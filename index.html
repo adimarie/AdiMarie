@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="The Animist Apothecary — Shamanic healing, somatic ceremony, and botanical medicine with Adi Marie. Topanga Canyon, Los Angeles.">
+  <meta name="description" content="The Animist Apothecary — Shamanic healing, somatic ceremony, and botanical medicine with Adi Marie. Topanga Canyon, Los Angeles. Available worldwide.">
   <title>The Animist Apothecary — Adi Marie · Topanga Canyon</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
@@ -17,7 +17,7 @@
       <a href="index.html" class="logo">The Animist <em class="logo-accent">Apothecary</em></a>
       <nav class="main-nav">
         <ul>
-          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html" class="nav-active">Home</a></li>
           <li class="nav-dropdown-parent">
             <a href="#">Offerings <span class="nav-arrow">▾</span></a>
             <div class="nav-dropdown">
@@ -50,7 +50,7 @@
     </div>
   </header>
 
-  <!-- HERO -->
+  <!-- ═══ HERO ═══ -->
   <section class="hero-fullbleed">
     <div class="hero-overlay"></div>
     <div class="hero-content">
@@ -68,11 +68,11 @@
     </div>
   </section>
 
-  <!-- METAMORPHOSIS -->
+  <!-- ═══ METAMORPHOSIS ═══ -->
   <section class="section-story">
     <div class="story-container">
-      <div class="story-image">
-        <div class="story-image-inner" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1000&fit=crop&q=80');"></div>
+      <div class="story-image-wrap">
+        <div class="story-image-inner" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=1000&fit=crop&q=80');"></div>
       </div>
       <div class="story-text">
         <span class="section-label">A Metamorphosis Has Been Underway</span>
@@ -92,9 +92,9 @@
     </div>
   </section>
 
-  <!-- VISION -->
+  <!-- ═══ VISION ═══ -->
   <section class="section-vision">
-    <span class="section-label" style="color:#9e8b6e;">The Greater Calling</span>
+    <span class="section-label">The Greater Calling</span>
     <h2 class="vision-title">Healing the earth grid.<br><em>One ceremony at a time.</em></h2>
     <div class="vision-divider"></div>
     <p class="vision-body">The great work of our time is not only personal — it is planetary. Adi Marie is cultivating communities of ceremonialists, building collective healing containers, and weaving systems of sacred resourcing in service to this precious planet and all sacred kin.</p>
@@ -108,7 +108,7 @@
       <div class="vision-pillar">
         <span class="pillar-icon">◈ ◈</span>
         <h3>Community &amp; Groups</h3>
-        <p>Themed group trajectories, eco-immersions, firesides, and collective healing containers in service to the life web.</p>
+        <p>Themed group trajectories, eco-immersions, firesides, and collective healing containers in devoted service to the life web.</p>
       </div>
       <div class="vision-pillar">
         <span class="pillar-icon">◈◈◈</span>
@@ -118,7 +118,7 @@
     </div>
   </section>
 
-  <!-- OFFERINGS -->
+  <!-- ═══ OFFERINGS ═══ -->
   <section class="section-offerings" id="offerings">
     <div class="offerings-container">
       <div class="offerings-header">
@@ -128,27 +128,25 @@
       </div>
 
       <div class="offering-featured-card">
-        <div class="ofc-image" style="background-image: url('https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1400&h=600&fit=crop&q=80');"></div>
+        <div class="ofc-image" style="background-image:url('https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1400&h=600&fit=crop&q=80');"></div>
         <div class="ofc-overlay"></div>
         <div class="ofc-content">
-          <span class="offering-tag" style="color:#C5D9C6; letter-spacing:0.2em; font-size:0.65rem;">Cornerstone Offering</span>
+          <span class="section-label" style="color:#C5D9C6; margin-bottom:0.6rem;">Cornerstone Offering</span>
           <h3>Mythopoetic Living — Developmental Arcs</h3>
           <p>A 3–24 month ceremonial developmental trajectory — weaving Sacred Breath sessions with Guidance &amp; Counsel into a living container for deep self-actualization and spiritual sovereignty.</p>
           <p>12-session progressions, built around your season of readiness.</p>
           <div class="ofc-meta">
-            <span>Solo Acolyte Intensives</span>
-            <span>·</span>
-            <span>Group Trajectories</span>
-            <span>·</span>
+            <span>Solo Acolyte Intensives</span><span>·</span>
+            <span>Group Trajectories</span><span>·</span>
             <span>3–24 Month Containers</span>
           </div>
-          <a href="mythopoetic.html" class="btn-ghost" style="margin-top:1.5rem; display:inline-block;">Explore the Developmental Arc →</a>
+          <a href="mythopoetic.html" class="btn-ghost">Explore the Developmental Arc →</a>
         </div>
       </div>
 
       <div class="offerings-grid">
         <div class="offering-card">
-          <div class="offering-image" style="background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&h=400&fit=crop&q=80');"></div>
+          <div class="offering-image" style="background-image:url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&h=400&fit=crop&q=80');"></div>
           <div class="offering-content">
             <span class="offering-tag">Somatic · Sacred</span>
             <h3>Shamanic Bodywork</h3>
@@ -157,25 +155,25 @@
           </div>
         </div>
         <div class="offering-card">
-          <div class="offering-image" style="background-image: url('https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=600&h=400&fit=crop&q=80');"></div>
+          <div class="offering-image" style="background-image:url('https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=600&h=400&fit=crop&q=80');"></div>
           <div class="offering-content">
             <span class="offering-tag">Multi-Day · Immersive</span>
             <h3>Personal Immersions</h3>
-            <p>Extended containers for those ready to go all the way in — multi-day experiences of radical presence, ceremony, and spiritual reclamation calibrated to your threshold.</p>
+            <p>Extended containers for those ready to go all the way in — multi-day experiences of radical presence, ceremony, and spiritual reclamation.</p>
             <a href="personal-immersions.html" class="offering-link">Learn More →</a>
           </div>
         </div>
         <div class="offering-card">
-          <div class="offering-image" style="background-image: url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&h=400&fit=crop&q=80');"></div>
+          <div class="offering-image" style="background-image:url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&h=400&fit=crop&q=80');"></div>
           <div class="offering-content">
             <span class="offering-tag">Collective · Ritual</span>
             <h3>Ceremonial &amp; Ritual Groups</h3>
-            <p>Themed group trajectories, seasonal ceremonies, and collective healing containers — because the work of tending the life web is communal work.</p>
+            <p>Themed group trajectories, seasonal ceremonies, and collective healing containers — because the work of tending the life web is communal.</p>
             <a href="ceremonial-groups.html" class="offering-link">Learn More →</a>
           </div>
         </div>
         <div class="offering-card">
-          <div class="offering-image" style="background-image: url('https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&h=400&fit=crop&q=80');"></div>
+          <div class="offering-image" style="background-image:url('https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=600&h=400&fit=crop&q=80');"></div>
           <div class="offering-content">
             <span class="offering-tag">Guidance · Counsel</span>
             <h3>Plát icas</h3>
@@ -184,7 +182,7 @@
           </div>
         </div>
         <div class="offering-card">
-          <div class="offering-image" style="background-image: url('https://images.unsplash.com/photo-1490730141103-6cac27aaab94?w=600&h=400&fit=crop&q=80');"></div>
+          <div class="offering-image" style="background-image:url('https://images.unsplash.com/photo-1490730141103-6cac27aaab94?w=600&h=400&fit=crop&q=80');"></div>
           <div class="offering-content">
             <span class="offering-tag">Ancestral · Elemental</span>
             <h3>Ancestral &amp; Elemental Divinations</h3>
@@ -196,10 +194,10 @@
     </div>
   </section>
 
-  <!-- PRACTITIONER -->
+  <!-- ═══ PRACTITIONER ═══ -->
   <section class="section-practitioner">
     <div class="practitioner-container">
-      <div class="practitioner-image-home" style="background-image: url('https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&h=800&fit=crop&q=80');"></div>
+      <div class="practitioner-image-home" style="background-image:url('https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&h=800&fit=crop&q=80');"></div>
       <div class="practitioner-content-home">
         <span class="section-label">The Practitioner</span>
         <h2 class="section-title"><em>Adi Marie</em></h2>
@@ -221,7 +219,7 @@
     </div>
   </section>
 
-  <!-- PROCESS -->
+  <!-- ═══ PROCESS ═══ -->
   <section class="section-process">
     <div class="process-container">
       <div class="process-header">
@@ -240,22 +238,22 @@
         <div class="process-step">
           <div class="step-number">01</div>
           <h3>Intake Call</h3>
-          <p>Book a free 20-minute introductory call to feel the resonance, share your needs, and outline a path forward together.</p>
+          <p>A free 20-minute introductory call to feel the resonance, share your needs, and outline a path forward together.</p>
         </div>
         <div class="process-step">
           <div class="step-number">02</div>
           <h3>Choose Your Path</h3>
-          <p>Together we identify whether a Solo Acolyte intensive, group trajectory, or individual session best meets your depth of readiness.</p>
+          <p>Together we identify whether a Solo Acolyte intensive, group trajectory, or individual session best meets your readiness.</p>
         </div>
         <div class="process-step">
           <div class="step-number">03</div>
           <h3>Commit &amp; Begin</h3>
-          <p>A deposit opens the container and signals your readiness. Dates are set. The work is engaged with full presence and intention.</p>
+          <p>A deposit opens the container and signals your readiness. Dates are set. The work is engaged with full intention.</p>
         </div>
         <div class="process-step">
           <div class="step-number">04</div>
           <h3>Aftercare &amp; Integration</h3>
-          <p>The work continues in the weaving. Integration practices, follow-up support, and ongoing resources are woven throughout every offering.</p>
+          <p>The work continues in the weaving. Integration practices and follow-up support are woven throughout every offering.</p>
         </div>
       </div>
       <div class="process-cta">
@@ -264,7 +262,7 @@
     </div>
   </section>
 
-  <!-- TESTIMONIAL -->
+  <!-- ═══ TESTIMONIAL ═══ -->
   <section class="section-testimonial">
     <div class="testimonial-container">
       <div class="testimonial-quote-mark">❝</div>
@@ -279,10 +277,10 @@
     </div>
   </section>
 
-  <!-- CTA -->
+  <!-- ═══ CTA ═══ -->
   <section class="section-cta">
     <div class="cta-container">
-      <span class="section-label" style="color:rgba(197,217,198,0.7);">Begin the Work</span>
+      <span class="section-label" style="color:rgba(197,217,198,0.65);">Begin the Work</span>
       <h2>The earth grid needs<br><em>your medicine.</em></h2>
       <p>Whether you're here for your own healing or to train as a ceremonialist in service to the living web — your season begins now.</p>
       <a href="book.html" class="btn-primary">Work With Us</a>
@@ -335,6 +333,6 @@
     </div>
   </footer>
 
-  <script src="main.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
