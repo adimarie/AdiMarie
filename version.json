@@ -1,9 +1,9 @@
 {
-  "version": "v260315.02 11:57am",
-  "release": 2,
-  "sha": "de974bf",
-  "fullSha": "de974bf8fc25372070a322b4dc440ecaacd5b04c",
+  "version": "v260315.03 5:20pm",
+  "release": 3,
+  "sha": "b3fcafc",
+  "fullSha": "b3fcafc084b419bf74b23ce4735ff22d4102fad3",
   "actor": "adimarie",
-  "pushedAt": "2026-03-15T16:57:45Z",
-  "commits": [{"sha": "de974bf", "message": "Create CNAME", "author": "adimarie"}]
+  "pushedAt": "2026-03-15T22:20:46Z",
+  "commits": [{"sha": "b3fcafc", "message": "Rebuild site from scratch: new directory structure, all 10 pages", "author": "Adi"}]
 }
