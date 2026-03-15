@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Venues · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+  <style>
+    .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .filter-tab { padding: 6px 14px; border-radius: 20px; border: 1px solid #e5e7eb; background: #fff; color: #6b7280; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+    .filter-tab:hover { border-color: #9ca3af; color: #374151; }
+    .filter-tab.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .badge-green { background: #f0fdf4; color: #166534; }
+    .badge-blue { background: #eff6ff; color: #1d4ed8; }
+    .badge-teal { background: #f0fdfa; color: #0f766e; }
+    .badge-gray { background: #f3f4f6; color: #6b7280; }
+    .stars { color: #f59e0b; font-size: 14px; letter-spacing: 1px; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: #fff; border-radius: 16px; padding: 32px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; margin: 0 0 24px; }
+    .modal-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group label { font-size: 13px; font-weight: 500; color: #374151; }
+    .form-group input, .form-group select, .form-group textarea { padding: 9px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; color: #111; background: #fff; transition: border-color 0.15s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #6b7280; }
+    .form-group textarea { resize: vertical; min-height: 72px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .btn { padding: 9px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
+    .btn-primary { background: #1a1a2e; color: #fff; }
+    .btn-primary:hover { background: #2d2d4e; }
+    .btn-secondary { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+    .btn-secondary:hover { background: #e5e7eb; }
+    .btn-danger { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .btn-danger:hover { background: #fee2e2; }
+  </style>
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html" class="active">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <h1>Venues</h1>
+        <p>Retreat centers, studios, and event spaces</p>
+      </div>
+
+      <div class="admin-toolbar">
+        <input class="admin-search" type="text" id="searchInput" placeholder="Search venues by name or city…">
+        <button class="btn btn-primary" id="newVenueBtn">+ Add Venue</button>
+      </div>
+
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-type="all">All</button>
+        <button class="filter-tab" data-type="retreat_center">Retreat Center</button>
+        <button class="filter-tab" data-type="studio">Studio</button>
+        <button class="filter-tab" data-type="conference">Conference</button>
+        <button class="filter-tab" data-type="outdoor">Outdoor</button>
+        <button class="filter-tab" data-type="private_home">Private Home</button>
+        <button class="filter-tab" data-type="virtual">Virtual</button>
+        <button class="filter-tab" data-type="other">Other</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="venuesTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>City / State</th>
+              <th>Capacity</th>
+              <th>Contact</th>
+              <th>Rating</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="venuesBody">
+            <tr><td colspan="7" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="venueModal">
+    <div class="modal-box">
+      <h2 class="modal-title" id="modalTitle">Add Venue</h2>
+      <input type="hidden" id="editVenueId">
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Venue Name</label>
+          <input type="text" id="fieldName" placeholder="Venue name">
+        </div>
+        <div class="form-group">
+          <label>Venue Type</label>
+          <select id="fieldVenueType">
+            <option value="retreat_center">Retreat Center</option>
+            <option value="studio">Studio / Practice Space</option>
+            <option value="conference">Conference Center</option>
+            <option value="outdoor">Outdoor / Land</option>
+            <option value="private_home">Private Home</option>
+            <option value="virtual">Virtual</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Full Address</label>
+        <input type="text" id="fieldAddress" placeholder="Street address">
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" id="fieldCity" placeholder="City">
+        </div>
+        <div class="form-group">
+          <label>State</label>
+          <input type="text" id="fieldState" placeholder="State / Province">
+        </div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Country</label>
+          <input type="text" id="fieldCountry" placeholder="Country" value="US">
+        </div>
+        <div class="form-group">
+          <label>Max Capacity</label>
+          <input type="number" id="fieldCapacity" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Contact Name</label>
+          <input type="text" id="fieldContactName" placeholder="Contact name">
+        </div>
+        <div class="form-group">
+          <label>Contact Email</label>
+          <input type="email" id="fieldContactEmail" placeholder="contact@example.com">
+        </div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Contact Phone</label>
+          <input type="tel" id="fieldContactPhone" placeholder="+1 555 000 0000">
+        </div>
+        <div class="form-group">
+          <label>Website</label>
+          <input type="url" id="fieldWebsite" placeholder="https://…">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Rate / Fee Info</label>
+        <input type="text" id="fieldRateInfo" placeholder="Rental rate or fee info">
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="fieldNotes" rows="3" placeholder="Internal notes…"></textarea>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Rating (1–5)</label>
+          <input type="number" id="fieldRating" min="1" max="5" placeholder="1–5">
+        </div>
+        <div class="form-group">
+          <label>Tags</label>
+          <input type="text" id="fieldTags" placeholder="Comma-separated tags">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="modalSaveBtn">Save Venue</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allVenues = [];
+    var activeFilter = 'all';
+    var searchQuery = '';
+
+    var typeBadge = {
+      retreat_center: 'badge-green',
+      studio: 'badge-blue',
+      outdoor: 'badge-teal',
+      conference: 'badge-gray',
+      private_home: 'badge-gray',
+      virtual: 'badge-gray',
+      other: 'badge-gray'
+    };
+    var typeLabel = {
+      retreat_center: 'Retreat Center',
+      studio: 'Studio',
+      conference: 'Conference',
+      outdoor: 'Outdoor',
+      private_home: 'Private Home',
+      virtual: 'Virtual',
+      other: 'Other'
+    };
+
+    function renderStars(rating) {
+      if (!rating) return '—';
+      var r = Math.min(5, Math.max(1, parseInt(rating)));
+      var stars = '';
+      for (var i = 1; i <= 5; i++) stars += i <= r ? '★' : '☆';
+      return '<span class="stars">' + stars + '</span>';
+    }
+
+    function renderTable(items) {
+      var tbody = document.getElementById('venuesBody');
+      if (!items.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:#9ca3af;">No venues found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map(function(v) {
+        var tCls = typeBadge[v.venue_type] || 'badge-gray';
+        var tLbl = typeLabel[v.venue_type] || (v.venue_type || '—');
+        var cityState = [v.city, v.state].filter(Boolean).join(', ') || '—';
+        return '<tr>' +
+          '<td><strong>' + escHtml(v.name || '—') + '</strong></td>' +
+          '<td><span class="badge ' + tCls + '">' + escHtml(tLbl) + '</span></td>' +
+          '<td>' + escHtml(cityState) + '</td>' +
+          '<td>' + (v.capacity || '—') + '</td>' +
+          '<td>' + escHtml(v.contact_name || '—') + '</td>' +
+          '<td>' + renderStars(v.rating) + '</td>' +
+          '<td>' +
+            '<button class="btn btn-secondary" style="padding:4px 12px;font-size:12px;" onclick="openModal(\'' + v.id + '\')">Edit</button> ' +
+            '<button class="btn btn-danger" style="padding:4px 12px;font-size:12px;" onclick="archiveVenue(\'' + v.id + '\')">Archive</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function applyFilters() {
+      var filtered = allVenues;
+      if (activeFilter !== 'all') {
+        filtered = filtered.filter(function(v) { return v.venue_type === activeFilter; });
+      }
+      if (searchQuery) {
+        var q = searchQuery.toLowerCase();
+        filtered = filtered.filter(function(v) {
+          return (v.name || '').toLowerCase().includes(q) || (v.city || '').toLowerCase().includes(q);
+        });
+      }
+      renderTable(filtered);
+    }
+
+    function loadVenues() {
+      document.getElementById('venuesBody').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>';
+      supabase.from('venues').select('*').eq('is_archived', false).order('name', { ascending: true })
+        .then(function(res) {
+          if (res.error) { showToast('Error loading venues: ' + res.error.message, 'error'); return; }
+          allVenues = res.data || [];
+          applyFilters();
+        });
+    }
+
+    document.getElementById('filterTabs').addEventListener('click', function(e) {
+      if (e.target.classList.contains('filter-tab')) {
+        document.querySelectorAll('.filter-tab').forEach(function(b) { b.classList.remove('active'); });
+        e.target.classList.add('active');
+        activeFilter = e.target.dataset.type;
+        applyFilters();
+      }
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      searchQuery = e.target.value.trim();
+      applyFilters();
+    });
+
+    function closeModal() { document.getElementById('venueModal').classList.remove('open'); }
+
+    window.openModal = function(id) {
+      var v = id ? allVenues.find(function(x) { return x.id === id; }) : null;
+      document.getElementById('editVenueId').value = v ? v.id : '';
+      document.getElementById('modalTitle').textContent = v ? 'Edit Venue' : 'Add Venue';
+      document.getElementById('fieldName').value = v ? (v.name || '') : '';
+      document.getElementById('fieldVenueType').value = v ? (v.venue_type || 'retreat_center') : 'retreat_center';
+      document.getElementById('fieldAddress').value = v ? (v.address || '') : '';
+      document.getElementById('fieldCity').value = v ? (v.city || '') : '';
+      document.getElementById('fieldState').value = v ? (v.state || '') : '';
+      document.getElementById('fieldCountry').value = v ? (v.country || 'US') : 'US';
+      document.getElementById('fieldCapacity').value = v ? (v.capacity || '') : '';
+      document.getElementById('fieldContactName').value = v ? (v.contact_name || '') : '';
+      document.getElementById('fieldContactEmail').value = v ? (v.contact_email || '') : '';
+      document.getElementById('fieldContactPhone').value = v ? (v.contact_phone || '') : '';
+      document.getElementById('fieldWebsite').value = v ? (v.website || '') : '';
+      document.getElementById('fieldRateInfo').value = v ? (v.rate_info || '') : '';
+      document.getElementById('fieldNotes').value = v ? (v.notes || '') : '';
+      document.getElementById('fieldRating').value = v ? (v.rating || '') : '';
+      document.getElementById('fieldTags').value = v ? (Array.isArray(v.tags) ? v.tags.join(', ') : (v.tags || '')) : '';
+      document.getElementById('venueModal').classList.add('open');
+    };
+
+    document.getElementById('newVenueBtn').addEventListener('click', function() { openModal(null); });
+    document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
+    document.getElementById('venueModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    function saveVenue() {
+      var id = document.getElementById('editVenueId').value;
+      var tagsRaw = document.getElementById('fieldTags').value.trim();
+      var tags = tagsRaw ? tagsRaw.split(',').map(function(t) { return t.trim(); }).filter(Boolean) : [];
+      var ratingRaw = document.getElementById('fieldRating').value;
+      var payload = {
+        name: document.getElementById('fieldName').value.trim(),
+        venue_type: document.getElementById('fieldVenueType').value,
+        address: document.getElementById('fieldAddress').value.trim(),
+        city: document.getElementById('fieldCity').value.trim(),
+        state: document.getElementById('fieldState').value.trim(),
+        country: document.getElementById('fieldCountry').value.trim() || 'US',
+        capacity: parseInt(document.getElementById('fieldCapacity').value) || null,
+        contact_name: document.getElementById('fieldContactName').value.trim(),
+        contact_email: document.getElementById('fieldContactEmail').value.trim(),
+        contact_phone: document.getElementById('fieldContactPhone').value.trim(),
+        website: document.getElementById('fieldWebsite').value.trim(),
+        rate_info: document.getElementById('fieldRateInfo').value.trim(),
+        notes: document.getElementById('fieldNotes').value.trim(),
+        rating: ratingRaw ? parseInt(ratingRaw) : null,
+        tags: tags,
+        updated_at: new Date().toISOString()
+      };
+      var op;
+      if (id) {
+        op = supabase.from('venues').update(payload).eq('id', id);
+      } else {
+        payload.is_archived = false;
+        payload.created_at = new Date().toISOString();
+        op = supabase.from('venues').insert(payload);
+      }
+      op.then(function(res) {
+        if (res.error) { showToast('Error saving venue: ' + res.error.message, 'error'); return; }
+        showToast(id ? 'Venue updated.' : 'Venue added.', 'success');
+        closeModal();
+        loadVenues();
+      });
+    }
+
+    window.archiveVenue = function(id) {
+      if (!confirm('Archive this venue? It will be hidden from the main list.')) return;
+      supabase.from('venues').update({ is_archived: true, updated_at: new Date().toISOString() }).eq('id', id)
+        .then(function(res) {
+          if (res.error) { showToast('Error archiving venue: ' + res.error.message, 'error'); return; }
+          showToast('Venue archived.', 'success');
+          loadVenues();
+        });
+    };
+
+    document.getElementById('modalSaveBtn').addEventListener('click', saveVenue);
+
+    loadVenues();
+  });
+  </script>
+</body>
+</html>

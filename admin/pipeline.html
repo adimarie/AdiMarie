@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Pipeline · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+  <style>
+    .kanban-board { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 24px; align-items: flex-start; }
+    .kanban-column { flex: 0 0 220px; border-radius: 12px; border: 1px solid; overflow: hidden; }
+    .kanban-col-header { padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 600; }
+    .kanban-col-count { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: rgba(0,0,0,0.08); }
+    .kanban-col-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 120px; }
+    .pipeline-card { background: #fff; border-radius: 8px; padding: 12px 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); cursor: pointer; transition: box-shadow 0.15s, transform 0.15s; border: 1px solid #f0f0f0; }
+    .pipeline-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); transform: translateY(-1px); }
+    .pipeline-card-name { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 2px; }
+    .pipeline-card-email { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
+    .pipeline-card-date { font-size: 11px; color: #9ca3af; }
+    .kanban-empty { font-size: 12px; color: #9ca3af; text-align: center; padding: 16px 0; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: #fff; border-radius: 16px; padding: 32px; width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; margin: 0 0 6px; }
+    .modal-subtitle { font-size: 13px; color: #6b7280; margin: 0 0 24px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group label { font-size: 13px; font-weight: 500; color: #374151; }
+    .form-group select { padding: 9px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; color: #111; background: #fff; }
+    .form-group select:focus { outline: none; border-color: #6b7280; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .btn { padding: 9px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
+    .btn-primary { background: #1a1a2e; color: #fff; }
+    .btn-primary:hover { background: #2d2d4e; }
+    .btn-secondary { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+    .btn-secondary:hover { background: #e5e7eb; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Sidebar ── -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html" class="active">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <h1>Pipeline</h1>
+        <p>Track clients through stages of the journey</p>
+      </div>
+
+      <div class="kanban-board" id="kanbanBoard">
+        <!-- Columns rendered by JS -->
+        <div style="color:#9ca3af;padding:32px;">Loading pipeline…</div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Move Stage Modal -->
+  <div class="modal-overlay" id="moveModal">
+    <div class="modal-box">
+      <h2 class="modal-title" id="moveModalName"></h2>
+      <p class="modal-subtitle" id="moveModalCurrentStage"></p>
+      <input type="hidden" id="moveClientId">
+      <div class="form-group">
+        <label>Move to Stage</label>
+        <select id="moveStageSelect">
+          <option value="inquiry">Inquiry</option>
+          <option value="intake">Intake</option>
+          <option value="active">Active</option>
+          <option value="aftercare">Aftercare</option>
+          <option value="integration">Integration</option>
+          <option value="community">Community</option>
+          <option value="alumni">Alumni</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="moveCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="moveSaveBtn">Move Client</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  var COLUMNS = [
+    { stage: 'inquiry',     label: 'Inquiry',     borderColor: '#bae6fd', headerBg: '#e0f2fe', textColor: '#0369a1' },
+    { stage: 'intake',      label: 'Intake',      borderColor: '#ddd6fe', headerBg: '#ede9fe', textColor: '#6d28d9' },
+    { stage: 'active',      label: 'Active',      borderColor: '#bbf7d0', headerBg: '#dcfce7', textColor: '#166534' },
+    { stage: 'aftercare',   label: 'Aftercare',   borderColor: '#f0abfc', headerBg: '#fae8ff', textColor: '#a21caf' },
+    { stage: 'integration', label: 'Integration', borderColor: '#fed7aa', headerBg: '#ffedd5', textColor: '#c2410c' },
+    { stage: 'community',   label: 'Community',   borderColor: '#6ee7b7', headerBg: '#d1fae5', textColor: '#065f46' },
+    { stage: 'alumni',      label: 'Alumni',      borderColor: '#e5e7eb', headerBg: '#f3f4f6', textColor: '#374151' }
+  ];
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allClients = [];
+
+    function renderBoard(clients) {
+      var grouped = {};
+      COLUMNS.forEach(function(col) { grouped[col.stage] = []; });
+      clients.forEach(function(c) {
+        var stage = c.pipeline_stage || 'inquiry';
+        if (!grouped[stage]) grouped[stage] = [];
+        grouped[stage].push(c);
+      });
+
+      var board = document.getElementById('kanbanBoard');
+      board.innerHTML = '';
+
+      COLUMNS.forEach(function(col) {
+        var cards = grouped[col.stage] || [];
+        var colEl = document.createElement('div');
+        colEl.className = 'kanban-column';
+        colEl.style.borderColor = col.borderColor;
+        colEl.style.background = '#fafafa';
+
+        var header = '<div class="kanban-col-header" style="background:' + col.headerBg + ';color:' + col.textColor + ';">' +
+          '<span>' + col.label + '</span>' +
+          '<span class="kanban-col-count">' + cards.length + '</span>' +
+        '</div>';
+
+        var body = '<div class="kanban-col-body">';
+        if (!cards.length) {
+          body += '<div class="kanban-empty">No clients</div>';
+        } else {
+          cards.forEach(function(c) {
+            var fullName = [c.first_name, c.last_name].filter(Boolean).join(' ') || 'Unnamed';
+            body += '<div class="pipeline-card" onclick="openMoveModal(\'' + c.id + '\')">' +
+              '<div class="pipeline-card-name">' + escHtml(fullName) + '</div>' +
+              '<div class="pipeline-card-email">' + escHtml(c.email || '') + '</div>' +
+              '<div class="pipeline-card-date">' + formatDate(c.created_at) + '</div>' +
+            '</div>';
+          });
+        }
+        body += '</div>';
+
+        colEl.innerHTML = header + body;
+        board.appendChild(colEl);
+      });
+    }
+
+    function loadPipeline() {
+      document.getElementById('kanbanBoard').innerHTML = '<div style="color:#9ca3af;padding:32px;">Loading pipeline…</div>';
+      supabase.from('clients').select('*').eq('is_archived', false).order('created_at', { ascending: false })
+        .then(function(res) {
+          if (res.error) { showToast('Error loading pipeline: ' + res.error.message, 'error'); return; }
+          allClients = res.data || [];
+          renderBoard(allClients);
+        });
+    }
+
+    window.openMoveModal = function(id) {
+      var c = allClients.find(function(x) { return x.id === id; });
+      if (!c) return;
+      document.getElementById('moveClientId').value = c.id;
+      document.getElementById('moveModalName').textContent = [c.first_name, c.last_name].filter(Boolean).join(' ') || 'Unnamed';
+      document.getElementById('moveModalCurrentStage').textContent = 'Current stage: ' + (c.pipeline_stage || 'unknown');
+      document.getElementById('moveStageSelect').value = c.pipeline_stage || 'inquiry';
+      document.getElementById('moveModal').classList.add('open');
+    };
+
+    document.getElementById('moveCancelBtn').addEventListener('click', function() {
+      document.getElementById('moveModal').classList.remove('open');
+    });
+    document.getElementById('moveModal').addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+
+    document.getElementById('moveSaveBtn').addEventListener('click', function() {
+      var id = document.getElementById('moveClientId').value;
+      var newStage = document.getElementById('moveStageSelect').value;
+      supabase.from('clients').update({ pipeline_stage: newStage, updated_at: new Date().toISOString() }).eq('id', id)
+        .then(function(res) {
+          if (res.error) { showToast('Error updating stage: ' + res.error.message, 'error'); return; }
+          showToast('Client moved to ' + newStage + '.', 'success');
+          document.getElementById('moveModal').classList.remove('open');
+          loadPipeline();
+        });
+    });
+
+    loadPipeline();
+  });
+  </script>
+</body>
+</html>

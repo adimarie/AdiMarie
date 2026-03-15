@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Aftercare &amp; Integration · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html" class="active">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <h1>Aftercare &amp; Integration</h1>
+        <p>Post-session integration plans and practices</p>
+      </div>
+
+      <div class="admin-toolbar">
+        <input class="admin-toolbar__search" type="text" id="searchInput" placeholder="Search plans…">
+        <div class="admin-toolbar__actions">
+          <button class="btn-sm btn-primary" id="newPlanBtn">+ New Plan</button>
+        </div>
+      </div>
+
+      <div class="admin-filters">
+        <button class="admin-filter-btn active" data-filter="all">All</button>
+        <button class="admin-filter-btn" data-filter="active">Active</button>
+        <button class="admin-filter-btn" data-filter="completed">Completed</button>
+        <button class="admin-filter-btn" data-filter="paused">Paused</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="plansTable">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Plan Title</th>
+              <th>Status</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="plansBody">
+            <tr id="loadingRow">
+              <td colspan="6" style="text-align:center;padding:32px;color:var(--aap-text-dim);">Loading…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admin-empty" id="emptyState" style="display:none;">
+        <div class="admin-empty__icon">🌿</div>
+        <div class="admin-empty__text">No integration plans yet</div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div class="admin-modal" id="planModal">
+    <div class="admin-modal__backdrop" id="modalBackdrop"></div>
+    <div class="admin-modal__card">
+      <div class="admin-modal__title" id="modalTitle">Integration Plan</div>
+      <form class="admin-modal__form" id="planForm" onsubmit="return false;">
+        <input type="hidden" id="fieldId">
+
+        <div class="admin-modal__field">
+          <label for="fieldClient">Client</label>
+          <select id="fieldClient" required>
+            <option value="">— Select Client —</option>
+          </select>
+        </div>
+
+        <div class="admin-modal__field">
+          <label for="fieldMentorship">Mentorship Arc (optional)</label>
+          <select id="fieldMentorship">
+            <option value="">— None —</option>
+          </select>
+        </div>
+
+        <div class="admin-modal__field">
+          <label for="fieldTitle">Plan Title</label>
+          <input type="text" id="fieldTitle" required placeholder="e.g. Post-Ceremony Integration">
+        </div>
+
+        <div class="admin-modal__field">
+          <label for="fieldDescription">Description</label>
+          <textarea id="fieldDescription" rows="3" placeholder="Overview of the integration plan…"></textarea>
+        </div>
+
+        <div class="admin-modal__field">
+          <label for="fieldPractices">Practices (JSON array, e.g. [{"name":"journaling","frequency":"daily"}])</label>
+          <textarea id="fieldPractices" rows="3" placeholder='[{"name":"journaling","frequency":"daily"}]'></textarea>
+        </div>
+
+        <div class="admin-modal__field">
+          <label for="fieldResources">Resources (JSON array)</label>
+          <textarea id="fieldResources" rows="3" placeholder='[{"title":"Book Title","url":"https://..."}]'></textarea>
+        </div>
+
+        <div class="admin-modal__row">
+          <div class="admin-modal__field">
+            <label for="fieldStartDate">Start Date</label>
+            <input type="date" id="fieldStartDate">
+          </div>
+          <div class="admin-modal__field">
+            <label for="fieldEndDate">End Date</label>
+            <input type="date" id="fieldEndDate">
+          </div>
+        </div>
+
+        <div class="admin-modal__field">
+          <label for="fieldStatus">Status</label>
+          <select id="fieldStatus">
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+            <option value="paused">Paused</option>
+          </select>
+        </div>
+
+        <div class="admin-modal__actions">
+          <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn-sm btn-primary" id="saveBtn">Save Plan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allPlans = [];
+    var currentFilter = 'all';
+    var searchTerm = '';
+
+    function statusBadge(status) {
+      var map = {
+        active:    ['#dcfce7','#166534','Active'],
+        completed: ['#dbeafe','#1d4ed8','Completed'],
+        paused:    ['#fef3c7','#92400e','Paused']
+      };
+      var s = map[status] || ['#f3f4f6','#6b7280', status || '—'];
+      return '<span class="admin-badge" style="background:'+s[0]+';color:'+s[1]+'">' + s[2] + '</span>';
+    }
+
+    function fmtDate(d) {
+      if (!d) return '—';
+      var parts = d.split('-');
+      if (parts.length < 3) return d;
+      return parts[1] + '/' + parts[2] + '/' + parts[0];
+    }
+
+    function renderPlans() {
+      var filtered = allPlans.filter(function(p) {
+        if (currentFilter !== 'all' && p.status !== currentFilter) return false;
+        if (searchTerm) {
+          var haystack = ((p.title || '') + ' ' + (p.client_name || '')).toLowerCase();
+          if (haystack.indexOf(searchTerm) === -1) return false;
+        }
+        return true;
+      });
+
+      var tbody = document.getElementById('plansBody');
+      var empty = document.getElementById('emptyState');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        document.getElementById('plansTable').style.display = 'none';
+        return;
+      }
+
+      empty.style.display = 'none';
+      document.getElementById('plansTable').style.display = '';
+
+      tbody.innerHTML = filtered.map(function(p) {
+        return '<tr>' +
+          '<td>' + (p.client_name || '—') + '</td>' +
+          '<td style="font-weight:600;color:var(--aap-text)">' + (p.title || '—') + '</td>' +
+          '<td>' + statusBadge(p.status) + '</td>' +
+          '<td>' + fmtDate(p.start_date) + '</td>' +
+          '<td>' + fmtDate(p.end_date) + '</td>' +
+          '<td><div class="admin-table__actions">' +
+            '<button onclick="openModal(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')">Edit</button>' +
+            '<button onclick="archivePlan(\'' + p.id + '\')">Archive</button>' +
+          '</div></td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function loadPlans() {
+      supabase.from('integration_plans')
+        .select('*, clients(full_name)')
+        .order('created_at', { ascending: false })
+        .then(function(res) {
+          document.getElementById('loadingRow') && (document.getElementById('loadingRow').remove());
+          if (res.error) { showToast('Could not load plans: ' + res.error.message, 'error'); return; }
+          allPlans = (res.data || []).map(function(p) {
+            return Object.assign({}, p, { client_name: p.clients ? p.clients.full_name : null });
+          });
+          renderPlans();
+        });
+    }
+
+    function loadClientsDropdown() {
+      supabase.from('clients').select('id, full_name').eq('is_archived', false).order('full_name')
+        .then(function(res) {
+          if (res.error || !res.data) return;
+          var sel = document.getElementById('fieldClient');
+          res.data.forEach(function(c) {
+            var o = document.createElement('option');
+            o.value = c.id; o.textContent = c.full_name;
+            sel.appendChild(o);
+          });
+        });
+    }
+
+    function loadMentorshipDropdown() {
+      supabase.from('mentorship_containers').select('id, title').order('title')
+        .then(function(res) {
+          if (res.error || !res.data) return;
+          var sel = document.getElementById('fieldMentorship');
+          res.data.forEach(function(m) {
+            var o = document.createElement('option');
+            o.value = m.id; o.textContent = m.title;
+            sel.appendChild(o);
+          });
+        });
+    }
+
+    window.openModal = function(item) {
+      document.getElementById('fieldId').value = item ? item.id : '';
+      document.getElementById('modalTitle').textContent = item ? 'Edit Integration Plan' : 'New Integration Plan';
+      document.getElementById('fieldClient').value = item ? (item.client_id || '') : '';
+      document.getElementById('fieldMentorship').value = item ? (item.mentorship_container_id || '') : '';
+      document.getElementById('fieldTitle').value = item ? (item.title || '') : '';
+      document.getElementById('fieldDescription').value = item ? (item.description || '') : '';
+      document.getElementById('fieldPractices').value = item && item.practices ? JSON.stringify(item.practices, null, 2) : '';
+      document.getElementById('fieldResources').value = item && item.resources ? JSON.stringify(item.resources, null, 2) : '';
+      document.getElementById('fieldStartDate').value = item ? (item.start_date || '') : '';
+      document.getElementById('fieldEndDate').value = item ? (item.end_date || '') : '';
+      document.getElementById('fieldStatus').value = item ? (item.status || 'active') : 'active';
+      document.getElementById('planModal').classList.add('admin-modal--open');
+    };
+
+    window.closeModal = function() {
+      document.getElementById('planModal').classList.remove('admin-modal--open');
+    };
+
+    window.archivePlan = function(id) {
+      if (!confirm('Archive this integration plan?')) return;
+      supabase.from('integration_plans').update({ archived: true }).eq('id', id)
+        .then(function(res) {
+          if (res.error) { showToast('Error: ' + res.error.message, 'error'); return; }
+          showToast('Plan archived', 'success');
+          allPlans = allPlans.filter(function(p) { return p.id !== id; });
+          renderPlans();
+        });
+    };
+
+    function savePlan() {
+      var id = document.getElementById('fieldId').value;
+      var practicesRaw = document.getElementById('fieldPractices').value.trim();
+      var resourcesRaw = document.getElementById('fieldResources').value.trim();
+
+      var practices = [];
+      var resources = [];
+
+      if (practicesRaw) {
+        try { practices = JSON.parse(practicesRaw); }
+        catch(e) { practices = []; showToast('Practices JSON was invalid — saved as empty array', 'warning'); }
+      }
+      if (resourcesRaw) {
+        try { resources = JSON.parse(resourcesRaw); }
+        catch(e) { resources = []; showToast('Resources JSON was invalid — saved as empty array', 'warning'); }
+      }
+
+      var payload = {
+        client_id:                document.getElementById('fieldClient').value || null,
+        mentorship_container_id:  document.getElementById('fieldMentorship').value || null,
+        title:                    document.getElementById('fieldTitle').value.trim(),
+        description:              document.getElementById('fieldDescription').value.trim(),
+        practices:                practices,
+        resources:                resources,
+        start_date:               document.getElementById('fieldStartDate').value || null,
+        end_date:                 document.getElementById('fieldEndDate').value || null,
+        status:                   document.getElementById('fieldStatus').value
+      };
+
+      var btn = document.getElementById('saveBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+
+      var op = id
+        ? supabase.from('integration_plans').update(payload).eq('id', id)
+        : supabase.from('integration_plans').insert(payload);
+
+      op.then(function(res) {
+        btn.disabled = false; btn.textContent = 'Save Plan';
+        if (res.error) { showToast('Error: ' + res.error.message, 'error'); return; }
+        showToast(id ? 'Plan updated' : 'Plan created', 'success');
+        closeModal();
+        loadPlans();
+      });
+    }
+
+    // Events
+    document.getElementById('newPlanBtn').addEventListener('click', function() { openModal(null); });
+    document.getElementById('cancelBtn').addEventListener('click', closeModal);
+    document.getElementById('modalBackdrop').addEventListener('click', closeModal);
+    document.getElementById('planForm').addEventListener('submit', savePlan);
+
+    document.querySelectorAll('.admin-filter-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.admin-filter-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderPlans();
+      });
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+      searchTerm = this.value.trim().toLowerCase();
+      renderPlans();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    loadClientsDropdown();
+    loadMentorshipDropdown();
+    loadPlans();
+  });
+  </script>
+</body>
+</html>

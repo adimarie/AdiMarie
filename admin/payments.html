@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Payments · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html" class="active">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <div>
+          <h1 class="admin-page-title">Payments</h1>
+          <p class="admin-page-subtitle">Payment records and financial tracking</p>
+        </div>
+        <button class="admin-btn admin-btn-primary" id="btnNewPayment">Record Payment</button>
+      </div>
+
+      <div class="admin-toolbar">
+        <input class="admin-search" type="search" id="searchInput" placeholder="Search payments…">
+      </div>
+
+      <div class="admin-filter-tabs">
+        <button class="admin-filter-tab active" data-filter="all">All</button>
+        <button class="admin-filter-tab" data-filter="completed">Completed</button>
+        <button class="admin-filter-tab" data-filter="pending">Pending</button>
+        <button class="admin-filter-tab" data-filter="refunded">Refunded</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Client</th>
+              <th>Amount</th>
+              <th>Payment Method</th>
+              <th>Status</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="paymentsTableBody">
+            <tr><td colspan="7" class="admin-table-empty">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="admin-modal-overlay" id="modalOverlay" style="display:none;">
+    <div class="admin-modal-card">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title" id="modalTitle">Record Payment</h2>
+        <button class="admin-modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="admin-modal-body">
+        <input type="hidden" id="fieldId">
+        <div class="admin-form-group">
+          <label class="admin-label">Client</label>
+          <select class="admin-input" id="fieldClientId"></select>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Amount (cents, e.g. 30000 = $300)</label>
+          <input class="admin-input" type="number" id="fieldAmountCents" min="0" placeholder="30000">
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Payment Method</label>
+          <select class="admin-input" id="fieldPaymentMethod">
+            <option value="card">Credit Card</option>
+            <option value="check">Check</option>
+            <option value="cash">Cash</option>
+            <option value="venmo">Venmo</option>
+            <option value="zelle">Zelle</option>
+            <option value="wire">Wire Transfer</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Status</label>
+          <select class="admin-input" id="fieldStatus">
+            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
+            <option value="refunded">Refunded</option>
+            <option value="failed">Failed</option>
+          </select>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Payment Date</label>
+          <input class="admin-input" type="date" id="fieldPaymentDate">
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Notes</label>
+          <textarea class="admin-input" id="fieldNotes" rows="2"></textarea>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Linked Appointment (optional)</label>
+          <select class="admin-input" id="fieldAppointmentId">
+            <option value="">— None —</option>
+          </select>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button class="admin-btn admin-btn-ghost" id="modalCancel">Cancel</button>
+        <button class="admin-btn admin-btn-primary" id="modalSave">Record Payment</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allPayments = [];
+    var currentFilter = 'all';
+
+    function formatCents(cents) {
+      if (!cents && cents !== 0) return '—';
+      return '$' + (cents / 100).toFixed(2);
+    }
+
+    function statusBadge(status) {
+      var colors = {
+        completed: 'background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;',
+        pending: 'background:#fffbeb;color:#92400e;border:1px solid #fde68a;',
+        refunded: 'background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;',
+        failed: 'background:#fef2f2;color:#991b1b;border:1px solid #fecaca;'
+      };
+      var s = colors[status] || 'background:#f3f4f6;color:#374151;border:1px solid #e5e7eb;';
+      return '<span style="' + s + 'padding:2px 10px;border-radius:20px;font-size:12px;font-weight:500;">' + (status || '—') + '</span>';
+    }
+
+    function methodLabel(m) {
+      var map = {card:'Credit Card',check:'Check',cash:'Cash',venmo:'Venmo',zelle:'Zelle',wire:'Wire Transfer',other:'Other'};
+      return map[m] || m || '—';
+    }
+
+    function renderTable(data) {
+      var tbody = document.getElementById('paymentsTableBody');
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="admin-table-empty">No payments found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(function(p) {
+        var clientName = p.clients ? (p.clients.full_name || p.clients.email || '—') : '—';
+        var date = p.payment_date ? p.payment_date.slice(0,10) : '—';
+        return '<tr>' +
+          '<td>' + date + '</td>' +
+          '<td>' + clientName + '</td>' +
+          '<td style="font-weight:600;">' + formatCents(p.amount_cents) + '</td>' +
+          '<td>' + methodLabel(p.payment_method) + '</td>' +
+          '<td>' + statusBadge(p.status) + '</td>' +
+          '<td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (p.notes || '—') + '</td>' +
+          '<td>' +
+            '<button class="admin-btn admin-btn-sm admin-btn-ghost" onclick="openModal(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')">Edit</button> ' +
+            '<button class="admin-btn admin-btn-sm admin-btn-ghost" style="color:#dc2626;" onclick="archivePayment(\'' + p.id + '\')">Archive</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function applyFilter() {
+      var q = document.getElementById('searchInput').value.toLowerCase();
+      var filtered = allPayments.filter(function(p) {
+        if (currentFilter !== 'all' && p.status !== currentFilter) return false;
+        if (q) {
+          var clientName = p.clients ? (p.clients.full_name || p.clients.email || '') : '';
+          var haystack = (clientName + ' ' + (p.notes || '') + ' ' + (p.payment_method || '')).toLowerCase();
+          if (!haystack.includes(q)) return false;
+        }
+        return true;
+      });
+      renderTable(filtered);
+    }
+
+    function loadPayments() {
+      supabase.from('payments')
+        .select('*, clients(full_name, email)')
+        .eq('archived', false)
+        .order('payment_date', {ascending: false})
+        .then(function(res) {
+          if (res.error) {
+            if (res.error.code === '42P01') {
+              document.getElementById('paymentsTableBody').innerHTML = '<tr><td colspan="7" class="admin-table-empty">Payments table not found. Run the database migration to create it.</td></tr>';
+            } else {
+              showToast('Error loading payments: ' + res.error.message, 'error');
+              document.getElementById('paymentsTableBody').innerHTML = '<tr><td colspan="7" class="admin-table-empty">Error loading payments.</td></tr>';
+            }
+            return;
+          }
+          allPayments = res.data || [];
+          applyFilter();
+        });
+    }
+
+    function loadClientsDropdown() {
+      supabase.from('clients').select('id, full_name, email').eq('archived', false).order('full_name').then(function(res) {
+        var sel = document.getElementById('fieldClientId');
+        sel.innerHTML = '<option value="">— Select Client —</option>';
+        (res.data || []).forEach(function(c) {
+          var opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = c.full_name || c.email || c.id;
+          sel.appendChild(opt);
+        });
+      });
+    }
+
+    function loadAppointmentsDropdown() {
+      supabase.from('appointments')
+        .select('id, appointment_date, clients(full_name)')
+        .eq('archived', false)
+        .order('appointment_date', {ascending: false})
+        .limit(100)
+        .then(function(res) {
+          var sel = document.getElementById('fieldAppointmentId');
+          sel.innerHTML = '<option value="">— None —</option>';
+          (res.data || []).forEach(function(a) {
+            var opt = document.createElement('option');
+            opt.value = a.id;
+            var dateStr = a.appointment_date ? a.appointment_date.slice(0,10) : '—';
+            var clientName = a.clients ? (a.clients.full_name || '—') : '—';
+            opt.textContent = dateStr + ' · ' + clientName;
+            sel.appendChild(opt);
+          });
+        });
+    }
+
+    window.openModal = function(item) {
+      document.getElementById('modalTitle').textContent = item ? 'Edit Payment' : 'Record Payment';
+      document.getElementById('modalSave').textContent = item ? 'Save Changes' : 'Record Payment';
+      document.getElementById('fieldId').value = item ? item.id : '';
+      document.getElementById('fieldClientId').value = item ? (item.client_id || '') : '';
+      document.getElementById('fieldAmountCents').value = item ? (item.amount_cents || '') : '';
+      document.getElementById('fieldPaymentMethod').value = item ? (item.payment_method || 'card') : 'card';
+      document.getElementById('fieldStatus').value = item ? (item.status || 'completed') : 'completed';
+      document.getElementById('fieldPaymentDate').value = item ? (item.payment_date ? item.payment_date.slice(0,10) : '') : new Date().toISOString().slice(0,10);
+      document.getElementById('fieldNotes').value = item ? (item.notes || '') : '';
+      document.getElementById('fieldAppointmentId').value = item ? (item.appointment_id || '') : '';
+      document.getElementById('modalOverlay').style.display = 'flex';
+    };
+
+    window.closeModal = function() {
+      document.getElementById('modalOverlay').style.display = 'none';
+    };
+
+    window.archivePayment = function(id) {
+      if (!confirm('Archive this payment?')) return;
+      supabase.from('payments').update({archived: true}).eq('id', id).then(function(res) {
+        if (res.error) { showToast('Error: ' + res.error.message, 'error'); return; }
+        showToast('Payment archived.', 'success');
+        loadPayments();
+      });
+    };
+
+    function savePayment() {
+      var id = document.getElementById('fieldId').value;
+      var clientId = document.getElementById('fieldClientId').value;
+      var amount = parseInt(document.getElementById('fieldAmountCents').value, 10);
+      var method = document.getElementById('fieldPaymentMethod').value;
+      var status = document.getElementById('fieldStatus').value;
+      var date = document.getElementById('fieldPaymentDate').value;
+      var notes = document.getElementById('fieldNotes').value.trim();
+      var apptId = document.getElementById('fieldAppointmentId').value;
+
+      if (!clientId) { showToast('Please select a client.', 'error'); return; }
+      if (!amount || isNaN(amount)) { showToast('Please enter a valid amount.', 'error'); return; }
+      if (!date) { showToast('Please enter a payment date.', 'error'); return; }
+
+      var payload = {
+        client_id: clientId,
+        amount_cents: amount,
+        payment_method: method,
+        status: status,
+        payment_date: date,
+        notes: notes || null,
+        appointment_id: apptId || null
+      };
+
+      var query = id
+        ? supabase.from('payments').update(payload).eq('id', id)
+        : supabase.from('payments').insert(payload);
+
+      query.then(function(res) {
+        if (res.error) { showToast('Error: ' + res.error.message, 'error'); return; }
+        showToast(id ? 'Payment updated.' : 'Payment recorded.', 'success');
+        closeModal();
+        loadPayments();
+      });
+    }
+
+    document.getElementById('btnNewPayment').addEventListener('click', function() {
+      loadClientsDropdown();
+      loadAppointmentsDropdown();
+      openModal(null);
+    });
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('modalCancel').addEventListener('click', closeModal);
+    document.getElementById('modalSave').addEventListener('click', savePayment);
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    document.getElementById('searchInput').addEventListener('input', applyFilter);
+
+    document.querySelectorAll('.admin-filter-tab').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.admin-filter-tab').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        applyFilter();
+      });
+    });
+
+    var _origOpen = window.openModal;
+    window.openModal = function(item) {
+      loadClientsDropdown();
+      loadAppointmentsDropdown();
+      _origOpen(item);
+    };
+
+    loadPayments();
+  });
+  </script>
+</body>
+</html>

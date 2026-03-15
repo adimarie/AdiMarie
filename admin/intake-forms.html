@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Intake Forms · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+  <style>
+    .empty-state { text-align: center; padding: 64px 32px; color: #9ca3af; }
+    .empty-state-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #374151; margin: 0 0 8px; }
+    .empty-state p { font-size: 14px; margin: 0 0 20px; }
+    .empty-state a { color: #6b7280; text-decoration: underline; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: #fff; border-radius: 16px; padding: 32px; width: 100%; max-width: 580px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; margin: 0 0 24px; }
+    .view-field { margin-bottom: 18px; }
+    .view-field-label { font-size: 12px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .view-field-value { font-size: 14px; color: #111; line-height: 1.6; white-space: pre-wrap; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+    .btn { padding: 9px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
+    .btn-primary { background: #1a1a2e; color: #fff; }
+    .btn-primary:hover { background: #2d2d4e; }
+    .btn-secondary { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+    .btn-secondary:hover { background: #e5e7eb; }
+    .msg-preview { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #6b7280; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Sidebar ── -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html" class="active">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <h1>Intake Forms</h1>
+        <p>Review and manage form submissions from prospective clients</p>
+      </div>
+
+      <div class="admin-toolbar">
+        <div></div>
+        <button class="btn btn-primary" id="newFormLinkBtn">+ Copy Form Link</button>
+      </div>
+
+      <div id="tableSection">
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="formsTable">
+            <thead>
+              <tr>
+                <th>Submitted</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Offerings Interested</th>
+                <th>Message</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="formsBody">
+              <tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="emptyState" style="display:none;">
+        <div class="empty-state">
+          <div class="empty-state-icon">📋</div>
+          <h3>No intake forms yet</h3>
+          <p>Intake submissions will appear here once clients fill out the booking form.</p>
+          <p><a href="../book.html" target="_blank">View the booking form →</a></p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- View Modal -->
+  <div class="modal-overlay" id="viewModal">
+    <div class="modal-box">
+      <h2 class="modal-title">Intake Submission</h2>
+      <div id="viewModalContent"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="viewClosBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  function escHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '—';
+    var d = new Date(iso);
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allForms = [];
+
+    document.getElementById('newFormLinkBtn').addEventListener('click', function() {
+      var url = window.location.origin + '/book.html';
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(function() {
+          showToast('Booking form link copied to clipboard!', 'success');
+        }).catch(function() {
+          prompt('Copy this link:', url);
+        });
+      } else {
+        prompt('Copy this link:', url);
+      }
+    });
+
+    function renderForms(forms) {
+      var tbody = document.getElementById('formsBody');
+      if (!forms.length) {
+        document.getElementById('tableSection').style.display = 'none';
+        document.getElementById('emptyState').style.display = 'block';
+        return;
+      }
+      document.getElementById('tableSection').style.display = 'block';
+      document.getElementById('emptyState').style.display = 'none';
+      tbody.innerHTML = forms.map(function(f, i) {
+        var firstName = f.first_name || f.name || '';
+        var lastName = f.last_name || '';
+        var fullName = [firstName, lastName].filter(Boolean).join(' ') || '—';
+        var offerings = Array.isArray(f.offerings_interested) ? f.offerings_interested.join(', ') : (f.offerings_interested || f.service_interest || '—');
+        var msg = f.message || f.notes || f.additional_info || '';
+        return '<tr>' +
+          '<td>' + formatDate(f.created_at || f.submitted_at) + '</td>' +
+          '<td><strong>' + escHtml(fullName) + '</strong></td>' +
+          '<td>' + escHtml(f.email || '—') + '</td>' +
+          '<td>' + escHtml(offerings) + '</td>' +
+          '<td><span class="msg-preview">' + escHtml(msg) + '</span></td>' +
+          '<td>' +
+            '<button class="btn btn-secondary" style="padding:4px 12px;font-size:12px;" onclick="viewForm(' + i + ')">View</button> ' +
+            '<button class="btn" style="padding:4px 12px;font-size:12px;background:#fef2f2;color:#991b1b;border:1px solid #fecaca;" onclick="archiveForm(\'' + f.id + '\')">Archive</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function viewFieldHtml(label, val) {
+      if (!val && val !== 0) val = '—';
+      if (Array.isArray(val)) val = val.join(', ');
+      return '<div class="view-field"><div class="view-field-label">' + escHtml(label) + '</div><div class="view-field-value">' + escHtml(String(val)) + '</div></div>';
+    }
+
+    window.viewForm = function(idx) {
+      var f = allForms[idx];
+      if (!f) return;
+      var html = '';
+      var firstName = f.first_name || f.name || '';
+      var lastName = f.last_name || '';
+      html += viewFieldHtml('Name', [firstName, lastName].filter(Boolean).join(' '));
+      html += viewFieldHtml('Email', f.email);
+      html += viewFieldHtml('Phone', f.phone);
+      html += viewFieldHtml('Offerings Interested', f.offerings_interested || f.service_interest);
+      html += viewFieldHtml('Message', f.message || f.notes || f.additional_info);
+      html += viewFieldHtml('Source', f.source || f.how_did_you_hear);
+      html += viewFieldHtml('Submitted', formatDate(f.created_at || f.submitted_at));
+      // Show any extra fields not already shown
+      var shown = ['first_name','last_name','name','email','phone','offerings_interested','service_interest','message','notes','additional_info','source','how_did_you_hear','created_at','submitted_at','id','is_archived','updated_at'];
+      Object.keys(f).forEach(function(k) {
+        if (!shown.includes(k) && f[k] !== null && f[k] !== undefined && f[k] !== '') {
+          html += viewFieldHtml(k.replace(/_/g, ' '), f[k]);
+        }
+      });
+      document.getElementById('viewModalContent').innerHTML = html;
+      document.getElementById('viewModal').classList.add('open');
+    };
+
+    window.archiveForm = function(id) {
+      if (!confirm('Archive this submission?')) return;
+      var tableName = window._intakeTable || 'intake_submissions';
+      supabase.from(tableName).update({ is_archived: true }).eq('id', id)
+        .then(function(res) {
+          if (res.error) { showToast('Could not archive: ' + res.error.message, 'error'); return; }
+          showToast('Submission archived.', 'success');
+          loadForms();
+        });
+    };
+
+    document.getElementById('viewClosBtn').addEventListener('click', function() {
+      document.getElementById('viewModal').classList.remove('open');
+    });
+    document.getElementById('viewModal').addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+
+    function loadForms() {
+      document.getElementById('formsBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>';
+      document.getElementById('tableSection').style.display = 'block';
+      document.getElementById('emptyState').style.display = 'none';
+
+      supabase.from('intake_submissions').select('*').order('created_at', { ascending: false })
+        .then(function(res) {
+          if (res.error) {
+            // Try fallback table
+            return supabase.from('form_submissions').select('*').order('created_at', { ascending: false })
+              .then(function(res2) {
+                if (res2.error) {
+                  // Neither table exists — show empty state
+                  document.getElementById('tableSection').style.display = 'none';
+                  document.getElementById('emptyState').style.display = 'block';
+                  return;
+                }
+                window._intakeTable = 'form_submissions';
+                allForms = res2.data || [];
+                renderForms(allForms);
+              });
+          }
+          window._intakeTable = 'intake_submissions';
+          allForms = res.data || [];
+          renderForms(allForms);
+        }).catch(function() {
+          document.getElementById('tableSection').style.display = 'none';
+          document.getElementById('emptyState').style.display = 'block';
+        });
+    }
+
+    loadForms();
+  });
+  </script>
+</body>
+</html>

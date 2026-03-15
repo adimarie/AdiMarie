@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>My Profile — The Animist Apothecary</title>
+  <link rel="stylesheet" href="portal.css" />
+</head>
+<body>
+
+<nav class="portal-nav">
+  <a href="index.html" class="portal-nav-brand">The Animist <em>Apothecary</em></a>
+  <button class="portal-nav-toggle" id="navToggle">☰</button>
+  <div class="portal-nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="sessions.html">Sessions</a>
+    <a href="agreements.html">Agreements</a>
+    <a href="resources.html">Resources</a>
+    <a href="journal.html">Journal</a>
+    <a href="profile.html" class="active">Profile</a>
+    <button class="portal-nav-signout" id="portalSignOut">Sign Out</button>
+  </div>
+</nav>
+
+<main class="portal-main">
+  <div class="portal-page-header">
+    <div class="portal-page-header__eyebrow">Your Account</div>
+    <h1>My Profile</h1>
+    <div class="portal-divider"></div>
+  </div>
+
+  <!-- 2-column grid -->
+  <div class="portal-grid portal-grid-2" style="gap:24px;margin-bottom:32px;">
+
+    <!-- LEFT: Your Information -->
+    <div class="portal-card" id="infoCard">
+      <div class="portal-card-title" style="margin-bottom:20px;">Your Information</div>
+
+      <div id="infoView">
+        <!-- Populated by JS -->
+      </div>
+
+      <div style="margin-top:20px;">
+        <button class="btn-outline" id="editProfileBtn">Edit Profile</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Journey & Preferences -->
+    <div>
+      <!-- Journey card -->
+      <div class="portal-card" style="margin-bottom:24px;">
+        <div class="portal-card-title" style="margin-bottom:4px;">Your Journey</div>
+        <p style="font-size:13px;color:#7A7068;margin:0 0 16px;">Your current place in the Apothecary arc.</p>
+        <div class="journey-stages" id="journeyStages">
+          <!-- Populated by JS -->
+        </div>
+        <div id="stageDescription" style="margin-top:16px;font-size:13px;color:#7A7068;line-height:1.6;"></div>
+      </div>
+
+      <!-- Portal Preferences card -->
+      <div class="portal-card">
+        <div class="portal-card-title" style="margin-bottom:16px;">Portal Preferences</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <div class="portal-card-label">Last Login</div>
+            <div id="lastLoginDisplay" style="font-size:14px;color:#4A4540;margin-top:2px;">—</div>
+          </div>
+          <div>
+            <div class="portal-card-label">Privacy</div>
+            <div style="font-size:14px;color:#4A4540;margin-top:2px;">All journal entries are private by default</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Sign Out Section -->
+  <div style="text-align:center;padding:40px 0 0;">
+    <p style="font-size:13px;color:#A89E95;margin:0 0 16px;">Ready to leave your sanctuary for now?</p>
+    <button
+      id="signOutBtn"
+      class="btn-outline"
+      style="color:#dc2626;border-color:#fecaca;"
+    >Sign Out of Portal</button>
+  </div>
+
+</main>
+
+<footer class="portal-footer">
+  <span>© 2025 The Animist Apothecary · Topanga Canyon, Los Angeles</span>
+  <a href="../index.html">← Return to main site</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../shared/supabase.js"></script>
+<script src="../shared/auth.js"></script>
+<script>
+
+function initPortal(callback) {
+  if (!window.adminSupabase) { window.location.href = 'login.html'; return; }
+  window.adminSupabase.auth.getSession().then(function(result) {
+    if (!result.data.session) { window.location.href = 'login.html'; return; }
+    var user = result.data.session.user;
+    window.adminSupabase
+      .from('client_portal_accounts')
+      .select('*, clients(*)')
+      .eq('auth_user_id', user.id)
+      .maybeSingle()
+      .then(function(res) {
+        if (res.error || !res.data) {
+          document.body.innerHTML = '<div style="text-align:center;padding:80px 40px;"><div style="font-size:48px;margin-bottom:16px;">🌱</div><h2 style="font-family:Cormorant Garamond,serif;">Your portal is being prepared</h2><p style="color:#7A7068;margin:12px auto 24px;max-width:400px;">Adi will activate your portal shortly after your intake is complete.</p><a href="../index.html" style="color:#5B7553;">← Return to main site</a></div>';
+          return;
+        }
+        window.portalAccount = res.data;
+        window.portalClient = res.data.clients;
+        var signOutBtn = document.getElementById('portalSignOut');
+        if (signOutBtn) signOutBtn.addEventListener('click', function() { window.adminSupabase.auth.signOut().then(function() { window.location.href = 'login.html'; }); });
+        var toggle = document.getElementById('navToggle');
+        var navLinks = document.getElementById('navLinks');
+        if (toggle && navLinks) toggle.addEventListener('click', function() { navLinks.classList.toggle('open'); });
+        if (callback) callback(user, window.adminSupabase, res.data.clients, res.data);
+      });
+  });
+}
+
+function showPortalToast(msg, type) {
+  var t = document.getElementById('portalToast');
+  if (!t) { t = document.createElement('div'); t.id = 'portalToast'; t.className = 'portal-toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  t.className = 'portal-toast ' + (type || 'success');
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3500);
+}
+
+// ── Journey Stages ─────────────────────────────────────────────────
+var STAGES = [
+  { key: 'inquiry',     label: 'Inquiry',     icon: '🌱', desc: 'You\'ve reached out and begun the conversation.' },
+  { key: 'intake',      label: 'Intake',      icon: '🌿', desc: 'We\'re getting to know you through the intake process.' },
+  { key: 'active',      label: 'Active',      icon: '🌀', desc: 'You\'re actively engaged in sessions and practice.' },
+  { key: 'aftercare',   label: 'Aftercare',   icon: '🕊',  desc: 'Post-session integration and support.' },
+  { key: 'integration', label: 'Integration', icon: '🔍', desc: 'Weaving the work into your everyday life.' },
+  { key: 'community',   label: 'Community',   icon: '🌸', desc: 'Part of the ongoing Apothecary community.' }
+];
+
+var STAGE_BADGE = {
+  inquiry:     'badge-gold',
+  intake:      'badge-blue',
+  active:      'badge-green',
+  aftercare:   'badge-sage',
+  integration: 'badge-purple',
+  community:   'badge-earth'
+};
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function formatDate(iso) {
+  if (!iso) return '—';
+  var d = new Date(iso);
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function renderJourneyStages(currentStage) {
+  var stagesEl = document.getElementById('journeyStages');
+  var descEl   = document.getElementById('stageDescription');
+  var html = '';
+  var currentIdx = STAGES.findIndex(function(s) { return s.key === currentStage; });
+  if (currentIdx === -1) currentIdx = 0;
+
+  STAGES.forEach(function(stage, i) {
+    var cls = '';
+    if (i < currentIdx) cls = 'done';
+    else if (i === currentIdx) cls = 'current';
+
+    html += '<div class="journey-stage ' + cls + '">';
+    html += '<div class="journey-stage-dot">' + (i < currentIdx ? '✓' : stage.icon) + '</div>';
+    html += '<div class="journey-stage-label">' + escHtml(stage.label) + '</div>';
+    html += '</div>';
+  });
+
+  stagesEl.innerHTML = html;
+
+  var found = STAGES[currentIdx];
+  if (found) {
+    descEl.innerHTML = '<strong style="color:#5B7553;">' + escHtml(found.label) + '</strong> — ' + escHtml(found.desc);
+  }
+}
+
+// ── Info View/Edit ─────────────────────────────────────────────────
+var currentClient   = null;
+var currentUser     = null;
+var currentSupabase = null;
+var isEditing       = false;
+
+function renderInfoView(client, userEmail) {
+  var stage = client.pipeline_stage || '';
+  var badgeCls = STAGE_BADGE[stage] || 'badge-gray';
+  var stageLabel = stage ? (stage.charAt(0).toUpperCase() + stage.slice(1)) : null;
+
+  var html = '';
+  html += infoField('Full Name', client.full_name || '—');
+  html += infoField('Email', userEmail || '—');
+  html += infoField('Phone', client.phone || '—');
+  html += infoField('Location', client.location || '—');
+  html += infoField('Timezone', client.timezone || '—');
+
+  if (stageLabel) {
+    html += '<div style="margin-top:14px;">';
+    html += '<div class="portal-card-label" style="margin-bottom:6px;">Current Stage</div>';
+    html += '<span class="portal-badge ' + badgeCls + '">' + escHtml(stageLabel) + '</span>';
+    html += '</div>';
+  }
+
+  document.getElementById('infoView').innerHTML = html;
+}
+
+function infoField(label, value) {
+  return '<div style="margin-bottom:14px;">'
+    + '<div class="portal-card-label">' + escHtml(label) + '</div>'
+    + '<div style="font-size:14px;color:#2D2A26;margin-top:3px;">' + escHtml(value) + '</div>'
+    + '</div>';
+}
+
+function renderInfoEditForm(client, userEmail) {
+  var html = '';
+
+  // Read-only fields
+  html += '<div style="margin-bottom:14px;">';
+  html += '<div class="portal-card-label">Full Name <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;">(managed by Adi)</span></div>';
+  html += '<div style="font-size:14px;color:#A89E95;margin-top:3px;">' + escHtml(client.full_name || '—') + '</div>';
+  html += '</div>';
+
+  html += '<div style="margin-bottom:18px;">';
+  html += '<div class="portal-card-label">Email <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;">(managed by auth)</span></div>';
+  html += '<div style="font-size:14px;color:#A89E95;margin-top:3px;">' + escHtml(userEmail || '—') + '</div>';
+  html += '</div>';
+
+  // Editable fields
+  html += '<div class="portal-form">';
+  html += '<div class="portal-field"><label>Phone</label><input type="tel" id="editPhone" value="' + escHtml(client.phone || '') + '" placeholder="+1 (555) 000-0000" /></div>';
+  html += '<div class="portal-field"><label>Location</label><input type="text" id="editLocation" value="' + escHtml(client.location || '') + '" placeholder="City, State" /></div>';
+  html += '<div class="portal-field"><label>Timezone</label>';
+  html += '<select id="editTimezone">';
+  var tzOptions = [
+    ['', '— Select timezone —'],
+    ['America/Los_Angeles', 'Pacific Time (PT)'],
+    ['America/Denver',      'Mountain Time (MT)'],
+    ['America/Chicago',     'Central Time (CT)'],
+    ['America/New_York',    'Eastern Time (ET)'],
+    ['America/Anchorage',   'Alaska Time (AKT)'],
+    ['Pacific/Honolulu',    'Hawaii Time (HT)'],
+    ['Europe/London',       'GMT / London'],
+    ['Europe/Paris',        'Central European Time (CET)'],
+    ['Australia/Sydney',    'Australian Eastern Time (AET)'],
+    ['Asia/Tokyo',          'Japan Standard Time (JST)']
+  ];
+  tzOptions.forEach(function(opt) {
+    var sel = (client.timezone === opt[0]) ? ' selected' : '';
+    html += '<option value="' + opt[0] + '"' + sel + '>' + opt[1] + '</option>';
+  });
+  html += '</select></div>';
+  html += '<div style="display:flex;gap:12px;justify-content:flex-end;margin-top:4px;">';
+  html += '<button class="btn-outline" id="cancelEditProfileBtn" type="button">Cancel</button>';
+  html += '<button class="btn-sage" id="saveProfileBtn" type="button">Save Changes</button>';
+  html += '</div>';
+  html += '</div>';
+
+  document.getElementById('infoView').innerHTML = html;
+
+  document.getElementById('cancelEditProfileBtn').addEventListener('click', function() {
+    isEditing = false;
+    document.getElementById('editProfileBtn').textContent = 'Edit Profile';
+    renderInfoView(currentClient, currentUser.email);
+  });
+
+  document.getElementById('saveProfileBtn').addEventListener('click', function() {
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    var updates = {
+      phone:    document.getElementById('editPhone').value.trim() || null,
+      location: document.getElementById('editLocation').value.trim() || null,
+      timezone: document.getElementById('editTimezone').value || null
+    };
+
+    currentSupabase
+      .from('clients')
+      .update(updates)
+      .eq('id', currentClient.id)
+      .then(function(res) {
+        btn.disabled = false;
+        btn.textContent = 'Save Changes';
+        if (res.error) { showPortalToast('Could not save profile.', 'error'); return; }
+        // Merge updates
+        Object.assign(currentClient, updates);
+        isEditing = false;
+        document.getElementById('editProfileBtn').textContent = 'Edit Profile';
+        renderInfoView(currentClient, currentUser.email);
+        showPortalToast('Profile updated.', 'success');
+      });
+  });
+}
+
+document.getElementById('editProfileBtn').addEventListener('click', function() {
+  isEditing = !isEditing;
+  if (isEditing) {
+    this.textContent = '— Cancel';
+    renderInfoEditForm(currentClient, currentUser.email);
+  } else {
+    this.textContent = 'Edit Profile';
+    renderInfoView(currentClient, currentUser.email);
+  }
+});
+
+// ── Sign Out ───────────────────────────────────────────────────────
+document.getElementById('signOutBtn').addEventListener('click', function() {
+  if (confirm('Sign out of your portal?')) {
+    window.adminSupabase.auth.signOut().then(function() { window.location.href = 'login.html'; });
+  }
+});
+
+// ── Init ───────────────────────────────────────────────────────────
+initPortal(function(user, supabase, client, account) {
+  currentClient   = client;
+  currentUser     = user;
+  currentSupabase = supabase;
+
+  renderInfoView(client, user.email);
+  renderJourneyStages(client.pipeline_stage || 'inquiry');
+
+  // Last login
+  if (account.last_login) {
+    document.getElementById('lastLoginDisplay').textContent = formatDate(account.last_login);
+  }
+});
+
+</script>
+</body>
+</html>

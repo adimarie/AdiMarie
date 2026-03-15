@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Resources — The Animist Apothecary</title>
+  <link rel="stylesheet" href="portal.css" />
+</head>
+<body>
+
+<nav class="portal-nav">
+  <a href="index.html" class="portal-nav-brand">The Animist <em>Apothecary</em></a>
+  <button class="portal-nav-toggle" id="navToggle">☰</button>
+  <div class="portal-nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="sessions.html">Sessions</a>
+    <a href="agreements.html">Agreements</a>
+    <a href="resources.html" class="active">Resources</a>
+    <a href="journal.html">Journal</a>
+    <a href="profile.html">Profile</a>
+    <button class="portal-nav-signout" id="portalSignOut">Sign Out</button>
+  </div>
+</nav>
+
+<main class="portal-main">
+  <div class="portal-page-header">
+    <div class="portal-page-header__eyebrow">Library &amp; Tools</div>
+    <h1>Your Resources</h1>
+    <div class="portal-divider"></div>
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="portal-tabs" id="categoryTabs">
+    <button class="portal-tab active" data-category="all">All</button>
+    <button class="portal-tab" data-category="reading">Reading</button>
+    <button class="portal-tab" data-category="practice">Practice</button>
+    <button class="portal-tab" data-category="community">Community</button>
+    <button class="portal-tab" data-category="referral">Referral</button>
+    <button class="portal-tab" data-category="media">Media</button>
+    <button class="portal-tab" data-category="tool">Tools</button>
+  </div>
+
+  <div id="resourcesGrid">
+    <div class="portal-empty">
+      <div class="portal-empty-icon">🌿</div>
+      <h3>Loading resources…</h3>
+    </div>
+  </div>
+</main>
+
+<footer class="portal-footer">
+  <span>© 2025 The Animist Apothecary · Topanga Canyon, Los Angeles</span>
+  <a href="../index.html">← Return to main site</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../shared/supabase.js"></script>
+<script src="../shared/auth.js"></script>
+<script>
+
+function initPortal(callback) {
+  if (!window.adminSupabase) { window.location.href = 'login.html'; return; }
+  window.adminSupabase.auth.getSession().then(function(result) {
+    if (!result.data.session) { window.location.href = 'login.html'; return; }
+    var user = result.data.session.user;
+    window.adminSupabase
+      .from('client_portal_accounts')
+      .select('*, clients(*)')
+      .eq('auth_user_id', user.id)
+      .maybeSingle()
+      .then(function(res) {
+        if (res.error || !res.data) {
+          document.body.innerHTML = '<div style="text-align:center;padding:80px 40px;"><div style="font-size:48px;margin-bottom:16px;">🌱</div><h2 style="font-family:Cormorant Garamond,serif;">Your portal is being prepared</h2><p style="color:#7A7068;margin:12px auto 24px;max-width:400px;">Adi will activate your portal shortly after your intake is complete.</p><a href="../index.html" style="color:#5B7553;">← Return to main site</a></div>';
+          return;
+        }
+        window.portalAccount = res.data;
+        window.portalClient = res.data.clients;
+        var signOutBtn = document.getElementById('portalSignOut');
+        if (signOutBtn) signOutBtn.addEventListener('click', function() { window.adminSupabase.auth.signOut().then(function() { window.location.href = 'login.html'; }); });
+        var toggle = document.getElementById('navToggle');
+        var navLinks = document.getElementById('navLinks');
+        if (toggle && navLinks) toggle.addEventListener('click', function() { navLinks.classList.toggle('open'); });
+        if (callback) callback(user, window.adminSupabase, res.data.clients, res.data);
+      });
+  });
+}
+
+function showPortalToast(msg, type) {
+  var t = document.getElementById('portalToast');
+  if (!t) { t = document.createElement('div'); t.id = 'portalToast'; t.className = 'portal-toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  t.className = 'portal-toast ' + (type || 'success');
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3500);
+}
+
+// Access stages for filtering
+var ACTIVE_STAGES     = ['active', 'aftercare', 'integration', 'community'];
+var ARC_STAGES        = ['integration', 'community'];
+
+// Category display labels
+var CATEGORY_LABELS = {
+  reading:   'Reading',
+  practice:  'Practice',
+  community: 'Community',
+  referral:  'Referral',
+  media:     'Media',
+  tool:      'Tools'
+};
+
+var allResources  = [];
+var clientStage   = '';
+var activeCategory = 'all';
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function isResourceVisible(resource) {
+  var level = resource.access_level;
+  if (level === 'public') return true;
+  if (level === 'all_clients') return true;
+  if (level === 'active_clients') return ACTIVE_STAGES.indexOf(clientStage) !== -1;
+  if (level === 'arc_clients')    return ARC_STAGES.indexOf(clientStage) !== -1;
+  return false;
+}
+
+function renderGrid() {
+  var grid = document.getElementById('resourcesGrid');
+
+  var visible = allResources.filter(function(r) {
+    if (!isResourceVisible(r)) return false;
+    if (activeCategory === 'all') return true;
+    return r.category === activeCategory;
+  });
+
+  if (visible.length === 0) {
+    grid.innerHTML = '<div class="portal-empty"><div class="portal-empty-icon">🌱</div><h3>Nothing here yet</h3><p>No resources are available in this category right now.</p></div>';
+    return;
+  }
+
+  var html = '<div class="portal-grid portal-grid-3">';
+  visible.forEach(function(r) {
+    var catLabel = CATEGORY_LABELS[r.category] || (r.category || 'Resource');
+    html += '<div class="resource-card">';
+    html += '<div class="resource-card-category">' + escHtml(catLabel) + '</div>';
+    html += '<h3 class="resource-card-title">' + escHtml(r.title) + '</h3>';
+    if (r.description) {
+      html += '<p class="resource-card-desc">' + escHtml(r.description) + '</p>';
+    }
+    if (r.url) {
+      html += '<a href="' + escHtml(r.url) + '" target="_blank" rel="noopener noreferrer" class="btn-sm-sage">Open Resource ↗</a>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+  grid.innerHTML = html;
+}
+
+// Tab switching
+document.getElementById('categoryTabs').addEventListener('click', function(e) {
+  var btn = e.target.closest('.portal-tab');
+  if (!btn) return;
+  document.querySelectorAll('.portal-tab').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+  activeCategory = btn.getAttribute('data-category');
+  renderGrid();
+});
+
+// Init
+initPortal(function(user, supabase, client, account) {
+  clientStage = (client && client.pipeline_stage) ? client.pipeline_stage : '';
+
+  supabase
+    .from('community_resources')
+    .select('*')
+    .eq('is_archived', false)
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+    .order('title', { ascending: true })
+    .then(function(res) {
+      if (res.error) {
+        showPortalToast('Could not load resources.', 'error');
+        document.getElementById('resourcesGrid').innerHTML = '<div class="portal-empty"><div class="portal-empty-icon">🌱</div><h3>Unable to load resources</h3><p>Please try refreshing the page.</p></div>';
+        return;
+      }
+      allResources = res.data || [];
+      renderGrid();
+    });
+});
+
+</script>
+</body>
+</html>

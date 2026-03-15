@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Getting Started · Client Portal · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="portal.css">
+  <style>
+    .stage-accordion {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .stage-accordion-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: var(--cream);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--earth);
+      user-select: none;
+      transition: background var(--transition);
+    }
+    .stage-accordion-header:hover { background: var(--cream-warm); }
+    .stage-accordion-header.open { background: var(--sage-mist); color: var(--sage-deep); }
+    .stage-accordion-icon { font-size: 18px; }
+    .stage-accordion-arrow { font-size: 11px; color: var(--earth-muted); transition: transform var(--transition); }
+    .stage-accordion-header.open .stage-accordion-arrow { transform: rotate(180deg); }
+    .stage-accordion-body {
+      display: none;
+      padding: 16px 20px 20px;
+      font-size: 14px;
+      color: var(--earth-soft);
+      line-height: 1.7;
+      border-top: 1px solid var(--border-light);
+      background: #fff;
+    }
+    .stage-accordion-body.open { display: block; }
+
+    .practitioner-section {
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+    }
+    .practitioner-avatar {
+      flex-shrink: 0;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--sage-mist);
+      border: 2px solid var(--sage-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+    @media (max-width: 600px) {
+      .practitioner-section { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="portal-nav">
+    <a href="index.html" class="portal-nav-brand">The Animist <em>Apothecary</em></a>
+    <button class="portal-nav-toggle" id="navToggle">☰</button>
+    <div class="portal-nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="sessions.html">Sessions</a>
+      <a href="agreements.html">Agreements</a>
+      <a href="resources.html">Resources</a>
+      <a href="journal.html">Journal</a>
+      <a href="profile.html">Profile</a>
+      <button class="portal-nav-signout" id="portalSignOut">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- Portal being prepared -->
+  <div id="portalPreparing" style="display:none;text-align:center;padding:80px 40px;">
+    <div style="font-size:48px;margin-bottom:16px;">🌱</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;color:#2D2A26;">Your portal is being prepared</h2>
+    <p style="color:#7A7068;max-width:400px;margin:12px auto 24px;">Your sacred space is almost ready. Adi will activate your portal shortly after your intake process is complete.</p>
+    <a href="../index.html" style="color:#5B7553;">← Return to main site</a>
+  </div>
+
+  <!-- Main content -->
+  <div id="portalContent" style="display:none;">
+    <main class="portal-main">
+
+      <!-- Page header -->
+      <div class="portal-page-header">
+        <div class="portal-page-header__eyebrow">Getting Started</div>
+        <h1>Welcome to Your Sanctuary</h1>
+        <div class="portal-divider"></div>
+      </div>
+
+      <!-- Welcome text -->
+      <div class="portal-card" style="margin-bottom:28px;">
+        <div style="font-size:1.15rem;font-family:'Cormorant Garamond',serif;color:var(--earth);line-height:1.7;font-weight:400;">
+          Welcome. You've taken a meaningful step by entering this work, and this portal is your own dedicated space to track your journey, access resources, reflect, and tend to your needs between our sessions. Take your time here. There's no rush.
+        </div>
+        <div style="margin-top:20px;font-size:14px;color:var(--earth-dim);line-height:1.7;">
+          This is a living space — it will grow alongside you as we move through the work together. Return here whenever you need grounding, guidance, or simply a reminder of how far you've come.
+        </div>
+      </div>
+
+      <!-- Onboarding checklist -->
+      <div class="portal-card" style="margin-bottom:28px;">
+        <div class="portal-card-title">Your Onboarding Steps</div>
+        <div id="checklistItems">
+          <div style="text-align:center;padding:24px 0;color:var(--earth-muted);font-size:13px;">Loading&hellip;</div>
+        </div>
+      </div>
+
+      <!-- Journey stages -->
+      <div class="portal-card" style="margin-bottom:28px;">
+        <div class="portal-card-title">Your Path</div>
+        <p style="font-size:14px;color:var(--earth-dim);margin:0 0 16px;">The work unfolds through six phases. Each one holds its own medicine.</p>
+        <div class="journey-stages" id="journeyStages">
+          <!-- populated by JS -->
+        </div>
+        <p id="journeyCurrentDesc" style="font-size:13px;color:var(--earth-dim);margin:16px 0 0;"></p>
+      </div>
+
+      <!-- Stage explanations accordion -->
+      <div class="portal-card" style="margin-bottom:28px;">
+        <div class="portal-card-title">What to Expect at Each Stage</div>
+        <div style="margin-top:16px;" id="stageAccordions">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <!-- Practitioner intro -->
+      <div class="portal-card" style="margin-bottom:40px;">
+        <div class="portal-card-title">Your Guide</div>
+        <div class="practitioner-section" style="margin-top:16px;">
+          <div class="practitioner-avatar">🌿</div>
+          <div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:500;color:var(--earth);margin-bottom:4px;">Adi Marie</div>
+            <div style="font-size:12px;color:var(--sage);font-weight:600;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:12px;">Shamanic Healer · Somatic Practitioner · Ceremonialist</div>
+            <p style="font-size:14px;color:var(--earth-soft);line-height:1.75;margin:0;">
+              Adi Marie is a shamanic healer, somatic practitioner, and ceremonialist based in Topanga Canyon, Los Angeles. She has been working in the fields of body, story, and soul for sixteen years. Her practice weaves shamanic energy medicine, somatic bodywork, Jungian depth work, and mythopoetic storytelling into a coherent whole.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Return to dashboard -->
+      <div style="text-align:center;margin-bottom:8px;">
+        <a href="index.html" class="btn-outline">← Return to Dashboard</a>
+      </div>
+
+    </main>
+
+    <footer class="portal-footer">
+      <span>© 2025 The Animist Apothecary · Topanga Canyon, Los Angeles</span>
+      <a href="../index.html">← Return to main site</a>
+    </footer>
+  </div>
+
+  <div id="portalToast" class="portal-toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  // ── Shared portal utilities ──────────────────────────────────────────────
+
+  function initPortal(callback) {
+    if (!window.adminSupabase) { window.location.href = 'login.html'; return; }
+    window.adminSupabase.auth.getSession().then(function(result) {
+      if (!result.data.session) { window.location.href = 'login.html'; return; }
+      var user = result.data.session.user;
+      window.adminSupabase
+        .from('client_portal_accounts')
+        .select('*, clients(*)')
+        .eq('auth_user_id', user.id)
+        .maybeSingle()
+        .then(function(res) {
+          if (res.error || !res.data) {
+            var prep = document.getElementById('portalPreparing');
+            var content = document.getElementById('portalContent');
+            if (prep) prep.style.display = 'block';
+            if (content) content.style.display = 'none';
+            return;
+          }
+          window.portalAccount = res.data;
+          window.portalClient = res.data.clients;
+          var signOutBtn = document.getElementById('portalSignOut');
+          if (signOutBtn) {
+            signOutBtn.addEventListener('click', function() {
+              window.adminSupabase.auth.signOut().then(function() { window.location.href = 'login.html'; });
+            });
+          }
+          var toggle = document.getElementById('navToggle');
+          var navLinks = document.getElementById('navLinks');
+          if (toggle && navLinks) {
+            toggle.addEventListener('click', function() { navLinks.classList.toggle('open'); });
+          }
+          if (callback) callback(user, window.adminSupabase, res.data.clients, res.data);
+        });
+    });
+  }
+
+  function showPortalToast(msg, type) {
+    var t = document.getElementById('portalToast') || document.createElement('div');
+    if (!t.id) { t.id = 'portalToast'; t.className = 'portal-toast'; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.className = 'portal-toast ' + (type || 'success');
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 3500);
+  }
+
+  // ── Journey config ───────────────────────────────────────────────────────
+
+  var JOURNEY_STAGES = ['inquiry', 'intake', 'active', 'aftercare', 'integration', 'community'];
+  var STAGE_ICONS = {
+    inquiry: '🌱', intake: '📋', active: '🌿',
+    aftercare: '🌸', integration: '🌀', community: '🌍'
+  };
+  var STAGE_INFO = {
+    inquiry: {
+      title: 'The Beginning',
+      short: 'You\'ve reached out — we\'re in first contact.',
+      detail: 'This is the threshold moment — the act of reaching out is already a form of courage. During inquiry, we\'re getting a sense of one another. You may receive an initial welcome message, and we\'ll begin the conversation about whether this work feels right for you. There\'s no pressure and no obligation. Trust your felt sense.'
+    },
+    intake: {
+      title: 'Intake',
+      short: 'We\'re getting to know each other and preparing the container.',
+      detail: 'The intake phase is about building the container — the held, intentional space in which the work will unfold. You\'ll complete an intake form, review and sign the client agreement, and schedule our first session. This is also when we discuss any relevant history, intentions, and the nature of what you\'re bringing to the work.'
+    },
+    active: {
+      title: 'Active Work',
+      short: 'Our sessions are underway. You are in the work.',
+      detail: 'This is the heart of it. We\'re meeting regularly and doing the actual work — shamanic sessions, somatic work, depth conversations, ceremony, or whatever combination your path calls for. Between sessions, your portal will hold notes, resources, and integration prompts. Show up as fully as you can. Rest when you need to.'
+    },
+    aftercare: {
+      title: 'Aftercare',
+      short: 'Your recent work is actively integrating.',
+      detail: 'After significant sessions — especially ceremonial or deep shamanic work — the integration period is as important as the session itself. Your system is processing. You may feel tender, raw, expanded, or surprisingly ordinary. All of this is appropriate. Rest, nourish yourself, limit overstimulation, and stay close to what landed in the session.'
+    },
+    integration: {
+      title: 'Integration',
+      short: 'You\'re embodying and living the changes.',
+      detail: 'Integration is where the work becomes life. The insights, openings, and shifts from your sessions are now finding their way into your daily patterns, relationships, and sense of self. This phase may involve less frequent sessions and more space for you to practice, reflect, and let the changes settle. Your journal here is a companion for this phase.'
+    },
+    community: {
+      title: 'Community',
+      short: 'You\'re part of the continuing circle.',
+      detail: 'Some clients move into ongoing relationship with the Animist Apothecary community — attending circles, seasonal ceremonies, or continuing the work in more spacious, communal forms. This phase honors that the journey doesn\'t end; it deepens and widens. You remain part of the lineage of this work.'
+    }
+  };
+
+  // ── Render journey ───────────────────────────────────────────────────────
+
+  function renderJourney(currentStage) {
+    var container = document.getElementById('journeyStages');
+    var descEl = document.getElementById('journeyCurrentDesc');
+    if (!container) return;
+    var idx = JOURNEY_STAGES.indexOf(currentStage);
+    if (idx === -1) idx = 0;
+    var html = '';
+    JOURNEY_STAGES.forEach(function(stage, i) {
+      var cls = i < idx ? 'done' : (i === idx ? 'current' : '');
+      html += '<div class="journey-stage ' + cls + '">';
+      html += '<div class="journey-stage-dot">' + STAGE_ICONS[stage] + '</div>';
+      html += '<div class="journey-stage-label">' + stage.charAt(0).toUpperCase() + stage.slice(1) + '</div>';
+      html += '</div>';
+    });
+    container.innerHTML = html;
+    if (descEl && STAGE_INFO[currentStage]) {
+      var info = STAGE_INFO[currentStage];
+      descEl.innerHTML = '<strong style="color:var(--sage-deep);">You are here: ' + info.title + '</strong> &mdash; ' + info.short;
+    }
+  }
+
+  // ── Render stage accordions ──────────────────────────────────────────────
+
+  function renderAccordions() {
+    var container = document.getElementById('stageAccordions');
+    if (!container) return;
+    var html = '';
+    JOURNEY_STAGES.forEach(function(stage) {
+      var info = STAGE_INFO[stage];
+      html += '<div class="stage-accordion">';
+      html += '<div class="stage-accordion-header" onclick="toggleAccordion(this)">';
+      html += '<span><span class="stage-accordion-icon">' + STAGE_ICONS[stage] + '</span>&nbsp; ' + info.title + '</span>';
+      html += '<span class="stage-accordion-arrow">▼</span>';
+      html += '</div>';
+      html += '<div class="stage-accordion-body">' + info.detail + '</div>';
+      html += '</div>';
+    });
+    container.innerHTML = html;
+  }
+
+  function toggleAccordion(header) {
+    var body = header.nextElementSibling;
+    var isOpen = header.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.stage-accordion-header').forEach(function(h) { h.classList.remove('open'); });
+    document.querySelectorAll('.stage-accordion-body').forEach(function(b) { b.classList.remove('open'); });
+    // Open clicked if it was closed
+    if (!isOpen) {
+      header.classList.add('open');
+      body.classList.add('open');
+    }
+  }
+
+  // ── Render checklist ─────────────────────────────────────────────────────
+
+  function checklistItemHTML(label, sub, done) {
+    var dot = done
+      ? '<div class="checklist-dot done">✓</div>'
+      : '<div class="checklist-dot pending"></div>';
+    return '<div class="checklist-item">' +
+      dot +
+      '<div class="checklist-info">' +
+        '<div class="checklist-label">' + label + '</div>' +
+        '<div class="checklist-sub">' + sub + '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  // ── Main init ────────────────────────────────────────────────────────────
+
+  initPortal(function(user, sb, client, account) {
+    document.getElementById('portalContent').style.display = 'block';
+
+    var clientId = client && client.id;
+    var stage = (client && client.pipeline_stage) ? client.pipeline_stage : 'inquiry';
+
+    renderJourney(stage);
+    renderAccordions();
+
+    // Open the current stage accordion by default
+    var headers = document.querySelectorAll('.stage-accordion-header');
+    var stageIdx = JOURNEY_STAGES.indexOf(stage);
+    if (stageIdx !== -1 && headers[stageIdx]) {
+      headers[stageIdx].classList.add('open');
+      headers[stageIdx].nextElementSibling.classList.add('open');
+    }
+
+    // Checklist: item 1 — intake form (stage != inquiry)
+    var intakeDone = stage !== 'inquiry';
+
+    // Portal activated — always done
+    var portalDone = true;
+
+    // Items 2 & 3 require async checks — render placeholders then update
+    var checklistEl = document.getElementById('checklistItems');
+
+    var agreementsDone = false;
+    var sessionsDone = false;
+    var pendingChecks = 2;
+
+    function renderChecklist() {
+      if (pendingChecks > 0) return;
+      checklistEl.innerHTML =
+        checklistItemHTML('Intake form submitted', intakeDone ? 'Your intake information has been received.' : 'Your intake form will be shared with you by Adi.', intakeDone) +
+        checklistItemHTML('Agreements signed', agreementsDone ? 'Your client agreement is on file.' : 'You\'ll receive your agreement document to review and sign.', agreementsDone) +
+        checklistItemHTML('First session scheduled', sessionsDone ? 'You have a session on the books.' : 'Reach out or use the booking link below to schedule.', sessionsDone) +
+        checklistItemHTML('Portal activated', 'You\'re here — your sanctuary is ready.', portalDone);
+    }
+
+    // Check agreements
+    sb.from('client_agreements')
+      .select('id', { count: 'exact', head: true })
+      .eq('client_id', clientId)
+      .eq('status', 'signed')
+      .then(function(res) {
+        agreementsDone = (res.count && res.count > 0) || false;
+        pendingChecks--;
+        renderChecklist();
+      });
+
+    // Check appointments
+    sb.from('appointments')
+      .select('id', { count: 'exact', head: true })
+      .eq('client_id', clientId)
+      .then(function(res) {
+        sessionsDone = (res.count && res.count > 0) || false;
+        pendingChecks--;
+        renderChecklist();
+      });
+  });
+  </script>
+</body>
+</html>

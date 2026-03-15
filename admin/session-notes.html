@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Session Notes · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+  <style>
+    .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .filter-tab { padding: 6px 14px; border-radius: 20px; border: 1px solid #e5e7eb; background: #fff; color: #6b7280; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+    .filter-tab:hover { border-color: #9ca3af; color: #374151; }
+    .filter-tab.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+    .theme-chip { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; background: #f0f9ff; color: #0369a1; margin: 1px 2px; }
+    .followup-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 500; }
+    .followup-overdue { background: #fef2f2; color: #991b1b; }
+    .followup-upcoming { background: #f0fdf4; color: #166534; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: #fff; border-radius: 16px; padding: 32px; width: 100%; max-width: 600px; max-height: 92vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; margin: 0 0 24px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group label { font-size: 13px; font-weight: 500; color: #374151; }
+    .form-group input, .form-group select, .form-group textarea { padding: 9px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; color: #111; background: #fff; transition: border-color 0.15s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #6b7280; }
+    .form-group textarea { resize: vertical; }
+    .form-group .hint { font-size: 12px; color: #9ca3af; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .btn { padding: 9px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
+    .btn-primary { background: #1a1a2e; color: #fff; }
+    .btn-primary:hover { background: #2d2d4e; }
+    .btn-secondary { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+    .btn-secondary:hover { background: #e5e7eb; }
+    .btn-danger { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .btn-danger:hover { background: #fee2e2; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Sidebar ── -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html" class="active">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <h1>Session Notes</h1>
+        <p>Session records, integration tasks, and follow-ups</p>
+      </div>
+
+      <div class="admin-toolbar">
+        <input class="admin-search" type="text" id="searchInput" placeholder="Search by client name or theme…">
+        <button class="btn btn-primary" id="newNoteBtn">+ New Session Note</button>
+      </div>
+
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="followup">With Follow-up</button>
+        <button class="filter-tab" data-filter="archived">Archived</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="notesTable">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Client</th>
+              <th>Session Themes</th>
+              <th>Follow-up Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="notesBody">
+            <tr><td colspan="5" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Create/Edit Modal -->
+  <div class="modal-overlay" id="noteModal">
+    <div class="modal-box">
+      <h2 class="modal-title" id="noteModalTitle">New Session Note</h2>
+      <input type="hidden" id="editNoteId">
+
+      <div class="form-group">
+        <label>Client</label>
+        <select id="fieldClientId">
+          <option value="">— Select client —</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Appointment (optional)</label>
+        <select id="fieldAppointmentId">
+          <option value="">— None —</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Practitioner Notes</label>
+        <textarea id="fieldPractitionerNotes" rows="5" placeholder="Internal session notes…"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Client-Visible Notes</label>
+        <textarea id="fieldClientNotes" rows="3" placeholder="Notes shared with the client…"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Integration Tasks</label>
+        <textarea id="fieldIntegrationTasks" rows="3" placeholder="Tasks and practices for the client…"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Session Themes</label>
+        <input type="text" id="fieldSessionThemes" placeholder="grief, embodiment, ancestors (comma-separated)">
+        <span class="hint">Enter themes separated by commas</span>
+      </div>
+
+      <div class="form-group">
+        <label>Follow-up Date</label>
+        <input type="date" id="fieldFollowUpDate">
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="noteCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="noteSaveBtn">Save Note</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  function escHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '—';
+    var d = new Date(iso);
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allNotes = [];
+    var clientsMap = {};
+    var appointmentsArr = [];
+    var activeFilter = 'all';
+    var searchQuery = '';
+    var todayStr = new Date().toISOString().split('T')[0];
+
+    function loadClientsDropdown() {
+      return supabase.from('clients').select('id, first_name, last_name, email').eq('is_archived', false).order('first_name')
+        .then(function(res) {
+          if (res.error || !res.data) return;
+          var sel = document.getElementById('fieldClientId');
+          clientsMap = {};
+          res.data.forEach(function(c) {
+            clientsMap[c.id] = [c.first_name, c.last_name].filter(Boolean).join(' ') || c.email;
+          });
+          sel.innerHTML = '<option value="">— Select client —</option>' +
+            res.data.map(function(c) {
+              var n = [c.first_name, c.last_name].filter(Boolean).join(' ') || c.email;
+              return '<option value="' + c.id + '">' + escHtml(n) + '</option>';
+            }).join('');
+        });
+    }
+
+    function loadAppointmentsDropdown() {
+      return supabase.from('appointments').select('id, start_time, client_id').order('start_time', { ascending: false })
+        .then(function(res) {
+          if (res.error || !res.data) return;
+          appointmentsArr = res.data;
+          var sel = document.getElementById('fieldAppointmentId');
+          sel.innerHTML = '<option value="">— None —</option>' +
+            res.data.map(function(a) {
+              var label = formatDate(a.start_time) + (a.client_id && clientsMap[a.client_id] ? ' — ' + clientsMap[a.client_id] : '');
+              return '<option value="' + a.id + '">' + escHtml(label) + '</option>';
+            }).join('');
+        }).catch(function() {});
+    }
+
+    function renderThemes(themes) {
+      if (!themes || !themes.length) return '—';
+      if (typeof themes === 'string') {
+        themes = themes.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+      }
+      return themes.map(function(t) { return '<span class="theme-chip">' + escHtml(t) + '</span>'; }).join('');
+    }
+
+    function followUpBadge(dateStr) {
+      if (!dateStr) return '—';
+      var cls = dateStr < todayStr ? 'followup-overdue' : 'followup-upcoming';
+      var label = dateStr < todayStr ? '⚠ ' + formatDate(dateStr) : formatDate(dateStr);
+      return '<span class="followup-badge ' + cls + '">' + escHtml(label) + '</span>';
+    }
+
+    function applyFilters() {
+      var filtered = allNotes;
+      if (activeFilter === 'followup') {
+        filtered = filtered.filter(function(n) { return !!n.follow_up_date; });
+      } else if (activeFilter === 'archived') {
+        filtered = allNotes; // already filtered by is_archived in loadNotes
+      } else {
+        // 'all' — already loaded without archived
+      }
+      if (searchQuery) {
+        var q = searchQuery.toLowerCase();
+        filtered = filtered.filter(function(n) {
+          var cname = (clientsMap[n.client_id] || '').toLowerCase();
+          var themes = Array.isArray(n.session_themes) ? n.session_themes.join(' ') : (n.session_themes || '');
+          return cname.includes(q) || themes.toLowerCase().includes(q);
+        });
+      }
+      renderNotes(filtered);
+    }
+
+    function renderNotes(notes) {
+      var tbody = document.getElementById('notesBody');
+      if (!notes.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:#9ca3af;">No session notes found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = notes.map(function(n) {
+        var clientName = clientsMap[n.client_id] || '—';
+        var date = formatDate(n.session_date || n.created_at);
+        return '<tr>' +
+          '<td>' + date + '</td>' +
+          '<td><strong>' + escHtml(clientName) + '</strong></td>' +
+          '<td>' + renderThemes(n.session_themes) + '</td>' +
+          '<td>' + followUpBadge(n.follow_up_date) + '</td>' +
+          '<td>' +
+            '<button class="btn btn-secondary" style="padding:4px 12px;font-size:12px;" onclick="openEditModal(\'' + n.id + '\')">Edit</button> ' +
+            '<button class="btn btn-danger" style="padding:4px 12px;font-size:12px;" onclick="archiveNote(\'' + n.id + '\')">' + (n.is_archived ? 'Unarchive' : 'Archive') + '</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function loadNotes() {
+      document.getElementById('notesBody').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>';
+      var query = supabase.from('session_notes').select('*').order('created_at', { ascending: false });
+      if (activeFilter !== 'archived') {
+        query = query.eq('is_archived', false);
+      } else {
+        query = query.eq('is_archived', true);
+      }
+      query.then(function(res) {
+        if (res.error) { showToast('Error loading notes: ' + res.error.message, 'error'); return; }
+        allNotes = res.data || [];
+        applyFilters();
+      });
+    }
+
+    // Filter tabs
+    document.getElementById('filterTabs').addEventListener('click', function(e) {
+      if (e.target.classList.contains('filter-tab')) {
+        document.querySelectorAll('.filter-tab').forEach(function(b) { b.classList.remove('active'); });
+        e.target.classList.add('active');
+        activeFilter = e.target.dataset.filter;
+        loadNotes();
+      }
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      searchQuery = e.target.value.trim();
+      applyFilters();
+    });
+
+    // Modal helpers
+    function openModal() { document.getElementById('noteModal').classList.add('open'); }
+    function closeModal() { document.getElementById('noteModal').classList.remove('open'); }
+
+    function clearForm() {
+      document.getElementById('editNoteId').value = '';
+      document.getElementById('fieldClientId').value = '';
+      document.getElementById('fieldAppointmentId').value = '';
+      document.getElementById('fieldPractitionerNotes').value = '';
+      document.getElementById('fieldClientNotes').value = '';
+      document.getElementById('fieldIntegrationTasks').value = '';
+      document.getElementById('fieldSessionThemes').value = '';
+      document.getElementById('fieldFollowUpDate').value = '';
+    }
+
+    document.getElementById('newNoteBtn').addEventListener('click', function() {
+      clearForm();
+      document.getElementById('noteModalTitle').textContent = 'New Session Note';
+      openModal();
+    });
+
+    document.getElementById('noteCancelBtn').addEventListener('click', closeModal);
+    document.getElementById('noteModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    window.openEditModal = function(id) {
+      var n = allNotes.find(function(x) { return x.id === id; });
+      if (!n) return;
+      clearForm();
+      document.getElementById('noteModalTitle').textContent = 'Edit Session Note';
+      document.getElementById('editNoteId').value = n.id;
+      document.getElementById('fieldClientId').value = n.client_id || '';
+      document.getElementById('fieldAppointmentId').value = n.appointment_id || '';
+      document.getElementById('fieldPractitionerNotes').value = n.practitioner_notes || '';
+      document.getElementById('fieldClientNotes').value = n.client_visible_notes || '';
+      document.getElementById('fieldIntegrationTasks').value = n.integration_tasks || '';
+      var themes = Array.isArray(n.session_themes) ? n.session_themes.join(', ') : (n.session_themes || '');
+      document.getElementById('fieldSessionThemes').value = themes;
+      document.getElementById('fieldFollowUpDate').value = n.follow_up_date || '';
+      openModal();
+    };
+
+    window.archiveNote = function(id) {
+      var n = allNotes.find(function(x) { return x.id === id; });
+      if (!n) return;
+      var newVal = !n.is_archived;
+      if (newVal && !confirm('Archive this session note?')) return;
+      supabase.from('session_notes').update({ is_archived: newVal, updated_at: new Date().toISOString() }).eq('id', id)
+        .then(function(res) {
+          if (res.error) { showToast('Error: ' + res.error.message, 'error'); return; }
+          showToast(newVal ? 'Note archived.' : 'Note restored.', 'success');
+          loadNotes();
+        });
+    };
+
+    document.getElementById('noteSaveBtn').addEventListener('click', function() {
+      var id = document.getElementById('editNoteId').value;
+      var themesRaw = document.getElementById('fieldSessionThemes').value.trim();
+      var themesArr = themesRaw ? themesRaw.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
+      var apptId = document.getElementById('fieldAppointmentId').value;
+      var payload = {
+        client_id: document.getElementById('fieldClientId').value || null,
+        appointment_id: apptId || null,
+        practitioner_notes: document.getElementById('fieldPractitionerNotes').value.trim(),
+        client_visible_notes: document.getElementById('fieldClientNotes').value.trim(),
+        integration_tasks: document.getElementById('fieldIntegrationTasks').value.trim(),
+        session_themes: themesArr,
+        follow_up_date: document.getElementById('fieldFollowUpDate').value || null,
+        updated_at: new Date().toISOString()
+      };
+
+      var op;
+      if (id) {
+        op = supabase.from('session_notes').update(payload).eq('id', id);
+      } else {
+        payload.is_archived = false;
+        payload.created_at = new Date().toISOString();
+        op = supabase.from('session_notes').insert(payload);
+      }
+      op.then(function(res) {
+        if (res.error) { showToast('Error saving note: ' + res.error.message, 'error'); return; }
+        showToast(id ? 'Note updated.' : 'Note created.', 'success');
+        closeModal();
+        loadNotes();
+      });
+    });
+
+    // Load clients first, then appointments, then notes
+    loadClientsDropdown().then(function() {
+      return loadAppointmentsDropdown();
+    }).then(function() {
+      loadNotes();
+    });
+  });
+  </script>
+</body>
+</html>

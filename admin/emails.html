@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Email Center · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html" class="active">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <div>
+          <h1 class="admin-page-title">Email Center</h1>
+          <p class="admin-page-subtitle">Email history and compose</p>
+        </div>
+        <button class="admin-btn admin-btn-primary" id="btnCompose">Compose Email</button>
+      </div>
+
+      <div class="admin-toolbar">
+        <input class="admin-search" type="search" id="searchInput" placeholder="Search emails…">
+      </div>
+
+      <div class="admin-filter-tabs">
+        <button class="admin-filter-tab active" data-filter="all">All</button>
+        <button class="admin-filter-tab" data-filter="sent">Sent</button>
+        <button class="admin-filter-tab" data-filter="failed">Failed</button>
+        <button class="admin-filter-tab" data-filter="bounced">Bounced</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Recipient Name</th>
+              <th>Email</th>
+              <th>Subject</th>
+              <th>Template</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="emailsTableBody">
+            <tr><td colspan="7" class="admin-table-empty">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- View Modal -->
+  <div class="admin-modal-overlay" id="viewModalOverlay" style="display:none;">
+    <div class="admin-modal-card" style="max-width:560px;">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title">Email Details</h2>
+        <button class="admin-modal-close" id="viewModalClose">✕</button>
+      </div>
+      <div class="admin-modal-body">
+        <div class="admin-form-group">
+          <label class="admin-label">Date</label>
+          <div id="viewDate" style="font-size:14px;padding:8px 0;color:var(--aap-text);"></div>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Recipient</label>
+          <div id="viewRecipient" style="font-size:14px;padding:8px 0;color:var(--aap-text);"></div>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Subject</label>
+          <div id="viewSubject" style="font-size:14px;padding:8px 0;color:var(--aap-text);font-weight:500;"></div>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Template</label>
+          <div id="viewTemplate" style="font-size:14px;padding:8px 0;color:var(--aap-text);"></div>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Status</label>
+          <div id="viewStatus" style="font-size:14px;padding:8px 0;"></div>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Message</label>
+          <div id="viewMessage" style="font-size:14px;padding:10px;background:var(--aap-surface);border-radius:8px;white-space:pre-wrap;line-height:1.6;color:var(--aap-text);min-height:80px;"></div>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button class="admin-btn admin-btn-ghost" id="viewModalCancel">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compose Modal -->
+  <div class="admin-modal-overlay" id="composeModalOverlay" style="display:none;">
+    <div class="admin-modal-card" style="max-width:580px;">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title">Compose Email</h2>
+        <button class="admin-modal-close" id="composeModalClose">✕</button>
+      </div>
+      <div class="admin-modal-body">
+        <div class="admin-form-group">
+          <label class="admin-label">Recipient Type</label>
+          <div style="display:flex;gap:24px;padding:8px 0;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;">
+              <input type="radio" name="recipientType" id="rtClient" value="client" checked> Existing Client
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;">
+              <input type="radio" name="recipientType" id="rtCustom" value="custom"> Custom Email
+            </label>
+          </div>
+        </div>
+        <div class="admin-form-group" id="clientSelectGroup">
+          <label class="admin-label">Client</label>
+          <select class="admin-input" id="fieldClientId"></select>
+        </div>
+        <div id="customEmailGroup" style="display:none;">
+          <div class="admin-form-group">
+            <label class="admin-label">Email Address</label>
+            <input class="admin-input" type="email" id="fieldCustomEmail" placeholder="recipient@example.com">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-label">Recipient Name</label>
+            <input class="admin-input" type="text" id="fieldCustomName" placeholder="Full name">
+          </div>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Subject</label>
+          <input class="admin-input" type="text" id="fieldSubject" placeholder="Email subject">
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Template</label>
+          <select class="admin-input" id="fieldTemplate">
+            <option value="welcome">Welcome</option>
+            <option value="session_reminder">Session Reminder</option>
+            <option value="follow_up">Follow-Up</option>
+            <option value="integration_check">Integration Check-In</option>
+            <option value="invoice">Invoice Notification</option>
+            <option value="newsletter">Newsletter</option>
+            <option value="custom">Custom Message</option>
+          </select>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Message</label>
+          <textarea class="admin-input" id="fieldMessage" rows="6" placeholder="Your message"></textarea>
+        </div>
+        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;font-size:12px;color:#92400e;line-height:1.5;">
+          Email logged. Configure Resend in supabase/functions to enable actual sending.
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button class="admin-btn admin-btn-ghost" id="composeModalCancel">Cancel</button>
+        <button class="admin-btn admin-btn-primary" id="composeSave">Send &amp; Log</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allEmails = [];
+    var currentFilter = 'all';
+    var clientsMap = {};
+
+    function statusBadge(status) {
+      var styles = {
+        sent: 'background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;',
+        failed: 'background:#fef2f2;color:#991b1b;border:1px solid #fecaca;',
+        bounced: 'background:#fffbeb;color:#92400e;border:1px solid #fde68a;'
+      };
+      var s = styles[status] || 'background:#f3f4f6;color:#374151;border:1px solid #e5e7eb;';
+      return '<span style="' + s + 'padding:2px 10px;border-radius:20px;font-size:12px;font-weight:500;">' + (status || '—') + '</span>';
+    }
+
+    function templateLabel(t) {
+      var map = {
+        welcome:'Welcome', session_reminder:'Session Reminder', follow_up:'Follow-Up',
+        integration_check:'Integration Check-In', invoice:'Invoice Notification',
+        newsletter:'Newsletter', custom:'Custom Message'
+      };
+      return map[t] || t || '—';
+    }
+
+    function renderTable(data) {
+      var tbody = document.getElementById('emailsTableBody');
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="admin-table-empty">No emails found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(function(e) {
+        var dateStr = e.created_at ? e.created_at.slice(0,10) : '—';
+        return '<tr>' +
+          '<td>' + dateStr + '</td>' +
+          '<td>' + (e.recipient_name || '—') + '</td>' +
+          '<td style="color:var(--aap-muted);font-size:13px;">' + (e.recipient_email || '—') + '</td>' +
+          '<td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (e.subject || '—') + '</td>' +
+          '<td>' + templateLabel(e.template) + '</td>' +
+          '<td>' + statusBadge(e.status) + '</td>' +
+          '<td>' +
+            '<button class="admin-btn admin-btn-sm admin-btn-ghost" onclick="openViewModal(' + JSON.stringify(e).replace(/"/g,'&quot;') + ')">View</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function applyFilter() {
+      var q = document.getElementById('searchInput').value.toLowerCase();
+      var filtered = allEmails.filter(function(e) {
+        if (currentFilter !== 'all' && e.status !== currentFilter) return false;
+        if (q) {
+          var haystack = ((e.recipient_name||'') + ' ' + (e.recipient_email||'') + ' ' + (e.subject||'')).toLowerCase();
+          if (!haystack.includes(q)) return false;
+        }
+        return true;
+      });
+      renderTable(filtered);
+    }
+
+    function loadEmails() {
+      supabase.from('email_log')
+        .select('*')
+        .order('created_at', {ascending: false})
+        .then(function(res) {
+          if (res.error) {
+            if (res.error.code === '42P01') {
+              document.getElementById('emailsTableBody').innerHTML = '<tr><td colspan="7" class="admin-table-empty">Email log table not found. Run the database migration to create it.</td></tr>';
+            } else {
+              showToast('Error loading emails: ' + res.error.message, 'error');
+              document.getElementById('emailsTableBody').innerHTML = '<tr><td colspan="7" class="admin-table-empty">Error loading emails.</td></tr>';
+            }
+            return;
+          }
+          allEmails = res.data || [];
+          applyFilter();
+        });
+    }
+
+    function loadClientsDropdown() {
+      supabase.from('clients').select('id, full_name, email').eq('archived', false).order('full_name').then(function(res) {
+        var sel = document.getElementById('fieldClientId');
+        sel.innerHTML = '<option value="">— Select Client —</option>';
+        clientsMap = {};
+        (res.data || []).forEach(function(c) {
+          var opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = c.full_name || c.email || c.id;
+          opt.dataset.email = c.email || '';
+          opt.dataset.name = c.full_name || '';
+          sel.appendChild(opt);
+          clientsMap[c.id] = c;
+        });
+      });
+    }
+
+    window.openViewModal = function(item) {
+      document.getElementById('viewDate').textContent = item.created_at ? item.created_at.replace('T',' ').slice(0,16) : '—';
+      document.getElementById('viewRecipient').textContent = (item.recipient_name || '—') + (item.recipient_email ? ' <' + item.recipient_email + '>' : '');
+      document.getElementById('viewSubject').textContent = item.subject || '—';
+      document.getElementById('viewTemplate').textContent = templateLabel(item.template);
+      document.getElementById('viewStatus').innerHTML = statusBadge(item.status);
+      document.getElementById('viewMessage').textContent = item.context || '—';
+      document.getElementById('viewModalOverlay').style.display = 'flex';
+    };
+
+    window.openComposeModal = function() {
+      loadClientsDropdown();
+      document.getElementById('fieldSubject').value = '';
+      document.getElementById('fieldTemplate').value = 'custom';
+      document.getElementById('fieldMessage').value = '';
+      document.getElementById('fieldCustomEmail').value = '';
+      document.getElementById('fieldCustomName').value = '';
+      document.getElementById('rtClient').checked = true;
+      document.getElementById('clientSelectGroup').style.display = '';
+      document.getElementById('customEmailGroup').style.display = 'none';
+      document.getElementById('composeModalOverlay').style.display = 'flex';
+    };
+
+    function saveEmail() {
+      var recipientType = document.querySelector('input[name="recipientType"]:checked').value;
+      var recipientEmail, recipientName, clientId;
+
+      if (recipientType === 'client') {
+        var sel = document.getElementById('fieldClientId');
+        clientId = sel.value;
+        if (!clientId) { showToast('Please select a client.', 'error'); return; }
+        var opt = sel.options[sel.selectedIndex];
+        recipientEmail = opt.dataset.email;
+        recipientName = opt.dataset.name;
+      } else {
+        recipientEmail = document.getElementById('fieldCustomEmail').value.trim();
+        recipientName = document.getElementById('fieldCustomName').value.trim();
+        if (!recipientEmail) { showToast('Please enter a recipient email.', 'error'); return; }
+      }
+
+      var subject = document.getElementById('fieldSubject').value.trim();
+      var template = document.getElementById('fieldTemplate').value;
+      var message = document.getElementById('fieldMessage').value.trim();
+
+      if (!subject) { showToast('Please enter a subject.', 'error'); return; }
+
+      var payload = {
+        recipient_email: recipientEmail,
+        recipient_name: recipientName || null,
+        subject: subject,
+        template: template,
+        status: 'sent',
+        client_id: clientId || null,
+        context: message || null
+      };
+
+      supabase.from('email_log').insert(payload).then(function(res) {
+        if (res.error) { showToast('Error: ' + res.error.message, 'error'); return; }
+        showToast('Email logged successfully.', 'success');
+        document.getElementById('composeModalOverlay').style.display = 'none';
+        loadEmails();
+      });
+    }
+
+    document.getElementById('btnCompose').addEventListener('click', openComposeModal);
+    document.getElementById('viewModalClose').addEventListener('click', function(){ document.getElementById('viewModalOverlay').style.display='none'; });
+    document.getElementById('viewModalCancel').addEventListener('click', function(){ document.getElementById('viewModalOverlay').style.display='none'; });
+    document.getElementById('composeModalClose').addEventListener('click', function(){ document.getElementById('composeModalOverlay').style.display='none'; });
+    document.getElementById('composeModalCancel').addEventListener('click', function(){ document.getElementById('composeModalOverlay').style.display='none'; });
+    document.getElementById('composeSave').addEventListener('click', saveEmail);
+
+    document.getElementById('viewModalOverlay').addEventListener('click', function(e){ if(e.target===this) this.style.display='none'; });
+    document.getElementById('composeModalOverlay').addEventListener('click', function(e){ if(e.target===this) this.style.display='none'; });
+
+    document.querySelectorAll('input[name="recipientType"]').forEach(function(radio) {
+      radio.addEventListener('change', function() {
+        var isClient = document.getElementById('rtClient').checked;
+        document.getElementById('clientSelectGroup').style.display = isClient ? '' : 'none';
+        document.getElementById('customEmailGroup').style.display = isClient ? 'none' : '';
+      });
+    });
+
+    document.getElementById('searchInput').addEventListener('input', applyFilter);
+
+    document.querySelectorAll('.admin-filter-tab').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.admin-filter-tab').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        applyFilter();
+      });
+    });
+
+    loadEmails();
+  });
+  </script>
+</body>
+</html>

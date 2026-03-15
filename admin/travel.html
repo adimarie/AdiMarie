@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Travel Itinerary · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+  <style>
+    .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .filter-tab { padding: 6px 14px; border-radius: 20px; border: 1px solid #e5e7eb; background: #fff; color: #6b7280; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+    .filter-tab:hover { border-color: #9ca3af; color: #374151; }
+    .filter-tab.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .badge-blue { background: #eff6ff; color: #1d4ed8; }
+    .badge-purple { background: #f5f3ff; color: #6d28d9; }
+    .badge-teal { background: #f0fdfa; color: #0f766e; }
+    .badge-yellow { background: #fffbeb; color: #92400e; }
+    .badge-gray { background: #f3f4f6; color: #6b7280; }
+    .badge-green { background: #f0fdf4; color: #166534; }
+    .badge-red { background: #fef2f2; color: #991b1b; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: #fff; border-radius: 16px; padding: 32px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; margin: 0 0 24px; }
+    .modal-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group label { font-size: 13px; font-weight: 500; color: #374151; }
+    .form-group input, .form-group select, .form-group textarea { padding: 9px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; color: #111; background: #fff; transition: border-color 0.15s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #6b7280; }
+    .form-group textarea { resize: vertical; min-height: 72px; }
+    .details-section-label { font-size: 12px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; margin: 4px 0 12px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .btn { padding: 9px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
+    .btn-primary { background: #1a1a2e; color: #fff; }
+    .btn-primary:hover { background: #2d2d4e; }
+    .btn-secondary { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+    .btn-secondary:hover { background: #e5e7eb; }
+    .btn-danger { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .btn-danger:hover { background: #fee2e2; }
+  </style>
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html" class="active">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <h1>Travel Itinerary</h1>
+        <p>Upcoming and past travel planning</p>
+      </div>
+
+      <div class="admin-toolbar">
+        <input class="admin-search" type="text" id="searchInput" placeholder="Search trips by title or destination…">
+        <button class="btn btn-primary" id="newTripBtn">+ Add Trip</button>
+      </div>
+
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-status="all">All</button>
+        <button class="filter-tab" data-status="planned">Planned</button>
+        <button class="filter-tab" data-status="confirmed">Confirmed</button>
+        <button class="filter-tab" data-status="in_progress">In Progress</button>
+        <button class="filter-tab" data-status="completed">Completed</button>
+        <button class="filter-tab" data-status="cancelled">Cancelled</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="travelTable">
+          <thead>
+            <tr>
+              <th>Trip Title</th>
+              <th>Destination</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Purpose</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="travelBody">
+            <tr><td colspan="7" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="travelModal">
+    <div class="modal-box">
+      <h2 class="modal-title" id="modalTitle">Add Trip</h2>
+      <input type="hidden" id="editTripId">
+      <div class="form-group">
+        <label>Trip Name / Title</label>
+        <input type="text" id="fieldTitle" placeholder="Trip name or short description">
+      </div>
+      <div class="form-group">
+        <label>Destination</label>
+        <input type="text" id="fieldDestination" placeholder="City, Country">
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Start Date</label>
+          <input type="date" id="fieldStartDate">
+        </div>
+        <div class="form-group">
+          <label>End Date</label>
+          <input type="date" id="fieldEndDate">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Purpose</label>
+        <select id="fieldPurpose">
+          <option value="client_work">Client Work</option>
+          <option value="speaking">Speaking Engagement</option>
+          <option value="retreat">Retreat / Training</option>
+          <option value="training">Personal Training</option>
+          <option value="personal">Personal</option>
+          <option value="scouting">Location Scouting</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Linked Speaking Engagement</label>
+        <select id="fieldLinkedEngagementId">
+          <option value="">— Not linked —</option>
+        </select>
+      </div>
+      <div class="details-section-label">Logistics</div>
+      <div class="form-group">
+        <label>Flights</label>
+        <input type="text" id="fieldFlights" placeholder="Flight details / confirmation numbers">
+      </div>
+      <div class="form-group">
+        <label>Lodging</label>
+        <input type="text" id="fieldLodging" placeholder="Lodging / accommodation info">
+      </div>
+      <div class="form-group">
+        <label>Local Transport</label>
+        <input type="text" id="fieldTransport" placeholder="Local transport notes">
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="fieldNotes" rows="3" placeholder="Internal notes…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="fieldStatus">
+          <option value="planned">Planned</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="in_progress">In Progress</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="modalSaveBtn">Save Trip</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allTrips = [];
+    var activeFilter = 'all';
+    var searchQuery = '';
+
+    var purposeBadge = {
+      client_work: 'badge-blue',
+      speaking: 'badge-purple',
+      retreat: 'badge-teal',
+      training: 'badge-yellow',
+      personal: 'badge-gray',
+      scouting: 'badge-green'
+    };
+    var purposeLabel = {
+      client_work: 'Client Work',
+      speaking: 'Speaking',
+      retreat: 'Retreat',
+      training: 'Training',
+      personal: 'Personal',
+      scouting: 'Scouting'
+    };
+    var statusBadge = {
+      planned: 'badge-gray',
+      confirmed: 'badge-blue',
+      in_progress: 'badge-yellow',
+      completed: 'badge-green',
+      cancelled: 'badge-red'
+    };
+    var statusLabel = {
+      planned: 'Planned',
+      confirmed: 'Confirmed',
+      in_progress: 'In Progress',
+      completed: 'Completed',
+      cancelled: 'Cancelled'
+    };
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      var d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function renderTable(items) {
+      var tbody = document.getElementById('travelBody');
+      if (!items.length) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:#9ca3af;">No trips found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map(function(trip) {
+        var pCls = purposeBadge[trip.purpose] || 'badge-gray';
+        var pLbl = purposeLabel[trip.purpose] || (trip.purpose || '—');
+        var sCls = statusBadge[trip.status] || 'badge-gray';
+        var sLbl = statusLabel[trip.status] || (trip.status || '—');
+        return '<tr>' +
+          '<td><strong>' + escHtml(trip.title || '—') + '</strong></td>' +
+          '<td>' + escHtml(trip.destination || '—') + '</td>' +
+          '<td>' + formatDate(trip.start_date) + '</td>' +
+          '<td>' + formatDate(trip.end_date) + '</td>' +
+          '<td><span class="badge ' + pCls + '">' + escHtml(pLbl) + '</span></td>' +
+          '<td><span class="badge ' + sCls + '">' + escHtml(sLbl) + '</span></td>' +
+          '<td>' +
+            '<button class="btn btn-secondary" style="padding:4px 12px;font-size:12px;" onclick="openModal(\'' + trip.id + '\')">Edit</button> ' +
+            '<button class="btn btn-danger" style="padding:4px 12px;font-size:12px;" onclick="archiveTrip(\'' + trip.id + '\')">Archive</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function applyFilters() {
+      var filtered = allTrips;
+      if (activeFilter !== 'all') {
+        filtered = filtered.filter(function(t) { return t.status === activeFilter; });
+      }
+      if (searchQuery) {
+        var q = searchQuery.toLowerCase();
+        filtered = filtered.filter(function(t) {
+          return (t.title || '').toLowerCase().includes(q) || (t.destination || '').toLowerCase().includes(q);
+        });
+      }
+      renderTable(filtered);
+    }
+
+    function loadTrips() {
+      document.getElementById('travelBody').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>';
+      supabase.from('travel_itinerary').select('*').eq('is_archived', false).order('start_date', { ascending: false })
+        .then(function(res) {
+          if (res.error) { showToast('Error loading trips: ' + res.error.message, 'error'); return; }
+          allTrips = res.data || [];
+          applyFilters();
+        });
+    }
+
+    function loadEngagementsDropdown() {
+      supabase.from('speaking_engagements').select('id, title, event_date').eq('is_archived', false).order('event_date', { ascending: false })
+        .then(function(res) {
+          var sel = document.getElementById('fieldLinkedEngagementId');
+          var current = sel.value;
+          while (sel.options.length > 1) sel.remove(1);
+          (res.data || []).forEach(function(e) {
+            var opt = document.createElement('option');
+            opt.value = e.id;
+            var dateStr = e.event_date ? ' (' + e.event_date.slice(0, 10) + ')' : '';
+            opt.textContent = (e.title || 'Untitled') + dateStr;
+            sel.appendChild(opt);
+          });
+          if (current) sel.value = current;
+        });
+    }
+
+    document.getElementById('filterTabs').addEventListener('click', function(e) {
+      if (e.target.classList.contains('filter-tab')) {
+        document.querySelectorAll('.filter-tab').forEach(function(b) { b.classList.remove('active'); });
+        e.target.classList.add('active');
+        activeFilter = e.target.dataset.status;
+        applyFilters();
+      }
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      searchQuery = e.target.value.trim();
+      applyFilters();
+    });
+
+    function closeModal() { document.getElementById('travelModal').classList.remove('open'); }
+
+    window.openModal = function(id) {
+      var trip = id ? allTrips.find(function(x) { return x.id === id; }) : null;
+      loadEngagementsDropdown();
+      document.getElementById('editTripId').value = trip ? trip.id : '';
+      document.getElementById('modalTitle').textContent = trip ? 'Edit Trip' : 'Add Trip';
+      document.getElementById('fieldTitle').value = trip ? (trip.title || '') : '';
+      document.getElementById('fieldDestination').value = trip ? (trip.destination || '') : '';
+      document.getElementById('fieldStartDate').value = trip ? (trip.start_date || '') : '';
+      document.getElementById('fieldEndDate').value = trip ? (trip.end_date || '') : '';
+      document.getElementById('fieldPurpose').value = trip ? (trip.purpose || 'client_work') : 'client_work';
+      document.getElementById('fieldLinkedEngagementId').value = trip ? (trip.linked_engagement_id || '') : '';
+      var details = (trip && trip.details) ? trip.details : {};
+      document.getElementById('fieldFlights').value = details.flights || '';
+      document.getElementById('fieldLodging').value = details.lodging || '';
+      document.getElementById('fieldTransport').value = details.transport || '';
+      document.getElementById('fieldNotes').value = trip ? (trip.notes || '') : '';
+      document.getElementById('fieldStatus').value = trip ? (trip.status || 'planned') : 'planned';
+      document.getElementById('travelModal').classList.add('open');
+    };
+
+    document.getElementById('newTripBtn').addEventListener('click', function() { openModal(null); });
+    document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
+    document.getElementById('travelModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    function saveTrip() {
+      var id = document.getElementById('editTripId').value;
+      var engId = document.getElementById('fieldLinkedEngagementId').value;
+      var details = {
+        flights: document.getElementById('fieldFlights').value.trim(),
+        lodging: document.getElementById('fieldLodging').value.trim(),
+        transport: document.getElementById('fieldTransport').value.trim()
+      };
+      var payload = {
+        title: document.getElementById('fieldTitle').value.trim(),
+        destination: document.getElementById('fieldDestination').value.trim(),
+        start_date: document.getElementById('fieldStartDate').value || null,
+        end_date: document.getElementById('fieldEndDate').value || null,
+        purpose: document.getElementById('fieldPurpose').value,
+        linked_engagement_id: engId || null,
+        details: details,
+        notes: document.getElementById('fieldNotes').value.trim(),
+        status: document.getElementById('fieldStatus').value,
+        updated_at: new Date().toISOString()
+      };
+      var op;
+      if (id) {
+        op = supabase.from('travel_itinerary').update(payload).eq('id', id);
+      } else {
+        payload.is_archived = false;
+        payload.created_at = new Date().toISOString();
+        op = supabase.from('travel_itinerary').insert(payload);
+      }
+      op.then(function(res) {
+        if (res.error) { showToast('Error saving trip: ' + res.error.message, 'error'); return; }
+        showToast(id ? 'Trip updated.' : 'Trip added.', 'success');
+        closeModal();
+        loadTrips();
+      });
+    }
+
+    window.archiveTrip = function(id) {
+      if (!confirm('Archive this trip? It will be hidden from the main list.')) return;
+      supabase.from('travel_itinerary').update({ is_archived: true, updated_at: new Date().toISOString() }).eq('id', id)
+        .then(function(res) {
+          if (res.error) { showToast('Error archiving trip: ' + res.error.message, 'error'); return; }
+          showToast('Trip archived.', 'success');
+          loadTrips();
+        });
+    };
+
+    document.getElementById('modalSaveBtn').addEventListener('click', saveTrip);
+
+    loadTrips();
+  });
+  </script>
+</body>
+</html>

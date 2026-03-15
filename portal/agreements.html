@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Agreements — The Animist Apothecary</title>
+  <link rel="stylesheet" href="portal.css" />
+</head>
+<body>
+
+<nav class="portal-nav">
+  <a href="index.html" class="portal-nav-brand">The Animist <em>Apothecary</em></a>
+  <button class="portal-nav-toggle" id="navToggle">☰</button>
+  <div class="portal-nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="sessions.html">Sessions</a>
+    <a href="agreements.html" class="active">Agreements</a>
+    <a href="resources.html">Resources</a>
+    <a href="journal.html">Journal</a>
+    <a href="profile.html">Profile</a>
+    <button class="portal-nav-signout" id="portalSignOut">Sign Out</button>
+  </div>
+</nav>
+
+<main class="portal-main">
+  <div class="portal-page-header">
+    <div class="portal-page-header__eyebrow">Documents &amp; Consents</div>
+    <h1>Your Agreements</h1>
+    <div class="portal-divider"></div>
+  </div>
+
+  <div id="agreementsList">
+    <div class="portal-empty">
+      <div class="portal-empty-icon">🌿</div>
+      <h3>Loading your agreements…</h3>
+    </div>
+  </div>
+</main>
+
+<!-- Agreement Content Modal -->
+<div id="agreementModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(45,42,38,0.5);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#fff;border-radius:20px;max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:40px;position:relative;">
+    <button onclick="document.getElementById('agreementModal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:24px;cursor:pointer;color:#7A7068;">×</button>
+    <div id="agreementModalContent"></div>
+  </div>
+</div>
+
+<footer class="portal-footer">
+  <span>© 2025 The Animist Apothecary · Topanga Canyon, Los Angeles</span>
+  <a href="../index.html">← Return to main site</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../shared/supabase.js"></script>
+<script src="../shared/auth.js"></script>
+<script>
+
+function initPortal(callback) {
+  if (!window.adminSupabase) { window.location.href = 'login.html'; return; }
+  window.adminSupabase.auth.getSession().then(function(result) {
+    if (!result.data.session) { window.location.href = 'login.html'; return; }
+    var user = result.data.session.user;
+    window.adminSupabase
+      .from('client_portal_accounts')
+      .select('*, clients(*)')
+      .eq('auth_user_id', user.id)
+      .maybeSingle()
+      .then(function(res) {
+        if (res.error || !res.data) {
+          document.body.innerHTML = '<div style="text-align:center;padding:80px 40px;"><div style="font-size:48px;margin-bottom:16px;">🌱</div><h2 style="font-family:Cormorant Garamond,serif;">Your portal is being prepared</h2><p style="color:#7A7068;margin:12px auto 24px;max-width:400px;">Adi will activate your portal shortly after your intake is complete.</p><a href="../index.html" style="color:#5B7553;">← Return to main site</a></div>';
+          return;
+        }
+        window.portalAccount = res.data;
+        window.portalClient = res.data.clients;
+        var signOutBtn = document.getElementById('portalSignOut');
+        if (signOutBtn) signOutBtn.addEventListener('click', function() { window.adminSupabase.auth.signOut().then(function() { window.location.href = 'login.html'; }); });
+        var toggle = document.getElementById('navToggle');
+        var navLinks = document.getElementById('navLinks');
+        if (toggle && navLinks) toggle.addEventListener('click', function() { navLinks.classList.toggle('open'); });
+        if (callback) callback(user, window.adminSupabase, res.data.clients, res.data);
+      });
+  });
+}
+
+function showPortalToast(msg, type) {
+  var t = document.getElementById('portalToast');
+  if (!t) { t = document.createElement('div'); t.id = 'portalToast'; t.className = 'portal-toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  t.className = 'portal-toast ' + (type || 'success');
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3500);
+}
+
+var DOC_TYPE_LABELS = {
+  informed_consent:  'Informed Consent',
+  intake_agreement:  'Intake Agreement',
+  payment_agreement: 'Payment Agreement',
+  confidentiality:   'Confidentiality',
+  liability_waiver:  'Liability Waiver',
+  other:             'Document'
+};
+
+var STATUS_BADGE = {
+  pending: 'badge-gold',
+  sent:    'badge-blue',
+  signed:  'badge-green',
+  expired: 'badge-gray'
+};
+
+function formatDate(iso) {
+  if (!iso) return '';
+  var d = new Date(iso);
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function openAgreementModal(agreement) {
+  var modal = document.getElementById('agreementModal');
+  var content = document.getElementById('agreementModalContent');
+  var typeLabel = DOC_TYPE_LABELS[agreement.document_type] || 'Document';
+
+  var html = '';
+  html += '<div style="margin-bottom:20px;">';
+  html += '<span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5B7553;">' + escHtml(typeLabel) + '</span>';
+  html += '<h2 style="font-family:Cormorant Garamond,serif;font-size:1.7rem;margin:8px 0 0;color:#2D2A26;">' + escHtml(agreement.title || typeLabel) + '</h2>';
+  html += '</div>';
+  html += '<hr style="border:none;border-top:1px solid #DDD8CF;margin:20px 0;" />';
+
+  if (agreement.content) {
+    html += '<div style="font-size:14px;line-height:1.8;color:#4A4540;white-space:pre-wrap;">' + escHtml(agreement.content) + '</div>';
+  } else {
+    html += '<p style="color:#7A7068;font-size:14px;">No document content is available to display.</p>';
+  }
+
+  if (agreement.status === 'signed' && agreement.signed_at) {
+    html += '<div style="margin-top:28px;padding:16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;font-size:13px;color:#166534;">';
+    html += '✓ Signed on ' + formatDate(agreement.signed_at);
+    html += '</div>';
+  }
+
+  content.innerHTML = html;
+  modal.style.display = 'flex';
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function renderAgreements(agreements) {
+  var container = document.getElementById('agreementsList');
+
+  if (!agreements || agreements.length === 0) {
+    container.innerHTML = '<div class="portal-empty"><div class="portal-empty-icon">📜</div><h3>No agreements yet</h3><p>Your agreements and consent documents will appear here once they\'ve been prepared.</p></div>';
+    return;
+  }
+
+  var html = '<div style="display:flex;flex-direction:column;gap:16px;">';
+
+  agreements.forEach(function(ag, idx) {
+    var typeLabel   = DOC_TYPE_LABELS[ag.document_type] || 'Document';
+    var statusClass = STATUS_BADGE[ag.status] || 'badge-gray';
+    var statusLabel = ag.status ? (ag.status.charAt(0).toUpperCase() + ag.status.slice(1)) : 'Unknown';
+
+    html += '<div class="portal-card" style="transition:box-shadow 0.22s;">';
+
+    // Top row: type label + status badge
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">';
+    html += '<span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5B7553;">' + escHtml(typeLabel) + '</span>';
+    html += '<span class="portal-badge ' + statusClass + '">' + escHtml(statusLabel) + '</span>';
+    html += '</div>';
+
+    // Title
+    html += '<h3 style="font-family:Cormorant Garamond,serif;font-size:1.3rem;font-weight:500;margin:0 0 8px;color:#2D2A26;">' + escHtml(ag.title || typeLabel) + '</h3>';
+
+    // Notes / description
+    if (ag.notes) {
+      html += '<p style="font-size:13px;color:#7A7068;margin:0 0 16px;line-height:1.6;">' + escHtml(ag.notes) + '</p>';
+    }
+
+    // Bottom row
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:' + (ag.notes ? '0' : '12px') + ';">';
+    html += '<div style="font-size:12px;color:#A89E95;">';
+    html += 'Added ' + formatDate(ag.created_at);
+    if (ag.status === 'signed' && ag.signed_at) {
+      html += ' &nbsp;·&nbsp; <span style="color:#5B7553;font-weight:600;">Signed ' + formatDate(ag.signed_at) + '</span>';
+    }
+    html += '</div>';
+
+    // View Document button
+    html += '<button class="btn-sm-sage" data-idx="' + idx + '">View Document</button>';
+
+    html += '</div>'; // bottom row
+    html += '</div>'; // portal-card
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+
+  // Attach click handlers
+  container.querySelectorAll('[data-idx]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var idx = parseInt(this.getAttribute('data-idx'), 10);
+      openAgreementModal(agreements[idx]);
+    });
+  });
+}
+
+// Close modal on backdrop click
+document.getElementById('agreementModal').addEventListener('click', function(e) {
+  if (e.target === this) this.style.display = 'none';
+});
+
+// Init
+initPortal(function(user, supabase, client, account) {
+  supabase
+    .from('client_agreements')
+    .select('*')
+    .eq('client_id', client.id)
+    .eq('is_archived', false)
+    .order('created_at', { ascending: false })
+    .then(function(res) {
+      if (res.error) {
+        showPortalToast('Could not load agreements.', 'error');
+        document.getElementById('agreementsList').innerHTML = '<div class="portal-empty"><div class="portal-empty-icon">📜</div><h3>Unable to load agreements</h3><p>Please try refreshing the page.</p></div>';
+        return;
+      }
+      renderAgreements(res.data);
+    });
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>People of Import · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+  <style>
+    .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .filter-tab { padding: 6px 14px; border-radius: 20px; border: 1px solid #e5e7eb; background: #fff; color: #6b7280; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+    .filter-tab:hover { border-color: #9ca3af; color: #374151; }
+    .filter-tab.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .badge-purple { background: #f5f3ff; color: #6d28d9; }
+    .badge-blue { background: #eff6ff; color: #1d4ed8; }
+    .badge-yellow { background: #fffbeb; color: #92400e; }
+    .badge-green { background: #f0fdf4; color: #166534; }
+    .badge-teal { background: #ccfbf1; color: #0f766e; }
+    .badge-orange { background: #ffedd5; color: #c2410c; }
+    .badge-gray { background: #f3f4f6; color: #6b7280; }
+    .badge-inactive { background: #f3f4f6; color: #9ca3af; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: #fff; border-radius: 16px; padding: 32px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; margin: 0 0 24px; }
+    .modal-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group label { font-size: 13px; font-weight: 500; color: #374151; }
+    .form-group input, .form-group select, .form-group textarea { padding: 9px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; color: #111; background: #fff; transition: border-color 0.15s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #6b7280; }
+    .form-group textarea { resize: vertical; min-height: 60px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .btn { padding: 9px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
+    .btn-primary { background: #1a1a2e; color: #fff; }
+    .btn-primary:hover { background: #2d2d4e; }
+    .btn-secondary { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+    .btn-secondary:hover { background: #e5e7eb; }
+    .btn-danger { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .btn-danger:hover { background: #fee2e2; }
+  </style>
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html" class="active">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <h1>People of Import</h1>
+        <p>Key relationships, elders, and strategic contacts</p>
+      </div>
+
+      <div class="admin-toolbar">
+        <input class="admin-search" type="text" id="searchInput" placeholder="Search contacts by name or organization…">
+        <button class="btn btn-primary" id="newVIPBtn">+ Add Contact</button>
+      </div>
+
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-cat="all">All</button>
+        <button class="filter-tab" data-cat="potential_mentor">Potential Mentor</button>
+        <button class="filter-tab" data-cat="industry_leader">Industry Leader</button>
+        <button class="filter-tab" data-cat="media">Media</button>
+        <button class="filter-tab" data-cat="funder">Funder</button>
+        <button class="filter-tab" data-cat="ally">Ally</button>
+        <button class="filter-tab" data-cat="elder">Elder</button>
+        <button class="filter-tab" data-cat="other">Other</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="vipTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Title / Organization</th>
+              <th>Category</th>
+              <th>Relationship Status</th>
+              <th>Last Contact</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="vipBody">
+            <tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="vipModal">
+    <div class="modal-box">
+      <h2 class="modal-title" id="modalTitle">Add Contact</h2>
+      <input type="hidden" id="editVIPId">
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="fieldFullName" placeholder="Full name">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="fieldCategory">
+            <option value="potential_mentor">Potential Mentor</option>
+            <option value="industry_leader">Industry Leader</option>
+            <option value="media">Media</option>
+            <option value="funder">Funder</option>
+            <option value="ally">Ally</option>
+            <option value="elder">Elder</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="fieldEmail" placeholder="email@example.com">
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" id="fieldPhone" placeholder="+1 555 000 0000">
+        </div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="fieldTitle" placeholder="Job title or role">
+        </div>
+        <div class="form-group">
+          <label>Organization</label>
+          <input type="text" id="fieldOrganization" placeholder="Organization or affiliation">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Location</label>
+        <input type="text" id="fieldLocation" placeholder="City, Country">
+      </div>
+      <div class="form-group">
+        <label>Connection Context</label>
+        <textarea id="fieldConnectionContext" rows="2" placeholder="How you know them / context of relationship"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Relationship Status</label>
+        <select id="fieldRelationshipStatus">
+          <option value="identified">Identified</option>
+          <option value="introduced">Introduced</option>
+          <option value="in_dialogue">In Dialogue</option>
+          <option value="collaborating">Collaborating</option>
+          <option value="dormant">Dormant</option>
+        </select>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Last Contact</label>
+          <input type="date" id="fieldLastContact">
+        </div>
+        <div class="form-group">
+          <label>Next Action</label>
+          <input type="text" id="fieldNextAction" placeholder="Next step or follow-up">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="fieldNotes" rows="3" placeholder="Internal notes…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Tags</label>
+        <input type="text" id="fieldTags" placeholder="Comma-separated tags">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="modalSaveBtn">Save Contact</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allVIPs = [];
+    var activeFilter = 'all';
+    var searchQuery = '';
+
+    var catBadge = {
+      potential_mentor: 'badge-purple',
+      industry_leader: 'badge-blue',
+      media: 'badge-yellow',
+      funder: 'badge-green',
+      ally: 'badge-teal',
+      elder: 'badge-orange',
+      other: 'badge-gray'
+    };
+    var catLabel = {
+      potential_mentor: 'Potential Mentor',
+      industry_leader: 'Industry Leader',
+      media: 'Media',
+      funder: 'Funder',
+      ally: 'Ally',
+      elder: 'Elder',
+      other: 'Other'
+    };
+    var statusBadge = {
+      identified: 'badge-gray',
+      introduced: 'badge-yellow',
+      in_dialogue: 'badge-blue',
+      collaborating: 'badge-green',
+      dormant: 'badge-inactive'
+    };
+    var statusLabel = {
+      identified: 'Identified',
+      introduced: 'Introduced',
+      in_dialogue: 'In Dialogue',
+      collaborating: 'Collaborating',
+      dormant: 'Dormant'
+    };
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      var d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function renderTable(items) {
+      var tbody = document.getElementById('vipBody');
+      if (!items.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">No contacts found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map(function(c) {
+        var titleOrg = [c.title, c.organization].filter(Boolean).join(' · ') || '—';
+        var cCls = catBadge[c.category] || 'badge-gray';
+        var cLbl = catLabel[c.category] || (c.category || '—');
+        var sCls = statusBadge[c.relationship_status] || 'badge-gray';
+        var sLbl = statusLabel[c.relationship_status] || (c.relationship_status || '—');
+        return '<tr>' +
+          '<td><strong>' + escHtml(c.full_name || '—') + '</strong></td>' +
+          '<td>' + escHtml(titleOrg) + '</td>' +
+          '<td><span class="badge ' + cCls + '">' + escHtml(cLbl) + '</span></td>' +
+          '<td><span class="badge ' + sCls + '">' + escHtml(sLbl) + '</span></td>' +
+          '<td>' + formatDate(c.last_contact) + '</td>' +
+          '<td>' +
+            '<button class="btn btn-secondary" style="padding:4px 12px;font-size:12px;" onclick="openModal(\'' + c.id + '\')">Edit</button> ' +
+            '<button class="btn btn-danger" style="padding:4px 12px;font-size:12px;" onclick="archiveVIP(\'' + c.id + '\')">Archive</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function applyFilters() {
+      var filtered = allVIPs;
+      if (activeFilter !== 'all') {
+        filtered = filtered.filter(function(c) { return c.category === activeFilter; });
+      }
+      if (searchQuery) {
+        var q = searchQuery.toLowerCase();
+        filtered = filtered.filter(function(c) {
+          return (c.full_name || '').toLowerCase().includes(q) ||
+                 (c.organization || '').toLowerCase().includes(q) ||
+                 (c.title || '').toLowerCase().includes(q);
+        });
+      }
+      renderTable(filtered);
+    }
+
+    function loadVIPs() {
+      document.getElementById('vipBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>';
+      supabase.from('contacts_vip').select('*').eq('is_archived', false).order('full_name', { ascending: true })
+        .then(function(res) {
+          if (res.error) { showToast('Error loading contacts: ' + res.error.message, 'error'); return; }
+          allVIPs = res.data || [];
+          applyFilters();
+        });
+    }
+
+    document.getElementById('filterTabs').addEventListener('click', function(e) {
+      if (e.target.classList.contains('filter-tab')) {
+        document.querySelectorAll('.filter-tab').forEach(function(b) { b.classList.remove('active'); });
+        e.target.classList.add('active');
+        activeFilter = e.target.dataset.cat;
+        applyFilters();
+      }
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      searchQuery = e.target.value.trim();
+      applyFilters();
+    });
+
+    function closeModal() { document.getElementById('vipModal').classList.remove('open'); }
+
+    window.openModal = function(id) {
+      var c = id ? allVIPs.find(function(x) { return x.id === id; }) : null;
+      document.getElementById('editVIPId').value = c ? c.id : '';
+      document.getElementById('modalTitle').textContent = c ? 'Edit Contact' : 'Add Contact';
+      document.getElementById('fieldFullName').value = c ? (c.full_name || '') : '';
+      document.getElementById('fieldCategory').value = c ? (c.category || 'potential_mentor') : 'potential_mentor';
+      document.getElementById('fieldEmail').value = c ? (c.email || '') : '';
+      document.getElementById('fieldPhone').value = c ? (c.phone || '') : '';
+      document.getElementById('fieldTitle').value = c ? (c.title || '') : '';
+      document.getElementById('fieldOrganization').value = c ? (c.organization || '') : '';
+      document.getElementById('fieldLocation').value = c ? (c.location || '') : '';
+      document.getElementById('fieldConnectionContext').value = c ? (c.connection_context || '') : '';
+      document.getElementById('fieldRelationshipStatus').value = c ? (c.relationship_status || 'identified') : 'identified';
+      document.getElementById('fieldLastContact').value = c ? (c.last_contact || '') : '';
+      document.getElementById('fieldNextAction').value = c ? (c.next_action || '') : '';
+      document.getElementById('fieldNotes').value = c ? (c.notes || '') : '';
+      document.getElementById('fieldTags').value = c ? (Array.isArray(c.tags) ? c.tags.join(', ') : (c.tags || '')) : '';
+      document.getElementById('vipModal').classList.add('open');
+    };
+
+    document.getElementById('newVIPBtn').addEventListener('click', function() { openModal(null); });
+    document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
+    document.getElementById('vipModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    function saveVIP() {
+      var id = document.getElementById('editVIPId').value;
+      var tagsRaw = document.getElementById('fieldTags').value.trim();
+      var tags = tagsRaw ? tagsRaw.split(',').map(function(t) { return t.trim(); }).filter(Boolean) : [];
+      var payload = {
+        full_name: document.getElementById('fieldFullName').value.trim(),
+        category: document.getElementById('fieldCategory').value,
+        email: document.getElementById('fieldEmail').value.trim(),
+        phone: document.getElementById('fieldPhone').value.trim(),
+        title: document.getElementById('fieldTitle').value.trim(),
+        organization: document.getElementById('fieldOrganization').value.trim(),
+        location: document.getElementById('fieldLocation').value.trim(),
+        connection_context: document.getElementById('fieldConnectionContext').value.trim(),
+        relationship_status: document.getElementById('fieldRelationshipStatus').value,
+        last_contact: document.getElementById('fieldLastContact').value || null,
+        next_action: document.getElementById('fieldNextAction').value.trim(),
+        notes: document.getElementById('fieldNotes').value.trim(),
+        tags: tags,
+        updated_at: new Date().toISOString()
+      };
+      var op;
+      if (id) {
+        op = supabase.from('contacts_vip').update(payload).eq('id', id);
+      } else {
+        payload.is_archived = false;
+        payload.created_at = new Date().toISOString();
+        op = supabase.from('contacts_vip').insert(payload);
+      }
+      op.then(function(res) {
+        if (res.error) { showToast('Error saving contact: ' + res.error.message, 'error'); return; }
+        showToast(id ? 'Contact updated.' : 'Contact added.', 'success');
+        closeModal();
+        loadVIPs();
+      });
+    }
+
+    window.archiveVIP = function(id) {
+      if (!confirm('Archive this contact? They will be hidden from the main list.')) return;
+      supabase.from('contacts_vip').update({ is_archived: true, updated_at: new Date().toISOString() }).eq('id', id)
+        .then(function(res) {
+          if (res.error) { showToast('Error archiving contact: ' + res.error.message, 'error'); return; }
+          showToast('Contact archived.', 'success');
+          loadVIPs();
+        });
+    };
+
+    document.getElementById('modalSaveBtn').addEventListener('click', saveVIP);
+
+    loadVIPs();
+  });
+  </script>
+</body>
+</html>

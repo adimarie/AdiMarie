@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Journal — The Animist Apothecary</title>
+  <link rel="stylesheet" href="portal.css" />
+  <style>
+    .journal-main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 40px 80px;
+    }
+    .journal-new-form {
+      display: none;
+      margin-bottom: 32px;
+    }
+    .journal-new-form.open {
+      display: block;
+    }
+    .journal-textarea {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      min-height: 200px;
+      border: none;
+      border-bottom: 1.5px solid #DDD8CF;
+      border-radius: 0;
+      padding: 12px 0;
+      background: transparent;
+      resize: vertical;
+      width: 100%;
+      outline: none;
+      color: #2D2A26;
+      transition: border-color 0.22s;
+    }
+    .journal-textarea:focus {
+      box-shadow: none;
+      border-color: #5B7553;
+    }
+    .journal-entries {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .journal-entry {
+      background: #fff;
+      border: 1px solid #DDD8CF;
+      border-radius: 20px;
+      padding: 36px 40px;
+      transition: box-shadow 0.22s;
+      line-height: 1.75;
+    }
+    .journal-entry:hover {
+      box-shadow: 0 4px 16px rgba(45,42,38,0.08);
+    }
+    .journal-entry-body {
+      font-size: 15px;
+      color: #4A4540;
+      line-height: 1.85;
+      white-space: pre-wrap;
+      margin: 0;
+    }
+    @media (max-width: 768px) {
+      .journal-main { padding: 32px 20px 60px; }
+      .journal-entry { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="portal-nav">
+  <a href="index.html" class="portal-nav-brand">The Animist <em>Apothecary</em></a>
+  <button class="portal-nav-toggle" id="navToggle">☰</button>
+  <div class="portal-nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="sessions.html">Sessions</a>
+    <a href="agreements.html">Agreements</a>
+    <a href="resources.html">Resources</a>
+    <a href="journal.html" class="active">Journal</a>
+    <a href="profile.html">Profile</a>
+    <button class="portal-nav-signout" id="portalSignOut">Sign Out</button>
+  </div>
+</nav>
+
+<main class="journal-main">
+  <div class="portal-page-header" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <div class="portal-page-header__eyebrow">Reflections &amp; Practice</div>
+      <h1>Your Journal</h1>
+      <div class="portal-divider"></div>
+    </div>
+    <button class="btn-sage" id="newEntryBtn" style="margin-top:8px;">+ New Entry</button>
+  </div>
+
+  <!-- New Entry Form -->
+  <div class="journal-new-form portal-card" id="newEntryForm" style="margin-bottom:40px;">
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:500;margin:0 0 24px;color:#2D2A26;">New Journal Entry</h3>
+    <div class="portal-form">
+      <div class="portal-field">
+        <label for="entryTitle">Title <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#A89E95;">(optional)</span></label>
+        <input type="text" id="entryTitle" placeholder="Give this entry a name…" />
+      </div>
+      <div class="portal-field">
+        <label for="entryBody">Your reflection</label>
+        <textarea
+          id="entryBody"
+          rows="8"
+          placeholder="What is alive in you today…"
+          class="journal-textarea"
+        ></textarea>
+      </div>
+      <div class="portal-row">
+        <div class="portal-field">
+          <label for="entryMood">Mood <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#A89E95;">(optional)</span></label>
+          <select id="entryMood">
+            <option value="">— choose one —</option>
+            <option value="peaceful">🕊 Peaceful</option>
+            <option value="tender">🌸 Tender</option>
+            <option value="unsettled">🌊 Unsettled</option>
+            <option value="electric">⚡ Electric</option>
+            <option value="grieving">🖤 Grieving</option>
+            <option value="grateful">🙏 Grateful</option>
+            <option value="curious">🔍 Curious</option>
+            <option value="tired">🌙 Tired</option>
+            <option value="alive">🌿 Alive</option>
+          </select>
+        </div>
+        <div class="portal-field">
+          <label for="entryTags">Tags <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#A89E95;">(comma-separated, optional)</span></label>
+          <input type="text" id="entryTags" placeholder="e.g. integration, dreams, body" />
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:8px;">
+        <button class="btn-outline" id="cancelEntryBtn" type="button">Cancel</button>
+        <button class="btn-sage" id="saveEntryBtn" type="button">Save Entry</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entries List -->
+  <div id="journalEntries">
+    <div class="portal-empty">
+      <div class="portal-empty-icon">🌿</div>
+      <h3>Loading your journal…</h3>
+    </div>
+  </div>
+</main>
+
+<footer class="portal-footer">
+  <span>© 2025 The Animist Apothecary · Topanga Canyon, Los Angeles</span>
+  <a href="../index.html">← Return to main site</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../shared/supabase.js"></script>
+<script src="../shared/auth.js"></script>
+<script>
+
+function initPortal(callback) {
+  if (!window.adminSupabase) { window.location.href = 'login.html'; return; }
+  window.adminSupabase.auth.getSession().then(function(result) {
+    if (!result.data.session) { window.location.href = 'login.html'; return; }
+    var user = result.data.session.user;
+    window.adminSupabase
+      .from('client_portal_accounts')
+      .select('*, clients(*)')
+      .eq('auth_user_id', user.id)
+      .maybeSingle()
+      .then(function(res) {
+        if (res.error || !res.data) {
+          document.body.innerHTML = '<div style="text-align:center;padding:80px 40px;"><div style="font-size:48px;margin-bottom:16px;">🌱</div><h2 style="font-family:Cormorant Garamond,serif;">Your portal is being prepared</h2><p style="color:#7A7068;margin:12px auto 24px;max-width:400px;">Adi will activate your portal shortly after your intake is complete.</p><a href="../index.html" style="color:#5B7553;">← Return to main site</a></div>';
+          return;
+        }
+        window.portalAccount = res.data;
+        window.portalClient = res.data.clients;
+        var signOutBtn = document.getElementById('portalSignOut');
+        if (signOutBtn) signOutBtn.addEventListener('click', function() { window.adminSupabase.auth.signOut().then(function() { window.location.href = 'login.html'; }); });
+        var toggle = document.getElementById('navToggle');
+        var navLinks = document.getElementById('navLinks');
+        if (toggle && navLinks) toggle.addEventListener('click', function() { navLinks.classList.toggle('open'); });
+        if (callback) callback(user, window.adminSupabase, res.data.clients, res.data);
+      });
+  });
+}
+
+function showPortalToast(msg, type) {
+  var t = document.getElementById('portalToast');
+  if (!t) { t = document.createElement('div'); t.id = 'portalToast'; t.className = 'portal-toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  t.className = 'portal-toast ' + (type || 'success');
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3500);
+}
+
+var MOOD_EMOJI = {
+  peaceful:  '🕊',
+  tender:    '🌸',
+  unsettled: '🌊',
+  electric:  '⚡',
+  grieving:  '🖤',
+  grateful:  '🙏',
+  curious:   '🔍',
+  tired:     '🌙',
+  alive:     '🌿'
+};
+
+var MOOD_LABEL = {
+  peaceful:  'Peaceful',
+  tender:    'Tender',
+  unsettled: 'Unsettled',
+  electric:  'Electric',
+  grieving:  'Grieving',
+  grateful:  'Grateful',
+  curious:   'Curious',
+  tired:     'Tired',
+  alive:     'Alive'
+};
+
+var currentClient = null;
+var currentSupabase = null;
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  var d = new Date(iso);
+  return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function parseTags(str) {
+  if (!str || !str.trim()) return [];
+  return str.split(',').map(function(t) { return t.trim(); }).filter(Boolean);
+}
+
+// ── New Entry Form Toggle ──────────────────────────────────────────
+var newEntryForm = document.getElementById('newEntryForm');
+var newEntryBtn  = document.getElementById('newEntryBtn');
+
+newEntryBtn.addEventListener('click', function() {
+  newEntryForm.classList.toggle('open');
+  if (newEntryForm.classList.contains('open')) {
+    newEntryBtn.textContent = '− Close';
+    document.getElementById('entryBody').focus();
+  } else {
+    newEntryBtn.textContent = '+ New Entry';
+    resetNewEntryForm();
+  }
+});
+
+document.getElementById('cancelEntryBtn').addEventListener('click', function() {
+  newEntryForm.classList.remove('open');
+  newEntryBtn.textContent = '+ New Entry';
+  resetNewEntryForm();
+});
+
+function resetNewEntryForm() {
+  document.getElementById('entryTitle').value = '';
+  document.getElementById('entryBody').value  = '';
+  document.getElementById('entryMood').value  = '';
+  document.getElementById('entryTags').value  = '';
+}
+
+// ── Save New Entry ────────────────────────────────────────────────
+document.getElementById('saveEntryBtn').addEventListener('click', function() {
+  var body = document.getElementById('entryBody').value.trim();
+  if (!body) { showPortalToast('Please write something before saving.', 'error'); return; }
+
+  var btn = this;
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  var tags = parseTags(document.getElementById('entryTags').value);
+  var payload = {
+    client_id:  currentClient.id,
+    title:      document.getElementById('entryTitle').value.trim() || null,
+    body:       body,
+    mood:       document.getElementById('entryMood').value || null,
+    tags:       tags.length ? tags : null,
+    is_private: true
+  };
+
+  currentSupabase
+    .from('client_journal')
+    .insert([payload])
+    .then(function(res) {
+      btn.disabled = false;
+      btn.textContent = 'Save Entry';
+      if (res.error) { showPortalToast('Could not save entry. Please try again.', 'error'); return; }
+      showPortalToast('Entry saved.', 'success');
+      newEntryForm.classList.remove('open');
+      newEntryBtn.textContent = '+ New Entry';
+      resetNewEntryForm();
+      loadEntries();
+    });
+});
+
+// ── Load & Render Entries ─────────────────────────────────────────
+function loadEntries() {
+  currentSupabase
+    .from('client_journal')
+    .select('*')
+    .eq('client_id', currentClient.id)
+    .eq('is_archived', false)
+    .order('created_at', { ascending: false })
+    .then(function(res) {
+      if (res.error) {
+        showPortalToast('Could not load journal entries.', 'error');
+        document.getElementById('journalEntries').innerHTML = '<div class="portal-empty"><div class="portal-empty-icon">📓</div><h3>Unable to load entries</h3><p>Please try refreshing the page.</p></div>';
+        return;
+      }
+      renderEntries(res.data);
+    });
+}
+
+function renderEntries(entries) {
+  var container = document.getElementById('journalEntries');
+
+  if (!entries || entries.length === 0) {
+    container.innerHTML = '<div class="portal-empty" style="padding:80px 24px;"><div class="portal-empty-icon">📓</div><h3>Your journal awaits</h3><p>This is your private space for reflection. Begin your first entry above.</p></div>';
+    return;
+  }
+
+  var html = '<div class="journal-entries">';
+
+  entries.forEach(function(entry) {
+    html += '<div class="journal-entry" id="entry-' + entry.id + '">';
+    html += renderEntryView(entry);
+    html += '</div>';
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+
+  // Attach edit button handlers
+  container.querySelectorAll('[data-edit-id]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var id = this.getAttribute('data-edit-id');
+      var entry = entries.find(function(e) { return String(e.id) === String(id); });
+      if (entry) showEditForm(entry);
+    });
+  });
+}
+
+function renderEntryView(entry) {
+  var html = '';
+
+  // Header
+  html += '<div class="journal-entry-header">';
+  html += '<span class="journal-entry-date">' + escHtml(formatDate(entry.created_at)) + '</span>';
+  html += '<button class="btn-sm-sage" data-edit-id="' + escHtml(String(entry.id)) + '" style="font-size:11px;">Edit</button>';
+  html += '</div>';
+
+  // Title
+  if (entry.title) {
+    html += '<h2 class="journal-entry-title">' + escHtml(entry.title) + '</h2>';
+  }
+
+  // Body
+  html += '<p class="journal-entry-body">' + escHtml(entry.body) + '</p>';
+
+  // Mood
+  if (entry.mood) {
+    var emoji = MOOD_EMOJI[entry.mood] || '';
+    var label = MOOD_LABEL[entry.mood] || entry.mood;
+    html += '<div class="journal-mood">' + emoji + ' ' + escHtml(label) + '</div>';
+  }
+
+  // Tags
+  if (entry.tags && entry.tags.length) {
+    html += '<div class="journal-tags">';
+    entry.tags.forEach(function(tag) {
+      html += '<span class="journal-tag">' + escHtml(tag) + '</span>';
+    });
+    html += '</div>';
+  }
+
+  return html;
+}
+
+function showEditForm(entry) {
+  var card = document.getElementById('entry-' + entry.id);
+  if (!card) return;
+
+  var tagsStr = (entry.tags && entry.tags.length) ? entry.tags.join(', ') : '';
+
+  var html = '';
+  html += '<div class="portal-form" id="editForm-' + entry.id + '">';
+  html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">';
+  html += '<span style="font-size:12px;color:#A89E95;">Editing entry from ' + escHtml(formatDate(entry.created_at)) + '</span>';
+  html += '</div>';
+  html += '<div class="portal-field">';
+  html += '<label>Title <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#A89E95;">(optional)</span></label>';
+  html += '<input type="text" id="editTitle-' + entry.id + '" value="' + escHtml(entry.title || '') + '" placeholder="Title…" />';
+  html += '</div>';
+  html += '<div class="portal-field">';
+  html += '<label>Your reflection</label>';
+  html += '<textarea id="editBody-' + entry.id + '" class="journal-textarea" rows="8">' + escHtml(entry.body || '') + '</textarea>';
+  html += '</div>';
+  html += '<div class="portal-row">';
+  html += '<div class="portal-field">';
+  html += '<label>Mood</label>';
+  html += '<select id="editMood-' + entry.id + '">';
+  html += '<option value="">— choose one —</option>';
+  var moods = [
+    ['peaceful','🕊 Peaceful'],['tender','🌸 Tender'],['unsettled','🌊 Unsettled'],
+    ['electric','⚡ Electric'],['grieving','🖤 Grieving'],['grateful','🙏 Grateful'],
+    ['curious','🔍 Curious'],['tired','🌙 Tired'],['alive','🌿 Alive']
+  ];
+  moods.forEach(function(m) {
+    var sel = (entry.mood === m[0]) ? ' selected' : '';
+    html += '<option value="' + m[0] + '"' + sel + '>' + m[1] + '</option>';
+  });
+  html += '</select>';
+  html += '</div>';
+  html += '<div class="portal-field">';
+  html += '<label>Tags <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#A89E95;">(comma-separated)</span></label>';
+  html += '<input type="text" id="editTags-' + entry.id + '" value="' + escHtml(tagsStr) + '" placeholder="e.g. integration, dreams" />';
+  html += '</div>';
+  html += '</div>';
+  html += '<div style="display:flex;gap:12px;justify-content:flex-end;margin-top:8px;">';
+  html += '<button class="btn-outline" id="cancelEdit-' + entry.id + '" type="button">Cancel</button>';
+  html += '<button class="btn-sage" id="saveEdit-' + entry.id + '" type="button">Save Changes</button>';
+  html += '</div>';
+  html += '</div>';
+
+  card.innerHTML = html;
+
+  // Cancel — restore view
+  document.getElementById('cancelEdit-' + entry.id).addEventListener('click', function() {
+    card.innerHTML = renderEntryView(entry);
+    card.querySelector('[data-edit-id]').addEventListener('click', function() {
+      showEditForm(entry);
+    });
+  });
+
+  // Save edit
+  document.getElementById('saveEdit-' + entry.id).addEventListener('click', function() {
+    var newBody = document.getElementById('editBody-' + entry.id).value.trim();
+    if (!newBody) { showPortalToast('Entry cannot be empty.', 'error'); return; }
+
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+
+    var newTags = parseTags(document.getElementById('editTags-' + entry.id).value);
+    var updates = {
+      title:      document.getElementById('editTitle-' + entry.id).value.trim() || null,
+      body:       newBody,
+      mood:       document.getElementById('editMood-' + entry.id).value || null,
+      tags:       newTags.length ? newTags : null,
+      updated_at: new Date().toISOString()
+    };
+
+    currentSupabase
+      .from('client_journal')
+      .update(updates)
+      .eq('id', entry.id)
+      .then(function(res) {
+        btn.disabled = false;
+        btn.textContent = 'Save Changes';
+        if (res.error) { showPortalToast('Could not save changes.', 'error'); return; }
+        showPortalToast('Entry updated.', 'success');
+        // Merge updates into entry for re-render
+        Object.assign(entry, updates);
+        card.innerHTML = renderEntryView(entry);
+        card.querySelector('[data-edit-id]').addEventListener('click', function() {
+          showEditForm(entry);
+        });
+      });
+  });
+}
+
+function parseTags(str) {
+  if (!str || !str.trim()) return [];
+  return str.split(',').map(function(t) { return t.trim(); }).filter(Boolean);
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+initPortal(function(user, supabase, client, account) {
+  currentClient   = client;
+  currentSupabase = supabase;
+  loadEntries();
+});
+
+</script>
+</body>
+</html>

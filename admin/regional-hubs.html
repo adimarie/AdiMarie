@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Regional Hubs · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+  <style>
+    .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .filter-tab { padding: 6px 14px; border-radius: 20px; border: 1px solid #e5e7eb; background: #fff; color: #6b7280; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+    .filter-tab:hover { border-color: #9ca3af; color: #374151; }
+    .filter-tab.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .badge-yellow { background: #fffbeb; color: #92400e; }
+    .badge-blue { background: #eff6ff; color: #1d4ed8; }
+    .badge-green { background: #f0fdf4; color: #166534; }
+    .badge-gray { background: #f3f4f6; color: #6b7280; }
+    .badge-teal-type { background: #f0fdfa; color: #0f766e; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: #fff; border-radius: 16px; padding: 32px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; margin: 0 0 24px; }
+    .modal-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group label { font-size: 13px; font-weight: 500; color: #374151; }
+    .form-group input, .form-group select, .form-group textarea { padding: 9px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; color: #111; background: #fff; transition: border-color 0.15s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #6b7280; }
+    .form-group textarea { resize: vertical; min-height: 72px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .btn { padding: 9px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
+    .btn-primary { background: #1a1a2e; color: #fff; }
+    .btn-primary:hover { background: #2d2d4e; }
+    .btn-secondary { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+    .btn-secondary:hover { background: #e5e7eb; }
+    .btn-danger { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .btn-danger:hover { background: #fee2e2; }
+  </style>
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html" class="active">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <h1>Regional Hubs</h1>
+        <p>Community circles and satellite locations worldwide</p>
+      </div>
+
+      <div class="admin-toolbar">
+        <input class="admin-search" type="text" id="searchInput" placeholder="Search hubs by name or region…">
+        <button class="btn btn-primary" id="newHubBtn">+ Add Hub</button>
+      </div>
+
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-status="all">All</button>
+        <button class="filter-tab" data-status="seeding">Seeding</button>
+        <button class="filter-tab" data-status="growing">Growing</button>
+        <button class="filter-tab" data-status="established">Established</button>
+        <button class="filter-tab" data-status="dormant">Dormant</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="hubsTable">
+          <thead>
+            <tr>
+              <th>Hub Name</th>
+              <th>Region</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Members</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="hubsBody">
+            <tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="hubModal">
+    <div class="modal-box">
+      <h2 class="modal-title" id="modalTitle">Add Hub</h2>
+      <input type="hidden" id="editHubId">
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Hub Name</label>
+          <input type="text" id="fieldName" placeholder="Hub name">
+        </div>
+        <div class="form-group">
+          <label>Hub Type</label>
+          <select id="fieldHubType">
+            <option value="community_circle">Community Circle</option>
+            <option value="training_site">Training Site</option>
+            <option value="retreat_center">Retreat Center</option>
+            <option value="affiliate">Affiliate</option>
+            <option value="satellite">Satellite</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Region</label>
+          <input type="text" id="fieldRegion" placeholder="e.g. Pacific Northwest">
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" id="fieldCity" placeholder="City">
+        </div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>State</label>
+          <input type="text" id="fieldState" placeholder="State / Province">
+        </div>
+        <div class="form-group">
+          <label>Country</label>
+          <input type="text" id="fieldCountry" placeholder="Country" value="US">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="fieldDescription" rows="3" placeholder="Describe this hub…"></textarea>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Primary Contact</label>
+          <input type="text" id="fieldPrimaryContact" placeholder="Contact name">
+        </div>
+        <div class="form-group">
+          <label>Contact Email</label>
+          <input type="email" id="fieldContactEmail" placeholder="contact@example.com">
+        </div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Member Count</label>
+          <input type="number" id="fieldMemberCount" min="0" value="0">
+        </div>
+        <div class="form-group">
+          <label>Active Offerings</label>
+          <input type="number" id="fieldActiveOfferings" min="0" value="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Linked Venue</label>
+        <select id="fieldVenueId">
+          <option value="">— No linked venue —</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="fieldStatus">
+          <option value="seeding">Seeding</option>
+          <option value="growing">Growing</option>
+          <option value="established">Established</option>
+          <option value="dormant">Dormant</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="fieldNotes" rows="2" placeholder="Internal notes…"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="modalSaveBtn">Save Hub</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allHubs = [];
+    var activeFilter = 'all';
+    var searchQuery = '';
+
+    var statusBadge = {
+      seeding: 'badge-yellow',
+      growing: 'badge-blue',
+      established: 'badge-green',
+      dormant: 'badge-gray'
+    };
+    var statusLabel = { seeding: 'Seeding', growing: 'Growing', established: 'Established', dormant: 'Dormant' };
+    var typeLabel = {
+      community_circle: 'Community Circle',
+      training_site: 'Training Site',
+      retreat_center: 'Retreat Center',
+      affiliate: 'Affiliate',
+      satellite: 'Satellite'
+    };
+
+    function renderTable(items) {
+      var tbody = document.getElementById('hubsBody');
+      if (!items.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">No hubs found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map(function(h) {
+        var sCls = statusBadge[h.status] || 'badge-gray';
+        var sLbl = statusLabel[h.status] || (h.status || '—');
+        var tLbl = typeLabel[h.hub_type] || (h.hub_type || '—');
+        var region = [h.city, h.region].filter(Boolean).join(', ') || '—';
+        return '<tr>' +
+          '<td><strong>' + escHtml(h.name || '—') + '</strong></td>' +
+          '<td>' + escHtml(region) + '</td>' +
+          '<td><span class="badge badge-teal-type">' + escHtml(tLbl) + '</span></td>' +
+          '<td><span class="badge ' + sCls + '">' + escHtml(sLbl) + '</span></td>' +
+          '<td>' + (h.member_count || 0) + '</td>' +
+          '<td>' +
+            '<button class="btn btn-secondary" style="padding:4px 12px;font-size:12px;" onclick="openModal(\'' + h.id + '\')">Edit</button> ' +
+            '<button class="btn btn-danger" style="padding:4px 12px;font-size:12px;" onclick="archiveHub(\'' + h.id + '\')">Archive</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function applyFilters() {
+      var filtered = allHubs;
+      if (activeFilter !== 'all') {
+        filtered = filtered.filter(function(h) { return h.status === activeFilter; });
+      }
+      if (searchQuery) {
+        var q = searchQuery.toLowerCase();
+        filtered = filtered.filter(function(h) {
+          return (h.name || '').toLowerCase().includes(q) || (h.region || '').toLowerCase().includes(q);
+        });
+      }
+      renderTable(filtered);
+    }
+
+    function loadHubs() {
+      document.getElementById('hubsBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>';
+      supabase.from('regional_hubs').select('*').eq('is_archived', false).order('name', { ascending: true })
+        .then(function(res) {
+          if (res.error) { showToast('Error loading hubs: ' + res.error.message, 'error'); return; }
+          allHubs = res.data || [];
+          applyFilters();
+        });
+    }
+
+    function loadVenuesDropdown() {
+      supabase.from('venues').select('id, name').eq('is_archived', false).order('name', { ascending: true })
+        .then(function(res) {
+          var sel = document.getElementById('fieldVenueId');
+          var current = sel.value;
+          while (sel.options.length > 1) sel.remove(1);
+          (res.data || []).forEach(function(v) {
+            var opt = document.createElement('option');
+            opt.value = v.id;
+            opt.textContent = v.name;
+            sel.appendChild(opt);
+          });
+          if (current) sel.value = current;
+        });
+    }
+
+    document.getElementById('filterTabs').addEventListener('click', function(e) {
+      if (e.target.classList.contains('filter-tab')) {
+        document.querySelectorAll('.filter-tab').forEach(function(b) { b.classList.remove('active'); });
+        e.target.classList.add('active');
+        activeFilter = e.target.dataset.status;
+        applyFilters();
+      }
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      searchQuery = e.target.value.trim();
+      applyFilters();
+    });
+
+    function closeModal() { document.getElementById('hubModal').classList.remove('open'); }
+
+    window.openModal = function(id) {
+      var h = id ? allHubs.find(function(x) { return x.id === id; }) : null;
+      loadVenuesDropdown();
+      document.getElementById('editHubId').value = h ? h.id : '';
+      document.getElementById('modalTitle').textContent = h ? 'Edit Hub' : 'Add Hub';
+      document.getElementById('fieldName').value = h ? (h.name || '') : '';
+      document.getElementById('fieldHubType').value = h ? (h.hub_type || 'community_circle') : 'community_circle';
+      document.getElementById('fieldRegion').value = h ? (h.region || '') : '';
+      document.getElementById('fieldCity').value = h ? (h.city || '') : '';
+      document.getElementById('fieldState').value = h ? (h.state || '') : '';
+      document.getElementById('fieldCountry').value = h ? (h.country || 'US') : 'US';
+      document.getElementById('fieldDescription').value = h ? (h.description || '') : '';
+      document.getElementById('fieldPrimaryContact').value = h ? (h.primary_contact || '') : '';
+      document.getElementById('fieldContactEmail').value = h ? (h.contact_email || '') : '';
+      document.getElementById('fieldMemberCount').value = h ? (h.member_count || 0) : 0;
+      document.getElementById('fieldActiveOfferings').value = h ? (h.active_offerings || 0) : 0;
+      document.getElementById('fieldVenueId').value = h ? (h.venue_id || '') : '';
+      document.getElementById('fieldStatus').value = h ? (h.status || 'seeding') : 'seeding';
+      document.getElementById('fieldNotes').value = h ? (h.notes || '') : '';
+      document.getElementById('hubModal').classList.add('open');
+    };
+
+    document.getElementById('newHubBtn').addEventListener('click', function() { openModal(null); });
+    document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
+    document.getElementById('hubModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    function saveHub() {
+      var id = document.getElementById('editHubId').value;
+      var venueId = document.getElementById('fieldVenueId').value;
+      var payload = {
+        name: document.getElementById('fieldName').value.trim(),
+        hub_type: document.getElementById('fieldHubType').value,
+        region: document.getElementById('fieldRegion').value.trim(),
+        city: document.getElementById('fieldCity').value.trim(),
+        state: document.getElementById('fieldState').value.trim(),
+        country: document.getElementById('fieldCountry').value.trim() || 'US',
+        description: document.getElementById('fieldDescription').value.trim(),
+        primary_contact: document.getElementById('fieldPrimaryContact').value.trim(),
+        contact_email: document.getElementById('fieldContactEmail').value.trim(),
+        member_count: parseInt(document.getElementById('fieldMemberCount').value) || 0,
+        active_offerings: parseInt(document.getElementById('fieldActiveOfferings').value) || 0,
+        venue_id: venueId || null,
+        status: document.getElementById('fieldStatus').value,
+        notes: document.getElementById('fieldNotes').value.trim(),
+        updated_at: new Date().toISOString()
+      };
+      var op;
+      if (id) {
+        op = supabase.from('regional_hubs').update(payload).eq('id', id);
+      } else {
+        payload.is_archived = false;
+        payload.created_at = new Date().toISOString();
+        op = supabase.from('regional_hubs').insert(payload);
+      }
+      op.then(function(res) {
+        if (res.error) { showToast('Error saving hub: ' + res.error.message, 'error'); return; }
+        showToast(id ? 'Hub updated.' : 'Hub added.', 'success');
+        closeModal();
+        loadHubs();
+      });
+    }
+
+    window.archiveHub = function(id) {
+      if (!confirm('Archive this hub? It will be hidden from the main list.')) return;
+      supabase.from('regional_hubs').update({ is_archived: true, updated_at: new Date().toISOString() }).eq('id', id)
+        .then(function(res) {
+          if (res.error) { showToast('Error archiving hub: ' + res.error.message, 'error'); return; }
+          showToast('Hub archived.', 'success');
+          loadHubs();
+        });
+    };
+
+    document.getElementById('modalSaveBtn').addEventListener('click', saveHub);
+
+    loadHubs();
+  });
+  </script>
+</body>
+</html>

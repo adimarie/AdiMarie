@@ -1,0 +1,649 @@
+/* ============================================================
+   The Animist Apothecary — Client Portal Styles
+   Aesthetic: sage green, warm cream, Cormorant + Inter
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+:root {
+  --sage:        #5B7553;
+  --sage-deep:   #3D5236;
+  --sage-mid:    #4A6344;
+  --sage-light:  #7A9470;
+  --sage-pale:   #C5D9C6;
+  --sage-mist:   #E8F0E8;
+  --cream:       #F7F5F0;
+  --cream-warm:  #F2EDE4;
+  --cream-deep:  #EDE5D8;
+  --earth:       #2D2A26;
+  --earth-soft:  #4A4540;
+  --earth-dim:   #7A7068;
+  --earth-muted: #A89E95;
+  --gold:        #9e8b6e;
+  --gold-light:  #C4A96C;
+  --border:      #DDD8CF;
+  --border-light: #EDE9E2;
+  --radius:      12px;
+  --radius-lg:   20px;
+  --shadow-sm:   0 1px 4px rgba(45,42,38,0.06);
+  --shadow-md:   0 4px 16px rgba(45,42,38,0.08);
+  --shadow-lg:   0 12px 40px rgba(45,42,38,0.12);
+  --transition:  0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--earth);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Typography ── */
+h1, h2, h3, h4 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--earth);
+}
+h1 { font-size: 2.4rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.4rem; }
+em { font-style: italic; }
+
+a { color: var(--sage); text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--sage-deep); }
+
+/* ── Portal Nav ── */
+.portal-nav {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  box-shadow: var(--shadow-sm);
+}
+.portal-nav-brand {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--earth);
+  text-decoration: none;
+}
+.portal-nav-brand em { color: var(--sage); font-style: normal; }
+.portal-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.portal-nav-links a {
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--earth-dim);
+  transition: all var(--transition);
+}
+.portal-nav-links a:hover { color: var(--sage); background: var(--sage-mist); }
+.portal-nav-links a.active { color: var(--sage-deep); background: var(--sage-mist); font-weight: 600; }
+.portal-nav-signout {
+  margin-left: 8px;
+  padding: 7px 16px;
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--earth-dim);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.portal-nav-signout:hover { border-color: var(--sage); color: var(--sage); }
+
+/* Mobile nav toggle */
+.portal-nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: var(--earth);
+  font-size: 22px;
+}
+
+/* ── Portal Main ── */
+.portal-main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 48px 40px 80px;
+}
+
+/* ── Page Header ── */
+.portal-page-header {
+  margin-bottom: 40px;
+}
+.portal-page-header__eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-bottom: 8px;
+}
+.portal-page-header h1 {
+  margin: 0 0 8px;
+  color: var(--earth);
+}
+.portal-page-header p {
+  font-size: 15px;
+  color: var(--earth-dim);
+  margin: 0;
+}
+.portal-divider {
+  width: 48px;
+  height: 2px;
+  background: var(--sage-pale);
+  margin: 16px 0;
+}
+
+/* ── Cards ── */
+.portal-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  transition: box-shadow var(--transition);
+}
+.portal-card:hover { box-shadow: var(--shadow-md); }
+.portal-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--earth);
+  margin: 0 0 16px;
+}
+.portal-card-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--earth-muted);
+  margin-bottom: 4px;
+}
+
+/* ── Grid ── */
+.portal-grid {
+  display: grid;
+  gap: 20px;
+}
+.portal-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.portal-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.portal-grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* ── Buttons ── */
+.btn-sage {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--sage);
+  color: #fff;
+  border: none;
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--transition), box-shadow var(--transition);
+}
+.btn-sage:hover { background: var(--sage-deep); color: #fff; box-shadow: 0 4px 12px rgba(91,117,83,0.3); }
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: none;
+  color: var(--sage);
+  border: 1.5px solid var(--sage-pale);
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.btn-outline:hover { border-color: var(--sage); background: var(--sage-mist); color: var(--sage-deep); }
+.btn-sm-sage {
+  padding: 7px 16px;
+  background: var(--sage-mist);
+  color: var(--sage-deep);
+  border: 1px solid var(--sage-pale);
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.btn-sm-sage:hover { background: var(--sage-pale); color: var(--sage-deep); }
+
+/* ── Badges ── */
+.portal-badge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.badge-sage { background: var(--sage-mist); color: var(--sage-deep); }
+.badge-gold { background: #fef3c7; color: #92400e; }
+.badge-blue { background: #dbeafe; color: #1e40af; }
+.badge-green { background: #dcfce7; color: #166534; }
+.badge-gray { background: #f3f4f6; color: #6b7280; }
+.badge-purple { background: #f5f3ff; color: #6d28d9; }
+.badge-earth { background: var(--cream-deep); color: var(--earth-soft); }
+
+/* ── Journey Progress ── */
+.journey-stages {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 20px 0;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.journey-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 80px;
+  position: relative;
+}
+.journey-stage::after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  right: -50%;
+  width: 100%;
+  height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+.journey-stage:last-child::after { display: none; }
+.journey-stage-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  position: relative;
+  z-index: 1;
+  transition: all var(--transition);
+}
+.journey-stage.done .journey-stage-dot {
+  background: var(--sage);
+  border-color: var(--sage);
+  color: #fff;
+}
+.journey-stage.done::after { background: var(--sage); }
+.journey-stage.current .journey-stage-dot {
+  background: var(--sage-deep);
+  border-color: var(--sage-deep);
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(91,117,83,0.2);
+  transform: scale(1.1);
+}
+.journey-stage-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: capitalize;
+  color: var(--earth-muted);
+  text-align: center;
+}
+.journey-stage.current .journey-stage-label,
+.journey-stage.done .journey-stage-label { color: var(--sage-deep); }
+
+/* ── Session Card ── */
+.session-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.session-item:last-child { border-bottom: none; padding-bottom: 0; }
+.session-date-block {
+  flex-shrink: 0;
+  width: 48px;
+  text-align: center;
+  background: var(--sage-mist);
+  border-radius: 10px;
+  padding: 8px 6px;
+}
+.session-date-month { font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--sage); }
+.session-date-day { font-size: 22px; font-weight: 700; color: var(--sage-deep); line-height: 1.1; font-family: 'Cormorant Garamond', serif; }
+.session-info { flex: 1; }
+.session-name { font-size: 15px; font-weight: 600; color: var(--earth); margin-bottom: 3px; }
+.session-sub { font-size: 13px; color: var(--earth-dim); }
+
+/* ── Quick Actions ── */
+.quick-action-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.quick-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 12px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  color: var(--earth);
+  transition: all var(--transition);
+  text-align: center;
+}
+.quick-action:hover { border-color: var(--sage-pale); box-shadow: var(--shadow-md); transform: translateY(-2px); color: var(--earth); }
+.quick-action-icon { font-size: 28px; }
+.quick-action-label { font-size: 12px; font-weight: 600; color: var(--earth-soft); }
+
+/* ── Forms ── */
+.portal-form { display: flex; flex-direction: column; gap: 20px; }
+.portal-field { display: flex; flex-direction: column; gap: 6px; }
+.portal-field label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--earth-dim);
+}
+.portal-field input,
+.portal-field select,
+.portal-field textarea {
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--earth);
+  background: #fff;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.portal-field input:focus,
+.portal-field select:focus,
+.portal-field textarea:focus {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(91,117,83,0.1);
+}
+.portal-field textarea { resize: vertical; }
+.portal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* ── Resource Cards ── */
+.resource-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: all var(--transition);
+}
+.resource-card:hover { box-shadow: var(--shadow-md); border-color: var(--sage-pale); }
+.resource-card-category {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-bottom: 8px;
+}
+.resource-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--earth);
+  margin: 0 0 8px;
+}
+.resource-card-desc { font-size: 13px; color: var(--earth-dim); margin-bottom: 16px; }
+
+/* ── Journal ── */
+.journal-entry {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  transition: all var(--transition);
+}
+.journal-entry:hover { box-shadow: var(--shadow-md); }
+.journal-entry-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.journal-entry-date { font-size: 12px; color: var(--earth-muted); }
+.journal-entry-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--earth);
+  margin: 0 0 12px;
+}
+.journal-entry-body {
+  font-size: 14px;
+  color: var(--earth-soft);
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+.journal-mood {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--earth-dim);
+  background: var(--cream-warm);
+  padding: 3px 10px;
+  border-radius: 100px;
+  margin-top: 12px;
+}
+.journal-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.journal-tag { font-size: 11px; color: var(--sage-deep); background: var(--sage-mist); padding: 3px 10px; border-radius: 100px; }
+
+/* ── Tabs ── */
+.portal-tabs { display: flex; gap: 4px; margin-bottom: 28px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+.portal-tab {
+  padding: 10px 20px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--earth-dim);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all var(--transition);
+}
+.portal-tab:hover { color: var(--sage); }
+.portal-tab.active { color: var(--sage-deep); border-bottom-color: var(--sage); }
+
+/* ── Onboarding Checklist ── */
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.checklist-item:last-child { border-bottom: none; }
+.checklist-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.checklist-dot.done { background: var(--sage); border-color: var(--sage); color: #fff; }
+.checklist-dot.pending { background: #fff; }
+.checklist-info { flex: 1; }
+.checklist-label { font-size: 15px; font-weight: 600; color: var(--earth); }
+.checklist-sub { font-size: 13px; color: var(--earth-dim); margin-top: 2px; }
+
+/* ── Login Page ── */
+.portal-login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cream);
+  padding: 24px;
+}
+.portal-login-card {
+  width: 100%;
+  max-width: 440px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 48px 44px;
+  box-shadow: var(--shadow-lg);
+}
+.portal-login-brand {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.portal-login-brand h1 {
+  font-size: 1.9rem;
+  color: var(--earth);
+  margin: 0 0 8px;
+}
+.portal-login-brand h1 em { color: var(--sage); font-style: normal; }
+.portal-login-brand p { font-size: 14px; color: var(--earth-dim); margin: 0; line-height: 1.5; }
+.portal-login-divider { height: 1px; background: var(--border); margin: 24px 0; }
+.portal-login-btn-google {
+  width: 100%;
+  padding: 13px;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--earth);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all var(--transition);
+  margin-bottom: 16px;
+}
+.portal-login-btn-google:hover { border-color: var(--sage-pale); background: var(--cream-warm); }
+.portal-login-or {
+  text-align: center;
+  font-size: 12px;
+  color: var(--earth-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 20px 0;
+}
+.portal-login-error {
+  font-size: 13px;
+  color: #dc2626;
+  text-align: center;
+  min-height: 0;
+  margin-top: -8px;
+}
+.portal-login-error:empty { display: none; }
+.portal-login-footer { text-align: center; margin-top: 24px; font-size: 13px; color: var(--earth-muted); }
+.portal-login-footer a { color: var(--sage); }
+
+/* ── Empty States ── */
+.portal-empty {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--earth-dim);
+}
+.portal-empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+.portal-empty h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  color: var(--earth);
+  margin: 0 0 8px;
+}
+.portal-empty p { font-size: 14px; margin: 0 0 20px; }
+
+/* ── Toast ── */
+.portal-toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  z-index: 9999;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+}
+.portal-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.portal-toast.success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.portal-toast.error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+/* ── Footer ── */
+.portal-footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--earth-muted);
+}
+.portal-footer a { color: var(--earth-muted); }
+.portal-footer a:hover { color: var(--sage); }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .portal-nav { padding: 0 20px; }
+  .portal-nav-links { display: none; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--cream); border-bottom: 1px solid var(--border); padding: 12px 20px; gap: 4px; }
+  .portal-nav-links.open { display: flex; }
+  .portal-nav-toggle { display: block; }
+  .portal-nav-signout { display: none; }
+  .portal-main { padding: 32px 20px 60px; }
+  .portal-grid-2, .portal-grid-3, .portal-grid-4 { grid-template-columns: 1fr; }
+  .quick-action-grid { grid-template-columns: repeat(2, 1fr); }
+  .portal-row { grid-template-columns: 1fr; }
+  .journey-stages { gap: 0; }
+  .portal-footer { flex-direction: column; gap: 8px; text-align: center; }
+  .portal-login-card { padding: 36px 28px; }
+  h1 { font-size: 1.9rem; }
+  h2 { font-size: 1.5rem; }
+}

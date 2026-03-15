@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Invoices · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+  <style>
+    .line-items-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+    .line-item-row { display: flex; gap: 8px; align-items: center; }
+    .line-item-row input[type="text"] { flex: 1; }
+    .line-item-row input[type="number"] { width: 100px; }
+    .line-item-remove { background: none; border: none; color: #dc2626; cursor: pointer; font-size: 18px; padding: 0 4px; }
+    .invoice-total-row { display: flex; justify-content: space-between; font-size: 14px; padding: 6px 0; border-top: 1px solid var(--aap-border); margin-top: 8px; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html" class="active">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <div>
+          <h1 class="admin-page-title">Invoices</h1>
+          <p class="admin-page-subtitle">Invoice management and tracking</p>
+        </div>
+        <button class="admin-btn admin-btn-primary" id="btnNewInvoice">New Invoice</button>
+      </div>
+
+      <div class="admin-toolbar">
+        <input class="admin-search" type="search" id="searchInput" placeholder="Search invoices…">
+      </div>
+
+      <div class="admin-filter-tabs">
+        <button class="admin-filter-tab active" data-filter="all">All</button>
+        <button class="admin-filter-tab" data-filter="draft">Draft</button>
+        <button class="admin-filter-tab" data-filter="sent">Sent</button>
+        <button class="admin-filter-tab" data-filter="paid">Paid</button>
+        <button class="admin-filter-tab" data-filter="overdue">Overdue</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Invoice #</th>
+              <th>Client</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Due Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="invoicesTableBody">
+            <tr><td colspan="6" class="admin-table-empty">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="admin-modal-overlay" id="modalOverlay" style="display:none;">
+    <div class="admin-modal-card" style="max-width:640px;">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title" id="modalTitle">New Invoice</h2>
+        <button class="admin-modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="admin-modal-body">
+        <input type="hidden" id="fieldId">
+
+        <div class="admin-form-group">
+          <label class="admin-label">Client</label>
+          <select class="admin-input" id="fieldClientId"></select>
+        </div>
+
+        <div class="admin-form-row">
+          <div class="admin-form-group">
+            <label class="admin-label">Invoice Number</label>
+            <input class="admin-input" type="text" id="fieldInvoiceNumber">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-label">Due Date</label>
+            <input class="admin-input" type="date" id="fieldDueDate">
+          </div>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">Status</label>
+          <select class="admin-input" id="fieldStatus">
+            <option value="draft">Draft</option>
+            <option value="sent">Sent</option>
+            <option value="paid">Paid</option>
+            <option value="overdue">Overdue</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label" style="display:flex;justify-content:space-between;align-items:center;">
+            Line Items
+            <button type="button" class="admin-btn admin-btn-sm admin-btn-ghost" id="btnAddLineItem">+ Add Line Item</button>
+          </label>
+          <div class="line-items-list" id="lineItemsList"></div>
+          <div style="border-top:1px solid var(--aap-border);padding-top:8px;margin-top:4px;">
+            <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--aap-muted);">
+              <span>Subtotal</span><span id="subtotalDisplay">$0.00</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--aap-muted);">
+              <span>Tax (0%)</span><span>$0.00</span>
+            </div>
+            <div class="invoice-total-row">
+              <span>Total</span><span id="totalDisplay">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-form-group">
+          <label class="admin-label">Notes</label>
+          <textarea class="admin-input" id="fieldNotes" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button class="admin-btn admin-btn-ghost" id="modalCancel">Cancel</button>
+        <button class="admin-btn admin-btn-primary" id="modalSave">Save Invoice</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allInvoices = [];
+    var currentFilter = 'all';
+
+    function formatCents(cents) {
+      if (!cents && cents !== 0) return '$0.00';
+      return '$' + (cents / 100).toFixed(2);
+    }
+
+    function statusBadge(status) {
+      var styles = {
+        draft: 'background:#f3f4f6;color:#374151;border:1px solid #e5e7eb;',
+        sent: 'background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;',
+        paid: 'background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;',
+        overdue: 'background:#fef2f2;color:#991b1b;border:1px solid #fecaca;',
+        cancelled: 'background:#f9fafb;color:#9ca3af;border:1px solid #e5e7eb;'
+      };
+      var s = styles[status] || styles.draft;
+      return '<span style="' + s + 'padding:2px 10px;border-radius:20px;font-size:12px;font-weight:500;">' + (status || '—') + '</span>';
+    }
+
+    function generateInvoiceNumber() {
+      var now = new Date();
+      var y = now.getFullYear();
+      var m = String(now.getMonth()+1).padStart(2,'0');
+      var d = String(now.getDate()).padStart(2,'0');
+      var rand = String(Math.floor(Math.random()*900)+100);
+      return 'INV-' + y + m + d + '-' + rand;
+    }
+
+    function renderTable(data) {
+      var tbody = document.getElementById('invoicesTableBody');
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="admin-table-empty">No invoices found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(function(inv) {
+        var clientName = inv.clients ? (inv.clients.full_name || inv.clients.email || '—') : '—';
+        var due = inv.due_date ? inv.due_date.slice(0,10) : '—';
+        return '<tr>' +
+          '<td style="font-family:monospace;">' + (inv.invoice_number || '—') + '</td>' +
+          '<td>' + clientName + '</td>' +
+          '<td style="font-weight:600;">' + formatCents(inv.total_cents) + '</td>' +
+          '<td>' + statusBadge(inv.status) + '</td>' +
+          '<td>' + due + '</td>' +
+          '<td>' +
+            '<button class="admin-btn admin-btn-sm admin-btn-ghost" onclick="openModal(' + JSON.stringify(inv).replace(/"/g,'&quot;') + ')">Edit</button> ' +
+            '<button class="admin-btn admin-btn-sm admin-btn-ghost" style="color:#dc2626;" onclick="archiveInvoice(\'' + inv.id + '\')">Archive</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function applyFilter() {
+      var q = document.getElementById('searchInput').value.toLowerCase();
+      var filtered = allInvoices.filter(function(inv) {
+        if (currentFilter !== 'all' && inv.status !== currentFilter) return false;
+        if (q) {
+          var clientName = inv.clients ? (inv.clients.full_name || inv.clients.email || '') : '';
+          var haystack = (clientName + ' ' + (inv.invoice_number || '') + ' ' + (inv.notes || '')).toLowerCase();
+          if (!haystack.includes(q)) return false;
+        }
+        return true;
+      });
+      renderTable(filtered);
+    }
+
+    function loadInvoices() {
+      supabase.from('invoices')
+        .select('*, clients(full_name, email)')
+        .eq('archived', false)
+        .order('created_at', {ascending: false})
+        .then(function(res) {
+          if (res.error) {
+            if (res.error.code === '42P01') {
+              document.getElementById('invoicesTableBody').innerHTML = '<tr><td colspan="6" class="admin-table-empty">Invoices table not found. Run the database migration to create it.</td></tr>';
+            } else {
+              showToast('Error loading invoices: ' + res.error.message, 'error');
+              document.getElementById('invoicesTableBody').innerHTML = '<tr><td colspan="6" class="admin-table-empty">Error loading invoices.</td></tr>';
+            }
+            return;
+          }
+          allInvoices = res.data || [];
+          applyFilter();
+        });
+    }
+
+    function loadClientsDropdown() {
+      supabase.from('clients').select('id, full_name, email').eq('archived', false).order('full_name').then(function(res) {
+        var sel = document.getElementById('fieldClientId');
+        sel.innerHTML = '<option value="">— Select Client —</option>';
+        (res.data || []).forEach(function(c) {
+          var opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = c.full_name || c.email || c.id;
+          sel.appendChild(opt);
+        });
+      });
+    }
+
+    window.addLineItem = function(desc, amtDollars) {
+      var list = document.getElementById('lineItemsList');
+      var row = document.createElement('div');
+      row.className = 'line-item-row';
+      row.innerHTML =
+        '<input type="text" class="admin-input li-desc" placeholder="Description" value="' + (desc || '') + '">' +
+        '<input type="number" class="admin-input li-amount" placeholder="0.00" min="0" step="0.01" value="' + (amtDollars || '') + '">' +
+        '<button type="button" class="line-item-remove" onclick="this.parentElement.remove();recalcTotal();">✕</button>';
+      row.querySelector('.li-amount').addEventListener('input', recalcTotal);
+      list.appendChild(row);
+      recalcTotal();
+    };
+
+    window.recalcTotal = function() {
+      var amounts = document.querySelectorAll('.li-amount');
+      var subtotal = 0;
+      amounts.forEach(function(inp) {
+        var v = parseFloat(inp.value) || 0;
+        subtotal += v;
+      });
+      document.getElementById('subtotalDisplay').textContent = '$' + subtotal.toFixed(2);
+      document.getElementById('totalDisplay').textContent = '$' + subtotal.toFixed(2);
+    };
+
+    window.openModal = function(item) {
+      loadClientsDropdown();
+      document.getElementById('lineItemsList').innerHTML = '';
+
+      document.getElementById('modalTitle').textContent = item ? 'Edit Invoice' : 'New Invoice';
+      document.getElementById('modalSave').textContent = item ? 'Save Changes' : 'Save Invoice';
+      document.getElementById('fieldId').value = item ? item.id : '';
+      document.getElementById('fieldClientId').value = item ? (item.client_id || '') : '';
+      document.getElementById('fieldInvoiceNumber').value = item ? (item.invoice_number || '') : generateInvoiceNumber();
+      document.getElementById('fieldDueDate').value = item ? (item.due_date ? item.due_date.slice(0,10) : '') : '';
+      document.getElementById('fieldStatus').value = item ? (item.status || 'draft') : 'draft';
+      document.getElementById('fieldNotes').value = item ? (item.notes || '') : '';
+
+      if (item && item.line_items) {
+        var li = typeof item.line_items === 'string' ? JSON.parse(item.line_items) : item.line_items;
+        (li || []).forEach(function(l) {
+          addLineItem(l.description, (l.amount_cents / 100).toFixed(2));
+        });
+      } else {
+        addLineItem('', '');
+      }
+
+      recalcTotal();
+      document.getElementById('modalOverlay').style.display = 'flex';
+    };
+
+    window.closeModal = function() {
+      document.getElementById('modalOverlay').style.display = 'none';
+    };
+
+    window.archiveInvoice = function(id) {
+      if (!confirm('Archive this invoice?')) return;
+      supabase.from('invoices').update({archived: true}).eq('id', id).then(function(res) {
+        if (res.error) { showToast('Error: ' + res.error.message, 'error'); return; }
+        showToast('Invoice archived.', 'success');
+        loadInvoices();
+      });
+    };
+
+    function saveInvoice() {
+      var id = document.getElementById('fieldId').value;
+      var clientId = document.getElementById('fieldClientId').value;
+      var invoiceNumber = document.getElementById('fieldInvoiceNumber').value.trim();
+      var dueDate = document.getElementById('fieldDueDate').value;
+      var status = document.getElementById('fieldStatus').value;
+      var notes = document.getElementById('fieldNotes').value.trim();
+
+      if (!clientId) { showToast('Please select a client.', 'error'); return; }
+      if (!invoiceNumber) { showToast('Invoice number is required.', 'error'); return; }
+
+      var lineItems = [];
+      var subtotalCents = 0;
+      document.querySelectorAll('.line-item-row').forEach(function(row) {
+        var desc = row.querySelector('.li-desc').value.trim();
+        var amt = parseFloat(row.querySelector('.li-amount').value) || 0;
+        var amtCents = Math.round(amt * 100);
+        if (desc || amtCents) {
+          lineItems.push({description: desc, amount_cents: amtCents});
+          subtotalCents += amtCents;
+        }
+      });
+
+      var payload = {
+        client_id: clientId,
+        invoice_number: invoiceNumber,
+        due_date: dueDate || null,
+        status: status,
+        notes: notes || null,
+        line_items: lineItems,
+        subtotal_cents: subtotalCents,
+        tax_cents: 0,
+        total_cents: subtotalCents
+      };
+
+      var query = id
+        ? supabase.from('invoices').update(payload).eq('id', id)
+        : supabase.from('invoices').insert(payload);
+
+      query.then(function(res) {
+        if (res.error) { showToast('Error: ' + res.error.message, 'error'); return; }
+        showToast(id ? 'Invoice updated.' : 'Invoice created.', 'success');
+        closeModal();
+        loadInvoices();
+      });
+    }
+
+    document.getElementById('btnNewInvoice').addEventListener('click', function() { openModal(null); });
+    document.getElementById('btnAddLineItem').addEventListener('click', function() { addLineItem('', ''); });
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('modalCancel').addEventListener('click', closeModal);
+    document.getElementById('modalSave').addEventListener('click', saveInvoice);
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    document.getElementById('searchInput').addEventListener('input', applyFilter);
+
+    document.querySelectorAll('.admin-filter-tab').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.admin-filter-tab').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        applyFilter();
+      });
+    });
+
+    loadInvoices();
+  });
+  </script>
+</body>
+</html>

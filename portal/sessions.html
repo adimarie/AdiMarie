@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sessions · Client Portal · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="portal.css">
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="portal-nav">
+    <a href="index.html" class="portal-nav-brand">The Animist <em>Apothecary</em></a>
+    <button class="portal-nav-toggle" id="navToggle">☰</button>
+    <div class="portal-nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="sessions.html" class="active">Sessions</a>
+      <a href="agreements.html">Agreements</a>
+      <a href="resources.html">Resources</a>
+      <a href="journal.html">Journal</a>
+      <a href="profile.html">Profile</a>
+      <button class="portal-nav-signout" id="portalSignOut">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- Portal being prepared -->
+  <div id="portalPreparing" style="display:none;text-align:center;padding:80px 40px;">
+    <div style="font-size:48px;margin-bottom:16px;">🌱</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;color:#2D2A26;">Your portal is being prepared</h2>
+    <p style="color:#7A7068;max-width:400px;margin:12px auto 24px;">Your sacred space is almost ready. Adi will activate your portal shortly after your intake process is complete.</p>
+    <a href="../index.html" style="color:#5B7553;">← Return to main site</a>
+  </div>
+
+  <!-- Main content -->
+  <div id="portalContent" style="display:none;">
+    <main class="portal-main">
+
+      <!-- Page header -->
+      <div class="portal-page-header">
+        <div class="portal-page-header__eyebrow">Your Sessions</div>
+        <h1>Sessions</h1>
+        <div class="portal-divider"></div>
+        <p>Upcoming appointments and your session history.</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="portal-tabs">
+        <button class="portal-tab active" id="tabUpcoming" onclick="switchTab('upcoming')">Upcoming</button>
+        <button class="portal-tab" id="tabPast" onclick="switchTab('past')">Past Sessions</button>
+      </div>
+
+      <!-- Upcoming pane -->
+      <div id="paneUpcoming">
+        <div id="upcomingList">
+          <div style="text-align:center;padding:40px 0;color:var(--earth-muted);font-size:13px;">Loading&hellip;</div>
+        </div>
+        <div style="margin-top:28px;">
+          <a href="../book.html" class="btn-sage">📅 Book a New Session</a>
+        </div>
+      </div>
+
+      <!-- Past pane -->
+      <div id="panePast" style="display:none;">
+        <div id="pastList">
+          <div style="text-align:center;padding:40px 0;color:var(--earth-muted);font-size:13px;">Loading&hellip;</div>
+        </div>
+      </div>
+
+    </main>
+
+    <footer class="portal-footer">
+      <span>© 2025 The Animist Apothecary · Topanga Canyon, Los Angeles</span>
+      <a href="../index.html">← Return to main site</a>
+    </footer>
+  </div>
+
+  <div id="portalToast" class="portal-toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  // ── Shared portal utilities ──────────────────────────────────────────────
+
+  function initPortal(callback) {
+    if (!window.adminSupabase) { window.location.href = 'login.html'; return; }
+    window.adminSupabase.auth.getSession().then(function(result) {
+      if (!result.data.session) { window.location.href = 'login.html'; return; }
+      var user = result.data.session.user;
+      window.adminSupabase
+        .from('client_portal_accounts')
+        .select('*, clients(*)')
+        .eq('auth_user_id', user.id)
+        .maybeSingle()
+        .then(function(res) {
+          if (res.error || !res.data) {
+            var prep = document.getElementById('portalPreparing');
+            var content = document.getElementById('portalContent');
+            if (prep) prep.style.display = 'block';
+            if (content) content.style.display = 'none';
+            return;
+          }
+          window.portalAccount = res.data;
+          window.portalClient = res.data.clients;
+          var signOutBtn = document.getElementById('portalSignOut');
+          if (signOutBtn) {
+            signOutBtn.addEventListener('click', function() {
+              window.adminSupabase.auth.signOut().then(function() { window.location.href = 'login.html'; });
+            });
+          }
+          var toggle = document.getElementById('navToggle');
+          var navLinks = document.getElementById('navLinks');
+          if (toggle && navLinks) {
+            toggle.addEventListener('click', function() { navLinks.classList.toggle('open'); });
+          }
+          if (callback) callback(user, window.adminSupabase, res.data.clients, res.data);
+        });
+    });
+  }
+
+  function showPortalToast(msg, type) {
+    var t = document.getElementById('portalToast') || document.createElement('div');
+    if (!t.id) { t.id = 'portalToast'; t.className = 'portal-toast'; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.className = 'portal-toast ' + (type || 'success');
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 3500);
+  }
+
+  // ── Tab switching ────────────────────────────────────────────────────────
+
+  function switchTab(tab) {
+    var tabUpcoming = document.getElementById('tabUpcoming');
+    var tabPast = document.getElementById('tabPast');
+    var paneUpcoming = document.getElementById('paneUpcoming');
+    var panePast = document.getElementById('panePast');
+    if (tab === 'upcoming') {
+      tabUpcoming.classList.add('active');
+      tabPast.classList.remove('active');
+      paneUpcoming.style.display = 'block';
+      panePast.style.display = 'none';
+    } else {
+      tabPast.classList.add('active');
+      tabUpcoming.classList.remove('active');
+      panePast.style.display = 'block';
+      paneUpcoming.style.display = 'none';
+    }
+  }
+
+  // ── Date/status helpers ──────────────────────────────────────────────────
+
+  function fmtDateBlock(dateStr) {
+    var d = new Date(dateStr);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return { month: months[d.getMonth()], day: d.getDate() };
+  }
+
+  function fmtDateTime(dateStr) {
+    var d = new Date(dateStr);
+    return d.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  }
+
+  function fmtDateShort(dateStr) {
+    var d = new Date(dateStr);
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  function statusBadge(status) {
+    var map = { confirmed: 'badge-green', scheduled: 'badge-blue', pending: 'badge-gold', completed: 'badge-sage', cancelled: 'badge-gray' };
+    var cls = map[status] || 'badge-earth';
+    return '<span class="portal-badge ' + cls + '">' + (status || 'scheduled') + '</span>';
+  }
+
+  function sessionItemHTML(appt) {
+    var db = fmtDateBlock(appt.start_time);
+    var timeStr = fmtDateTime(appt.start_time);
+    var name = appt.service_name || appt.service_type || 'Session';
+    var location = appt.location
+      ? '<span style="font-size:12px;color:var(--earth-muted);display:block;margin-top:4px;">📍 ' + appt.location + '</span>'
+      : '';
+    return '<div class="session-item">' +
+      '<div class="session-date-block"><div class="session-date-month">' + db.month + '</div><div class="session-date-day">' + db.day + '</div></div>' +
+      '<div class="session-info">' +
+        '<div class="session-name">' + name + '</div>' +
+        '<div class="session-sub">' + timeStr + '</div>' +
+        location +
+        '<div style="margin-top:6px;">' + statusBadge(appt.status) + '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  // ── Main init ────────────────────────────────────────────────────────────
+
+  initPortal(function(user, sb, client, account) {
+    document.getElementById('portalContent').style.display = 'block';
+    var clientId = client && client.id;
+    var now = new Date().toISOString();
+
+    // Load upcoming appointments
+    sb.from('appointments')
+      .select('*')
+      .eq('client_id', clientId)
+      .gt('start_time', now)
+      .not('status', 'in', '("cancelled")')
+      .order('start_time', { ascending: true })
+      .then(function(res) {
+        var el = document.getElementById('upcomingList');
+        if (res.error || !res.data || res.data.length === 0) {
+          el.innerHTML = '<div class="portal-empty">' +
+            '<div class="portal-empty-icon">📅</div>' +
+            '<h3>No upcoming sessions</h3>' +
+            '<p>When you book a session, it will appear here.</p>' +
+          '</div>';
+          return;
+        }
+        el.innerHTML = res.data.map(sessionItemHTML).join('');
+      });
+
+    // Load past appointments + their session notes
+    sb.from('appointments')
+      .select('*')
+      .eq('client_id', clientId)
+      .or('start_time.lt.' + now + ',status.eq.completed')
+      .order('start_time', { ascending: false })
+      .limit(20)
+      .then(function(res) {
+        var el = document.getElementById('pastList');
+        if (res.error || !res.data || res.data.length === 0) {
+          el.innerHTML = '<div class="portal-empty">' +
+            '<div class="portal-empty-icon">🌿</div>' +
+            '<h3>No past sessions yet</h3>' +
+            '<p>Your session history will appear here.</p>' +
+          '</div>';
+          return;
+        }
+
+        var appointments = res.data;
+        var apptIds = appointments.map(function(a) { return a.id; });
+
+        // Fetch session notes for these appointments
+        sb.from('session_notes')
+          .select('*')
+          .in('appointment_id', apptIds)
+          .not('client_visible_notes', 'is', null)
+          .then(function(notesRes) {
+            var notesByAppt = {};
+            if (notesRes.data) {
+              notesRes.data.forEach(function(n) {
+                if (!notesByAppt[n.appointment_id]) notesByAppt[n.appointment_id] = [];
+                notesByAppt[n.appointment_id].push(n);
+              });
+            }
+
+            var html = '';
+            appointments.forEach(function(appt) {
+              html += '<div class="portal-card" style="margin-bottom:16px;">';
+              html += sessionItemHTML(appt);
+              var notes = notesByAppt[appt.id];
+              if (notes && notes.length > 0) {
+                notes.forEach(function(note) {
+                  html += '<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-light);">';
+                  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--sage);margin-bottom:8px;">Session Notes · ' + fmtDateShort(note.created_at) + '</div>';
+                  if (note.session_themes) {
+                    var themes = Array.isArray(note.session_themes) ? note.session_themes : [note.session_themes];
+                    html += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;">';
+                    themes.forEach(function(th) {
+                      html += '<span style="font-size:11px;color:var(--sage-deep);background:var(--sage-mist);padding:2px 9px;border-radius:100px;">' + th + '</span>';
+                    });
+                    html += '</div>';
+                  }
+                  html += '<div style="font-size:14px;color:var(--earth-soft);line-height:1.7;">' + (note.client_visible_notes || '') + '</div>';
+                  html += '</div>';
+                });
+              }
+              html += '</div>';
+            });
+            el.innerHTML = html;
+          });
+      });
+  });
+  </script>
+</body>
+</html>

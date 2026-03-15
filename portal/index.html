@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard · Client Portal · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="portal.css">
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="portal-nav">
+    <a href="index.html" class="portal-nav-brand">The Animist <em>Apothecary</em></a>
+    <button class="portal-nav-toggle" id="navToggle">☰</button>
+    <div class="portal-nav-links" id="navLinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="sessions.html">Sessions</a>
+      <a href="agreements.html">Agreements</a>
+      <a href="resources.html">Resources</a>
+      <a href="journal.html">Journal</a>
+      <a href="profile.html">Profile</a>
+      <button class="portal-nav-signout" id="portalSignOut">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- Portal being prepared (shown if no portal account) -->
+  <div id="portalPreparing" style="display:none;text-align:center;padding:80px 40px;">
+    <div style="font-size:48px;margin-bottom:16px;">🌱</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;color:#2D2A26;">Your portal is being prepared</h2>
+    <p style="color:#7A7068;max-width:400px;margin:12px auto 24px;">Your sacred space is almost ready. Adi will activate your portal shortly after your intake process is complete.</p>
+    <a href="../index.html" style="color:#5B7553;">← Return to main site</a>
+  </div>
+
+  <!-- Main content -->
+  <div id="portalContent" style="display:none;">
+    <main class="portal-main">
+
+      <!-- Welcome header -->
+      <div class="portal-page-header">
+        <div class="portal-page-header__eyebrow">Welcome back</div>
+        <h1 id="welcomeName">Your Sanctuary</h1>
+        <div class="portal-divider"></div>
+        <p id="welcomeSub" style="color:var(--earth-dim);">Here is a view of your journey, your upcoming sessions, and your integration work.</p>
+      </div>
+
+      <!-- Journey card -->
+      <div class="portal-card" style="margin-bottom:24px;">
+        <div class="portal-card-title">Your Journey</div>
+        <div class="journey-stages" id="journeyStages">
+          <!-- populated by JS -->
+        </div>
+        <p id="journeyStageDesc" style="font-size:13px;color:var(--earth-dim);margin:12px 0 0;"></p>
+      </div>
+
+      <!-- 2-col grid: Upcoming + Tasks -->
+      <div class="portal-grid portal-grid-2" style="margin-bottom:24px;">
+
+        <!-- Upcoming Sessions -->
+        <div class="portal-card">
+          <div class="portal-card-title">Upcoming Sessions</div>
+          <div id="upcomingSessionsList">
+            <div style="text-align:center;padding:24px 0;color:var(--earth-muted);font-size:13px;">Loading&hellip;</div>
+          </div>
+        </div>
+
+        <!-- Integration Tasks -->
+        <div class="portal-card">
+          <div class="portal-card-title">Integration Tasks</div>
+          <div id="integrationTasksList">
+            <div style="text-align:center;padding:24px 0;color:var(--earth-muted);font-size:13px;">Loading&hellip;</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="portal-card" style="margin-bottom:24px;">
+        <div class="portal-card-title">Quick Actions</div>
+        <div class="quick-action-grid" style="margin-top:4px;">
+          <a href="../book.html" class="quick-action">
+            <span class="quick-action-icon">📅</span>
+            <span class="quick-action-label">Book a Session</span>
+          </a>
+          <a href="agreements.html" class="quick-action">
+            <span class="quick-action-icon">📜</span>
+            <span class="quick-action-label">Agreements</span>
+          </a>
+          <a href="resources.html" class="quick-action">
+            <span class="quick-action-icon">📚</span>
+            <span class="quick-action-label">Resources</span>
+          </a>
+          <a href="journal.html" class="quick-action">
+            <span class="quick-action-icon">📓</span>
+            <span class="quick-action-label">Journal</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Recent Session Notes -->
+      <div class="portal-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div class="portal-card-title" style="margin:0;">Recent Session Notes</div>
+          <a href="sessions.html" style="font-size:13px;color:var(--sage);">View all →</a>
+        </div>
+        <div id="recentNotesList">
+          <div style="text-align:center;padding:24px 0;color:var(--earth-muted);font-size:13px;">Loading&hellip;</div>
+        </div>
+      </div>
+
+    </main>
+
+    <footer class="portal-footer">
+      <span>© 2025 The Animist Apothecary · Topanga Canyon, Los Angeles</span>
+      <a href="../index.html">← Return to main site</a>
+    </footer>
+  </div>
+
+  <div id="portalToast" class="portal-toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  // ── Shared portal utilities ──────────────────────────────────────────────
+
+  function initPortal(callback) {
+    if (!window.adminSupabase) { window.location.href = 'login.html'; return; }
+    window.adminSupabase.auth.getSession().then(function(result) {
+      if (!result.data.session) { window.location.href = 'login.html'; return; }
+      var user = result.data.session.user;
+      window.adminSupabase
+        .from('client_portal_accounts')
+        .select('*, clients(*)')
+        .eq('auth_user_id', user.id)
+        .maybeSingle()
+        .then(function(res) {
+          if (res.error || !res.data) {
+            var prep = document.getElementById('portalPreparing');
+            var content = document.getElementById('portalContent');
+            if (prep) prep.style.display = 'block';
+            if (content) content.style.display = 'none';
+            return;
+          }
+          window.portalAccount = res.data;
+          window.portalClient = res.data.clients;
+          var signOutBtn = document.getElementById('portalSignOut');
+          if (signOutBtn) {
+            signOutBtn.addEventListener('click', function() {
+              window.adminSupabase.auth.signOut().then(function() { window.location.href = 'login.html'; });
+            });
+          }
+          var toggle = document.getElementById('navToggle');
+          var navLinks = document.getElementById('navLinks');
+          if (toggle && navLinks) {
+            toggle.addEventListener('click', function() { navLinks.classList.toggle('open'); });
+          }
+          if (callback) callback(user, window.adminSupabase, res.data.clients, res.data);
+        });
+    });
+  }
+
+  function showPortalToast(msg, type) {
+    var t = document.getElementById('portalToast') || document.createElement('div');
+    if (!t.id) { t.id = 'portalToast'; t.className = 'portal-toast'; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.className = 'portal-toast ' + (type || 'success');
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 3500);
+  }
+
+  // ── Journey config ───────────────────────────────────────────────────────
+
+  var JOURNEY_STAGES = ['inquiry', 'intake', 'active', 'aftercare', 'integration', 'community'];
+  var STAGE_ICONS = {
+    inquiry: '🌱', intake: '📋', active: '🌿',
+    aftercare: '🌸', integration: '🌀', community: '🌍'
+  };
+  var STAGE_DESCS = {
+    inquiry:     'You\'ve reached out — we\'re in first contact.',
+    intake:      'We\'re getting to know each other and preparing the container.',
+    active:      'Our sessions are underway. You are in the work.',
+    aftercare:   'Your recent work is actively integrating.',
+    integration: 'You\'re embodying and living the changes.',
+    community:   'You\'re part of the continuing circle.'
+  };
+
+  function renderJourney(currentStage) {
+    var container = document.getElementById('journeyStages');
+    var descEl = document.getElementById('journeyStageDesc');
+    if (!container) return;
+    var idx = JOURNEY_STAGES.indexOf(currentStage);
+    if (idx === -1) idx = 0;
+    var html = '';
+    JOURNEY_STAGES.forEach(function(stage, i) {
+      var cls = i < idx ? 'done' : (i === idx ? 'current' : '');
+      html += '<div class="journey-stage ' + cls + '">';
+      html += '<div class="journey-stage-dot">' + STAGE_ICONS[stage] + '</div>';
+      html += '<div class="journey-stage-label">' + stage.charAt(0).toUpperCase() + stage.slice(1) + '</div>';
+      html += '</div>';
+    });
+    container.innerHTML = html;
+    if (descEl) {
+      var desc = STAGE_DESCS[currentStage] || '';
+      descEl.textContent = currentStage ? currentStage.charAt(0).toUpperCase() + currentStage.slice(1) + ' \u2014 ' + desc : '';
+    }
+  }
+
+  // ── Date helpers ─────────────────────────────────────────────────────────
+
+  function fmtDateBlock(dateStr) {
+    var d = new Date(dateStr);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return { month: months[d.getMonth()], day: d.getDate() };
+  }
+
+  function fmtDateTime(dateStr) {
+    var d = new Date(dateStr);
+    var opts = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' };
+    return d.toLocaleString('en-US', opts);
+  }
+
+  function fmtDateShort(dateStr) {
+    var d = new Date(dateStr);
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  function statusBadge(status) {
+    var map = { confirmed: 'badge-green', scheduled: 'badge-blue', pending: 'badge-gold', completed: 'badge-sage', cancelled: 'badge-gray' };
+    var cls = map[status] || 'badge-earth';
+    return '<span class="portal-badge ' + cls + '">' + (status || 'scheduled') + '</span>';
+  }
+
+  // ── Session item HTML ────────────────────────────────────────────────────
+
+  function sessionItemHTML(appt) {
+    var db = fmtDateBlock(appt.start_time);
+    var timeStr = fmtDateTime(appt.start_time);
+    var name = appt.service_name || appt.service_type || 'Session';
+    var location = appt.location ? '<span style="font-size:12px;color:var(--earth-muted);margin-top:4px;display:block;">📍 ' + appt.location + '</span>' : '';
+    return '<div class="session-item">' +
+      '<div class="session-date-block"><div class="session-date-month">' + db.month + '</div><div class="session-date-day">' + db.day + '</div></div>' +
+      '<div class="session-info">' +
+        '<div class="session-name">' + name + '</div>' +
+        '<div class="session-sub">' + timeStr + '</div>' +
+        location +
+        '<div style="margin-top:6px;">' + statusBadge(appt.status) + '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  // ── Main init ────────────────────────────────────────────────────────────
+
+  initPortal(function(user, sb, client, account) {
+    document.getElementById('portalContent').style.display = 'block';
+
+    // Welcome name
+    var firstName = (client && client.first_name) ? client.first_name : (client && client.name ? client.name.split(' ')[0] : 'Welcome');
+    document.getElementById('welcomeName').textContent = 'Welcome, ' + firstName;
+
+    // Journey
+    var stage = (client && client.pipeline_stage) ? client.pipeline_stage : 'inquiry';
+    renderJourney(stage);
+
+    var now = new Date().toISOString();
+    var clientId = client && client.id;
+
+    // Upcoming sessions
+    sb.from('appointments')
+      .select('*')
+      .eq('client_id', clientId)
+      .gt('start_time', now)
+      .neq('status', 'cancelled')
+      .order('start_time', { ascending: true })
+      .limit(3)
+      .then(function(res) {
+        var el = document.getElementById('upcomingSessionsList');
+        if (res.error || !res.data || res.data.length === 0) {
+          el.innerHTML = '<div class="portal-empty" style="padding:32px 0;">' +
+            '<div class="portal-empty-icon">📅</div>' +
+            '<p style="margin-bottom:16px;">No upcoming sessions — book one below.</p>' +
+            '<a href="../book.html" class="btn-sage">Book a Session</a>' +
+          '</div>';
+          return;
+        }
+        var html = res.data.map(sessionItemHTML).join('');
+        el.innerHTML = html;
+      });
+
+    // Integration tasks (client-visible session notes)
+    sb.from('session_notes')
+      .select('*')
+      .eq('client_id', clientId)
+      .not('client_visible_notes', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(3)
+      .then(function(res) {
+        var el = document.getElementById('integrationTasksList');
+        if (res.error || !res.data || res.data.length === 0) {
+          el.innerHTML = '<div style="color:var(--earth-dim);font-size:13px;padding:16px 0;">No tasks yet — check back after your first session.</div>';
+          return;
+        }
+        var html = '';
+        res.data.forEach(function(note) {
+          html += '<div style="padding:14px 0;border-bottom:1px solid var(--border-light);">';
+          html += '<div style="font-size:11px;color:var(--earth-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;">' + fmtDateShort(note.created_at) + '</div>';
+          var text = note.client_visible_notes || '';
+          html += '<div style="font-size:14px;color:var(--earth);line-height:1.6;">' + text.substring(0, 200) + (text.length > 200 ? '\u2026' : '') + '</div>';
+          html += '</div>';
+        });
+        el.innerHTML = html;
+      });
+
+    // Recent session notes (5)
+    sb.from('session_notes')
+      .select('*')
+      .eq('client_id', clientId)
+      .not('client_visible_notes', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(5)
+      .then(function(res) {
+        var el = document.getElementById('recentNotesList');
+        if (res.error || !res.data || res.data.length === 0) {
+          el.innerHTML = '<div style="color:var(--earth-dim);font-size:13px;padding:16px 0;">No session notes yet — they\'ll appear here after your sessions.</div>';
+          return;
+        }
+        var html = '';
+        res.data.forEach(function(note) {
+          var text = note.client_visible_notes || '';
+          var themes = note.session_themes ? (Array.isArray(note.session_themes) ? note.session_themes : [note.session_themes]) : [];
+          html += '<div style="padding:16px 0;border-bottom:1px solid var(--border-light);">';
+          html += '<div style="font-size:11px;color:var(--earth-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">' + fmtDateShort(note.created_at) + '</div>';
+          if (themes.length > 0) {
+            html += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">';
+            themes.forEach(function(th) {
+              html += '<span style="font-size:11px;color:var(--sage-deep);background:var(--sage-mist);padding:2px 9px;border-radius:100px;">' + th + '</span>';
+            });
+            html += '</div>';
+          }
+          html += '<div style="font-size:14px;color:var(--earth-soft);line-height:1.65;">' + text.substring(0, 200) + (text.length > 200 ? '\u2026' : '') + '</div>';
+          html += '</div>';
+        });
+        el.innerHTML = html;
+      });
+  });
+  </script>
+</body>
+</html>

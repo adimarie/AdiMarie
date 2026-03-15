@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Offerings · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html" class="active">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <h1>Offerings</h1>
+        <p>Services and offering configurations</p>
+      </div>
+
+      <div class="admin-toolbar">
+        <input class="admin-toolbar__search" type="text" id="searchInput" placeholder="Search offerings…">
+        <div class="admin-toolbar__actions">
+          <button class="btn-sm btn-primary" id="newServiceBtn">+ New Offering</button>
+        </div>
+      </div>
+
+      <div class="admin-filters">
+        <button class="admin-filter-btn active" data-filter="all">All</button>
+        <button class="admin-filter-btn" data-filter="active">Active</button>
+        <button class="admin-filter-btn" data-filter="inactive">Inactive</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="servicesTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Duration</th>
+              <th>Price</th>
+              <th>Active</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="servicesBody">
+            <tr id="loadingRow">
+              <td colspan="6" style="text-align:center;padding:32px;color:var(--aap-text-dim);">Loading…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admin-empty" id="emptyState" style="display:none;">
+        <div class="admin-empty__icon">✨</div>
+        <div class="admin-empty__text">No offerings yet</div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div class="admin-modal" id="serviceModal">
+    <div class="admin-modal__backdrop" id="modalBackdrop"></div>
+    <div class="admin-modal__card">
+      <div class="admin-modal__title" id="modalTitle">Offering</div>
+      <form class="admin-modal__form" id="serviceForm" onsubmit="return false;">
+        <input type="hidden" id="fieldId">
+
+        <div class="admin-modal__field">
+          <label for="fieldName">Name</label>
+          <input type="text" id="fieldName" required placeholder="e.g. Mythopoetic Immersion">
+        </div>
+
+        <div class="admin-modal__field">
+          <label for="fieldDescription">Description</label>
+          <textarea id="fieldDescription" rows="3" placeholder="Describe this offering…"></textarea>
+        </div>
+
+        <div class="admin-modal__field">
+          <label for="fieldType">Type</label>
+          <select id="fieldType">
+            <option value="session">Single Session</option>
+            <option value="arc">Developmental Arc</option>
+            <option value="immersion">Immersion</option>
+            <option value="ceremony">Ceremony</option>
+            <option value="group">Group</option>
+            <option value="divination">Divination</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="admin-modal__row">
+          <div class="admin-modal__field">
+            <label for="fieldDuration">Duration (minutes)</label>
+            <input type="number" id="fieldDuration" value="90" min="0" step="15">
+          </div>
+          <div class="admin-modal__field">
+            <label for="fieldPrice">Price (in cents, e.g. 30000 = $300)</label>
+            <input type="number" id="fieldPrice" value="0" min="0" step="100">
+          </div>
+        </div>
+
+        <div class="admin-modal__field" style="flex-direction:row;align-items:center;gap:10px;">
+          <input type="checkbox" id="fieldActive" style="width:18px;height:18px;accent-color:var(--aap-accent);cursor:pointer;">
+          <label for="fieldActive" style="text-transform:none;font-size:14px;font-weight:500;color:var(--aap-text-soft);cursor:pointer;">Active / available for booking</label>
+        </div>
+
+        <div class="admin-modal__actions">
+          <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn-sm btn-primary" id="saveBtn">Save Offering</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allServices = [];
+    var currentFilter = 'all';
+    var searchTerm = '';
+
+    var typeLabels = {
+      session:   'Single Session',
+      arc:       'Developmental Arc',
+      immersion: 'Immersion',
+      ceremony:  'Ceremony',
+      group:     'Group',
+      divination:'Divination',
+      other:     'Other'
+    };
+
+    function activeBadge(isActive) {
+      return isActive
+        ? '<span class="admin-badge admin-badge--active">Active</span>'
+        : '<span class="admin-badge admin-badge--inactive">Inactive</span>';
+    }
+
+    function fmtPrice(cents) {
+      if (cents === null || cents === undefined) return '—';
+      return '$' + (cents / 100).toFixed(0);
+    }
+
+    function fmtDuration(mins) {
+      if (!mins) return '—';
+      return mins + ' min';
+    }
+
+    function renderServices() {
+      var filtered = allServices.filter(function(s) {
+        if (currentFilter === 'active' && !s.is_active) return false;
+        if (currentFilter === 'inactive' && s.is_active) return false;
+        if (searchTerm) {
+          var haystack = ((s.name || '') + ' ' + (s.service_type || '')).toLowerCase();
+          if (haystack.indexOf(searchTerm) === -1) return false;
+        }
+        return true;
+      });
+
+      var tbody = document.getElementById('servicesBody');
+      var empty = document.getElementById('emptyState');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        document.getElementById('servicesTable').style.display = 'none';
+        return;
+      }
+
+      empty.style.display = 'none';
+      document.getElementById('servicesTable').style.display = '';
+
+      tbody.innerHTML = filtered.map(function(s) {
+        var typeLabel = typeLabels[s.service_type] || s.service_type || '—';
+        return '<tr>' +
+          '<td style="font-weight:600;color:var(--aap-text)">' + (s.name || '—') + '</td>' +
+          '<td>' + typeLabel + '</td>' +
+          '<td>' + fmtDuration(s.duration_minutes) + '</td>' +
+          '<td>' + fmtPrice(s.price_cents) + '</td>' +
+          '<td>' + activeBadge(s.is_active) + '</td>' +
+          '<td><div class="admin-table__actions">' +
+            '<button onclick="openModal(' + JSON.stringify(s).replace(/"/g,'&quot;') + ')">Edit</button>' +
+          '</div></td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function loadServices() {
+      supabase.from('services')
+        .select('*')
+        .order('name')
+        .then(function(res) {
+          var lr = document.getElementById('loadingRow');
+          if (lr) lr.remove();
+          if (res.error) {
+            // Handle table-not-found gracefully
+            var code = res.error.code;
+            if (code === '42P01' || (res.error.message && res.error.message.indexOf('does not exist') !== -1)) {
+              allServices = [];
+              renderServices();
+              return;
+            }
+            showToast('Could not load offerings: ' + res.error.message, 'error');
+            return;
+          }
+          allServices = res.data || [];
+          renderServices();
+        });
+    }
+
+    window.openModal = function(item) {
+      document.getElementById('fieldId').value = item ? item.id : '';
+      document.getElementById('modalTitle').textContent = item ? 'Edit Offering' : 'New Offering';
+      document.getElementById('fieldName').value = item ? (item.name || '') : '';
+      document.getElementById('fieldDescription').value = item ? (item.description || '') : '';
+      document.getElementById('fieldType').value = item ? (item.service_type || 'session') : 'session';
+      document.getElementById('fieldDuration').value = item ? (item.duration_minutes || 90) : 90;
+      document.getElementById('fieldPrice').value = item ? (item.price_cents || 0) : 0;
+      document.getElementById('fieldActive').checked = item ? !!item.is_active : true;
+      document.getElementById('serviceModal').classList.add('admin-modal--open');
+    };
+
+    window.closeModal = function() {
+      document.getElementById('serviceModal').classList.remove('admin-modal--open');
+    };
+
+    function saveService() {
+      var id = document.getElementById('fieldId').value;
+      var payload = {
+        name:             document.getElementById('fieldName').value.trim(),
+        description:      document.getElementById('fieldDescription').value.trim(),
+        service_type:     document.getElementById('fieldType').value,
+        duration_minutes: parseInt(document.getElementById('fieldDuration').value) || 90,
+        price_cents:      parseInt(document.getElementById('fieldPrice').value) || 0,
+        is_active:        document.getElementById('fieldActive').checked
+      };
+
+      var btn = document.getElementById('saveBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+
+      var op = id
+        ? supabase.from('services').update(payload).eq('id', id)
+        : supabase.from('services').insert(payload);
+
+      op.then(function(res) {
+        btn.disabled = false; btn.textContent = 'Save Offering';
+        if (res.error) { showToast('Error: ' + res.error.message, 'error'); return; }
+        showToast(id ? 'Offering updated' : 'Offering created', 'success');
+        closeModal();
+        loadServices();
+      });
+    }
+
+    // Events
+    document.getElementById('newServiceBtn').addEventListener('click', function() { openModal(null); });
+    document.getElementById('cancelBtn').addEventListener('click', closeModal);
+    document.getElementById('modalBackdrop').addEventListener('click', closeModal);
+    document.getElementById('serviceForm').addEventListener('submit', saveService);
+
+    document.querySelectorAll('.admin-filter-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.admin-filter-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderServices();
+      });
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+      searchTerm = this.value.trim().toLowerCase();
+      renderServices();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    loadServices();
+  });
+  </script>
+</body>
+</html>

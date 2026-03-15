@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Referral Network · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html" class="active">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <div>
+          <h1 class="admin-page-title">Referral Network</h1>
+          <p class="admin-page-subtitle">Practitioners who refer clients to and from the practice</p>
+        </div>
+        <button class="admin-btn admin-btn-primary" id="btnNewReferral">Add Referral Partner</button>
+      </div>
+
+      <div class="admin-toolbar">
+        <input class="admin-search" type="search" id="searchInput" placeholder="Search referral partners…">
+      </div>
+
+      <div class="admin-filter-tabs">
+        <button class="admin-filter-tab active" data-filter="all">All</button>
+        <button class="admin-filter-tab" data-filter="inbound">Inbound</button>
+        <button class="admin-filter-tab" data-filter="outbound">Outbound</button>
+        <button class="admin-filter-tab" data-filter="both">Bidirectional</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Practice Type</th>
+              <th>Specialty</th>
+              <th>Direction</th>
+              <th>Clients Referred</th>
+              <th>Last Contact</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="referralsTableBody">
+            <tr><td colspan="7" class="admin-table-empty">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="admin-modal-overlay" id="modalOverlay" style="display:none;">
+    <div class="admin-modal-card" style="max-width:620px;">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title" id="modalTitle">Add Referral Partner</h2>
+        <button class="admin-modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="admin-modal-body">
+        <input type="hidden" id="fieldId">
+        <div class="admin-form-row">
+          <div class="admin-form-group">
+            <label class="admin-label">Full Name</label>
+            <input class="admin-input" type="text" id="fieldFullName" placeholder="Full name">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-label">Practice Type</label>
+            <select class="admin-input" id="fieldPracticeType">
+              <option value="therapist">Therapist</option>
+              <option value="doctor">Doctor</option>
+              <option value="bodyworker">Bodyworker</option>
+              <option value="acupuncturist">Acupuncturist</option>
+              <option value="naturopath">Naturopath</option>
+              <option value="psychiatrist">Psychiatrist</option>
+              <option value="coach">Coach</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-form-row">
+          <div class="admin-form-group">
+            <label class="admin-label">Email</label>
+            <input class="admin-input" type="email" id="fieldEmail" placeholder="email@example.com">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-label">Phone</label>
+            <input class="admin-input" type="tel" id="fieldPhone" placeholder="+1 (555) 000-0000">
+          </div>
+        </div>
+        <div class="admin-form-row">
+          <div class="admin-form-group">
+            <label class="admin-label">Specialty</label>
+            <input class="admin-input" type="text" id="fieldSpecialty" placeholder="e.g. trauma, somatic therapy">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-label">Organization</label>
+            <input class="admin-input" type="text" id="fieldOrganization" placeholder="Practice or organization name">
+          </div>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Location</label>
+          <input class="admin-input" type="text" id="fieldLocation" placeholder="City, State or Country">
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Referral Direction</label>
+          <select class="admin-input" id="fieldReferralDirection">
+            <option value="inbound">They Refer to Me</option>
+            <option value="outbound">I Refer to Them</option>
+            <option value="both">Bidirectional</option>
+          </select>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Clients Referred (total)</label>
+          <input class="admin-input" type="number" id="fieldClientsReferred" min="0" value="0">
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Relationship Notes</label>
+          <textarea class="admin-input" id="fieldRelationshipNotes" rows="3" placeholder="How you met, referral history, notes…"></textarea>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Last Contact</label>
+          <input class="admin-input" type="date" id="fieldLastContact">
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button class="admin-btn admin-btn-ghost" id="modalCancel">Cancel</button>
+        <button class="admin-btn admin-btn-primary" id="modalSave">Save Partner</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allReferrals = [];
+    var currentFilter = 'all';
+
+    function directionBadge(dir) {
+      var styles = {
+        inbound: 'background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;',
+        outbound: 'background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;',
+        both: 'background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe;'
+      };
+      var labels = {inbound: 'Inbound', outbound: 'Outbound', both: 'Bidirectional'};
+      var s = styles[dir] || 'background:#f3f4f6;color:#374151;border:1px solid #e5e7eb;';
+      return '<span style="' + s + 'padding:2px 10px;border-radius:20px;font-size:12px;font-weight:500;">' + (labels[dir] || dir || '—') + '</span>';
+    }
+
+    function practiceTypeLabel(pt) {
+      var map = {
+        therapist:'Therapist', doctor:'Doctor', bodyworker:'Bodyworker',
+        acupuncturist:'Acupuncturist', naturopath:'Naturopath',
+        psychiatrist:'Psychiatrist', coach:'Coach', other:'Other'
+      };
+      return map[pt] || pt || '—';
+    }
+
+    function renderTable(data) {
+      var tbody = document.getElementById('referralsTableBody');
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="admin-table-empty">No referral partners found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(function(r) {
+        var lastContact = r.last_contact ? r.last_contact.slice(0,10) : '—';
+        return '<tr>' +
+          '<td style="font-weight:500;">' + (r.full_name || '—') + '</td>' +
+          '<td>' + practiceTypeLabel(r.practice_type) + '</td>' +
+          '<td>' + (r.specialty || '—') + '</td>' +
+          '<td>' + directionBadge(r.referral_direction) + '</td>' +
+          '<td style="text-align:center;">' + (r.clients_referred || 0) + '</td>' +
+          '<td>' + lastContact + '</td>' +
+          '<td>' +
+            '<button class="admin-btn admin-btn-sm admin-btn-ghost" onclick="openModal(' + JSON.stringify(r).replace(/"/g,'&quot;') + ')">Edit</button> ' +
+            '<button class="admin-btn admin-btn-sm admin-btn-ghost" style="color:#dc2626;" onclick="archiveReferral(\'' + r.id + '\')">Archive</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function applyFilter() {
+      var q = document.getElementById('searchInput').value.toLowerCase();
+      var filtered = allReferrals.filter(function(r) {
+        if (currentFilter !== 'all' && r.referral_direction !== currentFilter) return false;
+        if (q) {
+          var haystack = ((r.full_name||'') + ' ' + (r.specialty||'') + ' ' + (r.organization||'') + ' ' + (r.practice_type||'')).toLowerCase();
+          if (!haystack.includes(q)) return false;
+        }
+        return true;
+      });
+      renderTable(filtered);
+    }
+
+    function loadReferrals() {
+      supabase.from('referral_network')
+        .select('*')
+        .eq('archived', false)
+        .order('full_name')
+        .then(function(res) {
+          if (res.error) {
+            if (res.error.code === '42P01') {
+              document.getElementById('referralsTableBody').innerHTML = '<tr><td colspan="7" class="admin-table-empty">Referral network table not found. Run the database migration to create it.</td></tr>';
+            } else {
+              showToast('Error loading referrals: ' + res.error.message, 'error');
+              document.getElementById('referralsTableBody').innerHTML = '<tr><td colspan="7" class="admin-table-empty">Error loading referral partners.</td></tr>';
+            }
+            return;
+          }
+          allReferrals = res.data || [];
+          applyFilter();
+        });
+    }
+
+    window.openModal = function(item) {
+      document.getElementById('modalTitle').textContent = item ? 'Edit Referral Partner' : 'Add Referral Partner';
+      document.getElementById('modalSave').textContent = item ? 'Save Changes' : 'Save Partner';
+      document.getElementById('fieldId').value = item ? item.id : '';
+      document.getElementById('fieldFullName').value = item ? (item.full_name || '') : '';
+      document.getElementById('fieldPracticeType').value = item ? (item.practice_type || 'therapist') : 'therapist';
+      document.getElementById('fieldEmail').value = item ? (item.email || '') : '';
+      document.getElementById('fieldPhone').value = item ? (item.phone || '') : '';
+      document.getElementById('fieldSpecialty').value = item ? (item.specialty || '') : '';
+      document.getElementById('fieldOrganization').value = item ? (item.organization || '') : '';
+      document.getElementById('fieldLocation').value = item ? (item.location || '') : '';
+      document.getElementById('fieldReferralDirection').value = item ? (item.referral_direction || 'inbound') : 'inbound';
+      document.getElementById('fieldClientsReferred').value = item ? (item.clients_referred || 0) : 0;
+      document.getElementById('fieldRelationshipNotes').value = item ? (item.relationship_notes || '') : '';
+      document.getElementById('fieldLastContact').value = item ? (item.last_contact ? item.last_contact.slice(0,10) : '') : '';
+      document.getElementById('modalOverlay').style.display = 'flex';
+    };
+
+    window.closeModal = function() {
+      document.getElementById('modalOverlay').style.display = 'none';
+    };
+
+    window.archiveReferral = function(id) {
+      if (!confirm('Archive this referral partner?')) return;
+      supabase.from('referral_network').update({archived: true}).eq('id', id).then(function(res) {
+        if (res.error) { showToast('Error: ' + res.error.message, 'error'); return; }
+        showToast('Referral partner archived.', 'success');
+        loadReferrals();
+      });
+    };
+
+    function saveReferral() {
+      var id = document.getElementById('fieldId').value;
+      var fullName = document.getElementById('fieldFullName').value.trim();
+      if (!fullName) { showToast('Full name is required.', 'error'); return; }
+
+      var payload = {
+        full_name: fullName,
+        practice_type: document.getElementById('fieldPracticeType').value,
+        email: document.getElementById('fieldEmail').value.trim() || null,
+        phone: document.getElementById('fieldPhone').value.trim() || null,
+        specialty: document.getElementById('fieldSpecialty').value.trim() || null,
+        organization: document.getElementById('fieldOrganization').value.trim() || null,
+        location: document.getElementById('fieldLocation').value.trim() || null,
+        referral_direction: document.getElementById('fieldReferralDirection').value,
+        clients_referred: parseInt(document.getElementById('fieldClientsReferred').value, 10) || 0,
+        relationship_notes: document.getElementById('fieldRelationshipNotes').value.trim() || null,
+        last_contact: document.getElementById('fieldLastContact').value || null
+      };
+
+      var query = id
+        ? supabase.from('referral_network').update(payload).eq('id', id)
+        : supabase.from('referral_network').insert(payload);
+
+      query.then(function(res) {
+        if (res.error) { showToast('Error: ' + res.error.message, 'error'); return; }
+        showToast(id ? 'Partner updated.' : 'Partner added.', 'success');
+        closeModal();
+        loadReferrals();
+      });
+    }
+
+    document.getElementById('btnNewReferral').addEventListener('click', function() { openModal(null); });
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('modalCancel').addEventListener('click', closeModal);
+    document.getElementById('modalSave').addEventListener('click', saveReferral);
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    document.getElementById('searchInput').addEventListener('input', applyFilter);
+
+    document.querySelectorAll('.admin-filter-tab').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.admin-filter-tab').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        applyFilter();
+      });
+    });
+
+    loadReferrals();
+  });
+  </script>
+</body>
+</html>

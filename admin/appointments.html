@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Calendar &amp; Scheduling · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html" class="active">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <h1>Calendar &amp; Scheduling</h1>
+        <p>Appointments and session scheduling</p>
+      </div>
+
+      <div class="admin-toolbar">
+        <input class="admin-toolbar__search" type="text" id="searchInput" placeholder="Search appointments…">
+        <div class="admin-toolbar__actions">
+          <button class="btn-sm btn-primary" id="newAppointmentBtn">+ New Appointment</button>
+        </div>
+      </div>
+
+      <div class="admin-filters">
+        <button class="admin-filter-btn active" data-filter="all">All</button>
+        <button class="admin-filter-btn" data-filter="upcoming">Upcoming</button>
+        <button class="admin-filter-btn" data-filter="today">Today</button>
+        <button class="admin-filter-btn" data-filter="past">Past</button>
+        <button class="admin-filter-btn" data-filter="cancelled">Cancelled</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="appointmentsTable">
+          <thead>
+            <tr>
+              <th>Date / Time</th>
+              <th>Client</th>
+              <th>Offering</th>
+              <th>Duration</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="appointmentsBody">
+            <tr id="loadingRow">
+              <td colspan="6" style="text-align:center;padding:32px;color:var(--aap-text-dim);">Loading…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="admin-empty" id="emptyState" style="display:none;">
+        <div class="admin-empty__icon">📅</div>
+        <div class="admin-empty__text">No appointments yet</div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div class="admin-modal" id="appointmentModal">
+    <div class="admin-modal__backdrop" id="modalBackdrop"></div>
+    <div class="admin-modal__card">
+      <div class="admin-modal__title" id="modalTitle">Appointment</div>
+      <form class="admin-modal__form" id="appointmentForm" onsubmit="return false;">
+        <input type="hidden" id="fieldId">
+
+        <div class="admin-modal__field">
+          <label for="fieldClient">Client</label>
+          <select id="fieldClient" required>
+            <option value="">— Select Client —</option>
+          </select>
+        </div>
+
+        <div class="admin-modal__field">
+          <label for="fieldService">Offering</label>
+          <select id="fieldService">
+            <option value="">— No specific offering —</option>
+          </select>
+        </div>
+
+        <div class="admin-modal__field">
+          <label for="fieldStartTime">Date &amp; Time</label>
+          <input type="datetime-local" id="fieldStartTime" required>
+        </div>
+
+        <div class="admin-modal__row">
+          <div class="admin-modal__field">
+            <label for="fieldDuration">Duration (minutes)</label>
+            <input type="number" id="fieldDuration" value="60" min="15" step="30">
+          </div>
+          <div class="admin-modal__field">
+            <label for="fieldStatus">Status</label>
+            <select id="fieldStatus">
+              <option value="scheduled">Scheduled</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="no_show">No Show</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-modal__field">
+          <label for="fieldLocation">Location</label>
+          <input type="text" id="fieldLocation" placeholder="In person / Topanga Canyon, video, etc.">
+        </div>
+
+        <div class="admin-modal__field">
+          <label for="fieldNotes">Notes</label>
+          <textarea id="fieldNotes" rows="3" placeholder="Session notes, preparation reminders…"></textarea>
+        </div>
+
+        <div class="admin-modal__actions">
+          <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn-sm btn-primary" id="saveBtn">Save Appointment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allAppointments = [];
+    var currentFilter = 'all';
+    var searchTerm = '';
+
+    function statusBadge(status) {
+      var map = {
+        scheduled:  ['#fef3c7','#92400e','Scheduled'],
+        confirmed:  ['#dbeafe','#1d4ed8','Confirmed'],
+        completed:  ['#dcfce7','#166534','Completed'],
+        cancelled:  ['#f3f4f6','#6b7280','Cancelled'],
+        no_show:    ['#fef2f2','#991b1b','No Show']
+      };
+      var s = map[status] || ['#f3f4f6','#6b7280', status || '—'];
+      return '<span class="admin-badge" style="background:'+s[0]+';color:'+s[1]+'">' + s[2] + '</span>';
+    }
+
+    function fmtDateTime(iso) {
+      if (!iso) return '—';
+      var d = new Date(iso);
+      if (isNaN(d)) return iso;
+      return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' }) +
+             ' · ' + d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
+    }
+
+    function fmtDuration(mins) {
+      if (!mins) return '—';
+      return mins + ' min';
+    }
+
+    function isSameDay(iso, date) {
+      return iso && iso.startsWith(date);
+    }
+
+    function renderAppointments() {
+      var now = new Date().toISOString();
+      var todayDate = now.split('T')[0];
+
+      var filtered = allAppointments.filter(function(a) {
+        if (currentFilter === 'upcoming') {
+          if (!a.start_time || a.start_time <= now) return false;
+        } else if (currentFilter === 'today') {
+          if (!isSameDay(a.start_time, todayDate)) return false;
+        } else if (currentFilter === 'past') {
+          if (!a.start_time || a.start_time >= now || a.status === 'cancelled') return false;
+        } else if (currentFilter === 'cancelled') {
+          if (a.status !== 'cancelled') return false;
+        }
+
+        if (searchTerm) {
+          var haystack = ((a.client_name || '') + ' ' + (a.service_name || '') + ' ' + (a.location || '')).toLowerCase();
+          if (haystack.indexOf(searchTerm) === -1) return false;
+        }
+        return true;
+      });
+
+      var tbody = document.getElementById('appointmentsBody');
+      var empty = document.getElementById('emptyState');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        document.getElementById('appointmentsTable').style.display = 'none';
+        return;
+      }
+
+      empty.style.display = 'none';
+      document.getElementById('appointmentsTable').style.display = '';
+
+      tbody.innerHTML = filtered.map(function(a) {
+        return '<tr>' +
+          '<td style="font-size:13px;white-space:nowrap">' + fmtDateTime(a.start_time) + '</td>' +
+          '<td style="font-weight:600;color:var(--aap-text)">' + (a.client_name || '—') + '</td>' +
+          '<td>' + (a.service_name || '—') + '</td>' +
+          '<td>' + fmtDuration(a.duration_minutes) + '</td>' +
+          '<td>' + statusBadge(a.status) + '</td>' +
+          '<td><div class="admin-table__actions">' +
+            '<button onclick="openModal(' + JSON.stringify(a).replace(/"/g,'&quot;') + ')">Edit</button>' +
+            '<button onclick="cancelAppointment(\'' + a.id + '\')">Cancel</button>' +
+          '</div></td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function loadAppointments() {
+      supabase.from('appointments')
+        .select('*, clients(full_name), services(name)')
+        .order('start_time', { ascending: false })
+        .then(function(res) {
+          var lr = document.getElementById('loadingRow');
+          if (lr) lr.remove();
+          if (res.error) { showToast('Could not load appointments: ' + res.error.message, 'error'); return; }
+          allAppointments = (res.data || []).map(function(a) {
+            return Object.assign({}, a, {
+              client_name:  a.clients  ? a.clients.full_name : null,
+              service_name: a.services ? a.services.name    : null
+            });
+          });
+          renderAppointments();
+        });
+    }
+
+    function loadClientsDropdown() {
+      supabase.from('clients').select('id, full_name').eq('is_archived', false).order('full_name')
+        .then(function(res) {
+          if (res.error || !res.data) return;
+          var sel = document.getElementById('fieldClient');
+          res.data.forEach(function(c) {
+            var o = document.createElement('option');
+            o.value = c.id; o.textContent = c.full_name;
+            sel.appendChild(o);
+          });
+        });
+    }
+
+    function loadServicesDropdown() {
+      supabase.from('services').select('id, name').eq('is_active', true).order('name')
+        .then(function(res) {
+          if (res.error || !res.data) return;
+          var sel = document.getElementById('fieldService');
+          res.data.forEach(function(s) {
+            var o = document.createElement('option');
+            o.value = s.id; o.textContent = s.name;
+            sel.appendChild(o);
+          });
+        });
+    }
+
+    window.openModal = function(item) {
+      document.getElementById('fieldId').value = item ? item.id : '';
+      document.getElementById('modalTitle').textContent = item ? 'Edit Appointment' : 'New Appointment';
+      document.getElementById('fieldClient').value = item ? (item.client_id || '') : '';
+      document.getElementById('fieldService').value = item ? (item.service_id || '') : '';
+
+      // Convert ISO to datetime-local format
+      var startVal = '';
+      if (item && item.start_time) {
+        startVal = item.start_time.slice(0, 16); // "YYYY-MM-DDTHH:mm"
+      }
+      document.getElementById('fieldStartTime').value = startVal;
+      document.getElementById('fieldDuration').value = item ? (item.duration_minutes || 60) : 60;
+      document.getElementById('fieldStatus').value = item ? (item.status || 'scheduled') : 'scheduled';
+      document.getElementById('fieldLocation').value = item ? (item.location || '') : '';
+      document.getElementById('fieldNotes').value = item ? (item.notes || '') : '';
+      document.getElementById('appointmentModal').classList.add('admin-modal--open');
+    };
+
+    window.closeModal = function() {
+      document.getElementById('appointmentModal').classList.remove('admin-modal--open');
+    };
+
+    window.cancelAppointment = function(id) {
+      if (!confirm('Mark this appointment as cancelled?')) return;
+      supabase.from('appointments').update({ status: 'cancelled' }).eq('id', id)
+        .then(function(res) {
+          if (res.error) { showToast('Error: ' + res.error.message, 'error'); return; }
+          showToast('Appointment cancelled', 'success');
+          var appt = allAppointments.find(function(a){ return a.id === id; });
+          if (appt) appt.status = 'cancelled';
+          renderAppointments();
+        });
+    };
+
+    function saveAppointment() {
+      var id = document.getElementById('fieldId').value;
+      var payload = {
+        client_id:        document.getElementById('fieldClient').value || null,
+        service_id:       document.getElementById('fieldService').value || null,
+        start_time:       document.getElementById('fieldStartTime').value || null,
+        duration_minutes: parseInt(document.getElementById('fieldDuration').value) || 60,
+        status:           document.getElementById('fieldStatus').value,
+        location:         document.getElementById('fieldLocation').value.trim(),
+        notes:            document.getElementById('fieldNotes').value.trim()
+      };
+
+      var btn = document.getElementById('saveBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+
+      var op = id
+        ? supabase.from('appointments').update(payload).eq('id', id)
+        : supabase.from('appointments').insert(payload);
+
+      op.then(function(res) {
+        btn.disabled = false; btn.textContent = 'Save Appointment';
+        if (res.error) { showToast('Error: ' + res.error.message, 'error'); return; }
+        showToast(id ? 'Appointment updated' : 'Appointment created', 'success');
+        closeModal();
+        loadAppointments();
+      });
+    }
+
+    // Events
+    document.getElementById('newAppointmentBtn').addEventListener('click', function() { openModal(null); });
+    document.getElementById('cancelBtn').addEventListener('click', closeModal);
+    document.getElementById('modalBackdrop').addEventListener('click', closeModal);
+    document.getElementById('appointmentForm').addEventListener('submit', saveAppointment);
+
+    document.querySelectorAll('.admin-filter-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.admin-filter-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderAppointments();
+      });
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+      searchTerm = this.value.trim().toLowerCase();
+      renderAppointments();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    loadClientsDropdown();
+    loadServicesDropdown();
+    loadAppointments();
+  });
+  </script>
+</body>
+</html>

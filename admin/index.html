@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Dashboard · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+</head>
+<body>
+
+  <!-- ── Sidebar ── -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="active">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <h1>Command Center</h1>
+        <p>The Animist Apothecary — practice management dashboard</p>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="admin-stats" id="statsRow">
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">👤</div>
+          <div class="admin-stat-value" id="stat-clients">...</div>
+          <div class="admin-stat-label">Total Clients</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">📅</div>
+          <div class="admin-stat-value" id="stat-appointments">...</div>
+          <div class="admin-stat-label">Upcoming Appointments</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">🌀</div>
+          <div class="admin-stat-value" id="stat-arcs">...</div>
+          <div class="admin-stat-label">Active Arcs</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">🧾</div>
+          <div class="admin-stat-value" id="stat-invoices">...</div>
+          <div class="admin-stat-label">Pending Invoices</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">✈️</div>
+          <div class="admin-stat-value" id="stat-travel">...</div>
+          <div class="admin-stat-label">Upcoming Travel</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">🎤</div>
+          <div class="admin-stat-value" id="stat-speaking">...</div>
+          <div class="admin-stat-label">Speaking Engagements</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">🌍</div>
+          <div class="admin-stat-value" id="stat-network">...</div>
+          <div class="admin-stat-label">Network Contacts</div>
+        </div>
+      </div>
+
+      <!-- CLIENT DOSSIER -->
+      <h3 style="margin: 40px 0 16px; font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px;">Client Dossier</h3>
+      <div class="admin-cards">
+        <a class="admin-card" href="clients.html">
+          <div class="admin-card-icon">👤</div>
+          <div class="admin-card-title">Clients</div>
+          <div class="admin-card-desc">Full client records and history</div>
+        </a>
+        <a class="admin-card" href="pipeline.html">
+          <div class="admin-card-icon">🔮</div>
+          <div class="admin-card-title">Pipeline</div>
+          <div class="admin-card-desc">Track clients through stages</div>
+        </a>
+        <a class="admin-card" href="intake-forms.html">
+          <div class="admin-card-icon">📋</div>
+          <div class="admin-card-title">Intake Forms</div>
+          <div class="admin-card-desc">Review form submissions</div>
+        </a>
+        <a class="admin-card" href="session-notes.html">
+          <div class="admin-card-icon">📝</div>
+          <div class="admin-card-title">Session Notes</div>
+          <div class="admin-card-desc">Session records and follow-ups</div>
+        </a>
+        <a class="admin-card" href="integration.html">
+          <div class="admin-card-icon">🌿</div>
+          <div class="admin-card-title">Aftercare &amp; Integration</div>
+          <div class="admin-card-desc">Integration plans and aftercare</div>
+        </a>
+        <a class="admin-card" href="agreements.html">
+          <div class="admin-card-icon">📜</div>
+          <div class="admin-card-title">Agreements</div>
+          <div class="admin-card-desc">Client documents and consents</div>
+        </a>
+      </div>
+
+      <!-- PRACTICE -->
+      <h3 style="margin: 40px 0 16px; font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px;">Practice</h3>
+      <div class="admin-cards">
+        <a class="admin-card" href="appointments.html">
+          <div class="admin-card-icon">📅</div>
+          <div class="admin-card-title">Calendar &amp; Scheduling</div>
+          <div class="admin-card-desc">Appointments and availability</div>
+        </a>
+        <a class="admin-card" href="services.html">
+          <div class="admin-card-icon">✨</div>
+          <div class="admin-card-title">Offerings</div>
+          <div class="admin-card-desc">Services and offerings</div>
+        </a>
+        <a class="admin-card" href="mentorship.html">
+          <div class="admin-card-icon">🌀</div>
+          <div class="admin-card-title">Mentorship Arcs</div>
+          <div class="admin-card-desc">Developmental containers</div>
+        </a>
+        <a class="admin-card" href="payments.html">
+          <div class="admin-card-icon">💳</div>
+          <div class="admin-card-title">Payments</div>
+          <div class="admin-card-desc">Payment records</div>
+        </a>
+        <a class="admin-card" href="invoices.html">
+          <div class="admin-card-icon">🧾</div>
+          <div class="admin-card-title">Invoices</div>
+          <div class="admin-card-desc">Invoice management</div>
+        </a>
+      </div>
+
+      <!-- COMMUNICATIONS -->
+      <h3 style="margin: 40px 0 16px; font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px;">Communications</h3>
+      <div class="admin-cards">
+        <a class="admin-card" href="emails.html">
+          <div class="admin-card-icon">✉️</div>
+          <div class="admin-card-title">Email Center</div>
+          <div class="admin-card-desc">Email history and compose</div>
+        </a>
+      </div>
+
+      <!-- NETWORK -->
+      <h3 style="margin: 40px 0 16px; font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px;">Network</h3>
+      <div class="admin-cards">
+        <a class="admin-card" href="collaborators.html">
+          <div class="admin-card-icon">🤝</div>
+          <div class="admin-card-title">Collaborators</div>
+          <div class="admin-card-desc">Co-facilitators and allies</div>
+        </a>
+        <a class="admin-card" href="referrals.html">
+          <div class="admin-card-icon">🔗</div>
+          <div class="admin-card-title">Referral Network</div>
+          <div class="admin-card-desc">Referral partners</div>
+        </a>
+        <a class="admin-card" href="vip-contacts.html">
+          <div class="admin-card-icon">⭐</div>
+          <div class="admin-card-title">People of Import</div>
+          <div class="admin-card-desc">VIP contacts and relations</div>
+        </a>
+        <a class="admin-card" href="regional-hubs.html">
+          <div class="admin-card-icon">🌍</div>
+          <div class="admin-card-title">Regional Hubs</div>
+          <div class="admin-card-desc">Community hubs worldwide</div>
+        </a>
+      </div>
+
+      <!-- ENGAGEMENTS -->
+      <h3 style="margin: 40px 0 16px; font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px;">Engagements</h3>
+      <div class="admin-cards">
+        <a class="admin-card" href="speaking.html">
+          <div class="admin-card-icon">🎤</div>
+          <div class="admin-card-title">Speaking Engagements</div>
+          <div class="admin-card-desc">Talks and events</div>
+        </a>
+        <a class="admin-card" href="venues.html">
+          <div class="admin-card-icon">🏛️</div>
+          <div class="admin-card-title">Venues</div>
+          <div class="admin-card-desc">Venue directory</div>
+        </a>
+        <a class="admin-card" href="travel.html">
+          <div class="admin-card-icon">✈️</div>
+          <div class="admin-card-title">Travel Itinerary</div>
+          <div class="admin-card-desc">Travel planning</div>
+        </a>
+      </div>
+
+      <!-- COMMUNITY -->
+      <h3 style="margin: 40px 0 16px; font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px;">Community</h3>
+      <div class="admin-cards">
+        <a class="admin-card" href="community-resources.html">
+          <div class="admin-card-icon">📚</div>
+          <div class="admin-card-title">Community Resources</div>
+          <div class="admin-card-desc">Client resource library</div>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var today = new Date().toISOString();
+    var todayDate = today.split('T')[0];
+
+    function setStat(id, val) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = (val !== null && val !== undefined) ? val : '—';
+    }
+
+    function safeCount(promise) {
+      return promise.then(function(res) {
+        return (res && res.count !== null && res.count !== undefined) ? res.count : 0;
+      }).catch(function() { return 0; });
+    }
+
+    Promise.all([
+      safeCount(supabase.from('clients').select('*', {count: 'exact', head: true}).eq('is_archived', false)),
+      safeCount(supabase.from('appointments').select('*', {count: 'exact', head: true}).gt('start_time', today)),
+      safeCount(supabase.from('mentorship_containers').select('*', {count: 'exact', head: true}).eq('status', 'active')),
+      safeCount(supabase.from('invoices').select('*', {count: 'exact', head: true}).in('status', ['draft', 'sent'])),
+      safeCount(supabase.from('travel_itinerary').select('*', {count: 'exact', head: true}).gte('start_date', todayDate).neq('status', 'cancelled')),
+      safeCount(supabase.from('speaking_engagements').select('*', {count: 'exact', head: true}).in('status', ['inquiry', 'confirmed', 'preparing'])),
+      safeCount(supabase.from('collaborators').select('*', {count: 'exact', head: true})),
+      safeCount(supabase.from('referral_network').select('*', {count: 'exact', head: true})),
+      safeCount(supabase.from('contacts_vip').select('*', {count: 'exact', head: true}))
+    ]).then(function(results) {
+      setStat('stat-clients', results[0]);
+      setStat('stat-appointments', results[1]);
+      setStat('stat-arcs', results[2]);
+      setStat('stat-invoices', results[3]);
+      setStat('stat-travel', results[4]);
+      setStat('stat-speaking', results[5]);
+      setStat('stat-network', results[6] + results[7] + results[8]);
+    });
+  });
+  </script>
+</body>
+</html>

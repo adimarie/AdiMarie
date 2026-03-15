@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Community Resources · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+  <style>
+    .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .filter-tab { padding: 6px 14px; border-radius: 20px; border: 1px solid #e5e7eb; background: #fff; color: #6b7280; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+    .filter-tab:hover { border-color: #9ca3af; color: #374151; }
+    .filter-tab.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .badge-blue { background: #eff6ff; color: #1d4ed8; }
+    .badge-green { background: #f0fdf4; color: #166534; }
+    .badge-teal { background: #f0fdfa; color: #0f766e; }
+    .badge-yellow { background: #fffbeb; color: #92400e; }
+    .badge-purple { background: #f5f3ff; color: #6d28d9; }
+    .badge-gray { background: #f3f4f6; color: #6b7280; }
+    .sort-hint { font-size: 13px; color: #6b7280; background: #f9fafb; border: 1px solid #e5e7eb; padding: 8px 16px; border-radius: 8px; display: none; margin-bottom: 12px; }
+    .sort-hint.visible { display: block; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: #fff; border-radius: 16px; padding: 32px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; margin: 0 0 24px; }
+    .modal-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group label { font-size: 13px; font-weight: 500; color: #374151; }
+    .form-group input, .form-group select, .form-group textarea { padding: 9px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; color: #111; background: #fff; transition: border-color 0.15s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #6b7280; }
+    .form-group textarea { resize: vertical; min-height: 60px; }
+    .form-group input[type="checkbox"] { width: auto; padding: 0; margin-top: 4px; }
+    .checkbox-row { flex-direction: row; align-items: center; gap: 10px; }
+    .checkbox-row label { margin: 0; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .btn { padding: 9px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
+    .btn-primary { background: #1a1a2e; color: #fff; }
+    .btn-primary:hover { background: #2d2d4e; }
+    .btn-secondary { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+    .btn-secondary:hover { background: #e5e7eb; }
+    .btn-danger { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .btn-danger:hover { background: #fee2e2; }
+  </style>
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html" class="active">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <h1>Community Resources</h1>
+        <p>Resource library for clients and community</p>
+      </div>
+
+      <div class="admin-toolbar">
+        <input class="admin-search" type="text" id="searchInput" placeholder="Search resources by title…">
+        <button class="btn btn-secondary" id="sortInfoBtn">Sort</button>
+        <button class="btn btn-primary" id="newResourceBtn">+ Add Resource</button>
+      </div>
+
+      <div class="sort-hint" id="sortHint">
+        Use the <strong>sort_order</strong> field to manually order resources. Lower numbers appear first.
+      </div>
+
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-cat="all">All</button>
+        <button class="filter-tab" data-cat="reading">Reading</button>
+        <button class="filter-tab" data-cat="practice">Practice</button>
+        <button class="filter-tab" data-cat="community">Community</button>
+        <button class="filter-tab" data-cat="referral">Referral</button>
+        <button class="filter-tab" data-cat="media">Media</button>
+        <button class="filter-tab" data-cat="tool">Tool</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="resourcesTable">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Access Level</th>
+              <th>Active</th>
+              <th>Sort Order</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="resourcesBody">
+            <tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="resourceModal">
+    <div class="modal-box">
+      <h2 class="modal-title" id="modalTitle">Add Resource</h2>
+      <input type="hidden" id="editResourceId">
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" id="fieldTitle" placeholder="Resource title">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="fieldDescription" rows="2" placeholder="Brief description of this resource…"></textarea>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="fieldCategory">
+            <option value="reading">Reading / Article</option>
+            <option value="practice">Practice / Exercise</option>
+            <option value="community">Community</option>
+            <option value="referral">Referral</option>
+            <option value="media">Media / Audio / Video</option>
+            <option value="tool">Tool</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Access Level</label>
+          <select id="fieldAccessLevel">
+            <option value="public">Public</option>
+            <option value="all_clients">All Clients</option>
+            <option value="active_clients">Active Clients</option>
+            <option value="arc_clients">Arc Clients Only</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>URL (optional)</label>
+        <input type="url" id="fieldUrl" placeholder="https://… Link to resource">
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Sort Order</label>
+          <input type="number" id="fieldSortOrder" value="0" placeholder="0 = first">
+        </div>
+        <div class="form-group checkbox-row" style="justify-content:center;">
+          <input type="checkbox" id="fieldIsActive" checked>
+          <label for="fieldIsActive">Active / visible to clients</label>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="modalSaveBtn">Save Resource</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allResources = [];
+    var activeFilter = 'all';
+    var searchQuery = '';
+
+    var catBadge = {
+      reading: 'badge-blue',
+      practice: 'badge-green',
+      community: 'badge-teal',
+      referral: 'badge-yellow',
+      media: 'badge-purple',
+      tool: 'badge-gray'
+    };
+    var catLabel = {
+      reading: 'Reading',
+      practice: 'Practice',
+      community: 'Community',
+      referral: 'Referral',
+      media: 'Media',
+      tool: 'Tool'
+    };
+    var accessBadge = {
+      public: 'badge-green',
+      all_clients: 'badge-blue',
+      active_clients: 'badge-yellow',
+      arc_clients: 'badge-purple'
+    };
+    var accessLabel = {
+      public: 'Public',
+      all_clients: 'All Clients',
+      active_clients: 'Active Clients',
+      arc_clients: 'Arc Clients'
+    };
+
+    document.getElementById('sortInfoBtn').addEventListener('click', function() {
+      var hint = document.getElementById('sortHint');
+      hint.classList.toggle('visible');
+    });
+
+    function renderTable(items) {
+      var tbody = document.getElementById('resourcesBody');
+      if (!items.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">No resources found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map(function(r) {
+        var cCls = catBadge[r.category] || 'badge-gray';
+        var cLbl = catLabel[r.category] || (r.category || '—');
+        var aCls = accessBadge[r.access_level] || 'badge-gray';
+        var aLbl = accessLabel[r.access_level] || (r.access_level || '—');
+        var activeBadge = r.is_active
+          ? '<span class="badge badge-green">Active</span>'
+          : '<span class="badge badge-gray">Hidden</span>';
+        return '<tr>' +
+          '<td><strong>' + escHtml(r.title || '—') + '</strong></td>' +
+          '<td><span class="badge ' + cCls + '">' + escHtml(cLbl) + '</span></td>' +
+          '<td><span class="badge ' + aCls + '">' + escHtml(aLbl) + '</span></td>' +
+          '<td>' + activeBadge + '</td>' +
+          '<td>' + (r.sort_order !== null && r.sort_order !== undefined ? r.sort_order : 0) + '</td>' +
+          '<td>' +
+            '<button class="btn btn-secondary" style="padding:4px 12px;font-size:12px;" onclick="openModal(\'' + r.id + '\')">Edit</button> ' +
+            '<button class="btn btn-danger" style="padding:4px 12px;font-size:12px;" onclick="archiveResource(\'' + r.id + '\')">Archive</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function applyFilters() {
+      var filtered = allResources;
+      if (activeFilter !== 'all') {
+        filtered = filtered.filter(function(r) { return r.category === activeFilter; });
+      }
+      if (searchQuery) {
+        var q = searchQuery.toLowerCase();
+        filtered = filtered.filter(function(r) {
+          return (r.title || '').toLowerCase().includes(q);
+        });
+      }
+      renderTable(filtered);
+    }
+
+    function loadResources() {
+      document.getElementById('resourcesBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>';
+      supabase.from('community_resources').select('*').eq('is_archived', false)
+        .order('sort_order', { ascending: true })
+        .order('title', { ascending: true })
+        .then(function(res) {
+          if (res.error) { showToast('Error loading resources: ' + res.error.message, 'error'); return; }
+          allResources = res.data || [];
+          applyFilters();
+        });
+    }
+
+    document.getElementById('filterTabs').addEventListener('click', function(e) {
+      if (e.target.classList.contains('filter-tab')) {
+        document.querySelectorAll('.filter-tab').forEach(function(b) { b.classList.remove('active'); });
+        e.target.classList.add('active');
+        activeFilter = e.target.dataset.cat;
+        applyFilters();
+      }
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      searchQuery = e.target.value.trim();
+      applyFilters();
+    });
+
+    function closeModal() { document.getElementById('resourceModal').classList.remove('open'); }
+
+    window.openModal = function(id) {
+      var r = id ? allResources.find(function(x) { return x.id === id; }) : null;
+      document.getElementById('editResourceId').value = r ? r.id : '';
+      document.getElementById('modalTitle').textContent = r ? 'Edit Resource' : 'Add Resource';
+      document.getElementById('fieldTitle').value = r ? (r.title || '') : '';
+      document.getElementById('fieldDescription').value = r ? (r.description || '') : '';
+      document.getElementById('fieldCategory').value = r ? (r.category || 'reading') : 'reading';
+      document.getElementById('fieldAccessLevel').value = r ? (r.access_level || 'public') : 'public';
+      document.getElementById('fieldUrl').value = r ? (r.url || '') : '';
+      document.getElementById('fieldSortOrder').value = r ? (r.sort_order !== null && r.sort_order !== undefined ? r.sort_order : 0) : 0;
+      document.getElementById('fieldIsActive').checked = r ? (r.is_active !== false) : true;
+      document.getElementById('resourceModal').classList.add('open');
+    };
+
+    document.getElementById('newResourceBtn').addEventListener('click', function() { openModal(null); });
+    document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
+    document.getElementById('resourceModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    function saveResource() {
+      var id = document.getElementById('editResourceId').value;
+      var payload = {
+        title: document.getElementById('fieldTitle').value.trim(),
+        description: document.getElementById('fieldDescription').value.trim(),
+        category: document.getElementById('fieldCategory').value,
+        access_level: document.getElementById('fieldAccessLevel').value,
+        url: document.getElementById('fieldUrl').value.trim() || null,
+        sort_order: parseInt(document.getElementById('fieldSortOrder').value) || 0,
+        is_active: document.getElementById('fieldIsActive').checked,
+        updated_at: new Date().toISOString()
+      };
+      var op;
+      if (id) {
+        op = supabase.from('community_resources').update(payload).eq('id', id);
+      } else {
+        payload.is_archived = false;
+        payload.created_at = new Date().toISOString();
+        op = supabase.from('community_resources').insert(payload);
+      }
+      op.then(function(res) {
+        if (res.error) { showToast('Error saving resource: ' + res.error.message, 'error'); return; }
+        showToast(id ? 'Resource updated.' : 'Resource added.', 'success');
+        closeModal();
+        loadResources();
+      });
+    }
+
+    window.archiveResource = function(id) {
+      if (!confirm('Archive this resource? It will be hidden from the main list.')) return;
+      supabase.from('community_resources').update({ is_archived: true, updated_at: new Date().toISOString() }).eq('id', id)
+        .then(function(res) {
+          if (res.error) { showToast('Error archiving resource: ' + res.error.message, 'error'); return; }
+          showToast('Resource archived.', 'success');
+          loadResources();
+        });
+    };
+
+    document.getElementById('modalSaveBtn').addEventListener('click', saveResource);
+
+    loadResources();
+  });
+  </script>
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Speaking Engagements · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+  <style>
+    .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .filter-tab { padding: 6px 14px; border-radius: 20px; border: 1px solid #e5e7eb; background: #fff; color: #6b7280; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+    .filter-tab:hover { border-color: #9ca3af; color: #374151; }
+    .filter-tab.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .badge-yellow { background: #fffbeb; color: #92400e; }
+    .badge-blue { background: #eff6ff; color: #1d4ed8; }
+    .badge-purple { background: #f5f3ff; color: #6d28d9; }
+    .badge-green { background: #f0fdf4; color: #166534; }
+    .badge-gray { background: #f3f4f6; color: #6b7280; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: #fff; border-radius: 16px; padding: 32px; width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; margin: 0 0 24px; }
+    .modal-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group label { font-size: 13px; font-weight: 500; color: #374151; }
+    .form-group input, .form-group select, .form-group textarea { padding: 9px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; color: #111; background: #fff; transition: border-color 0.15s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #6b7280; }
+    .form-group textarea { resize: vertical; min-height: 72px; }
+    .form-group input[type="checkbox"] { width: auto; padding: 0; margin-top: 4px; }
+    .checkbox-row { flex-direction: row; align-items: center; gap: 10px; }
+    .checkbox-row label { margin: 0; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .btn { padding: 9px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; border: none; transition: all 0.15s; }
+    .btn-primary { background: #1a1a2e; color: #fff; }
+    .btn-primary:hover { background: #2d2d4e; }
+    .btn-secondary { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+    .btn-secondary:hover { background: #e5e7eb; }
+    .btn-danger { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .btn-danger:hover { background: #fee2e2; }
+  </style>
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html" class="active">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-main-inner">
+
+      <div class="admin-page-header">
+        <h1>Speaking Engagements</h1>
+        <p>Talks, panels, workshops, and public appearances</p>
+      </div>
+
+      <div class="admin-toolbar">
+        <input class="admin-search" type="text" id="searchInput" placeholder="Search by title or event name…">
+        <button class="btn btn-primary" id="newEngBtn">+ Add Engagement</button>
+      </div>
+
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-status="all">All</button>
+        <button class="filter-tab" data-status="inquiry">Inquiry</button>
+        <button class="filter-tab" data-status="confirmed">Confirmed</button>
+        <button class="filter-tab" data-status="preparing">Preparing</button>
+        <button class="filter-tab" data-status="completed">Completed</button>
+        <button class="filter-tab" data-status="cancelled">Cancelled</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="engTable">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Event Name</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Compensation</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="engBody">
+            <tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="engModal">
+    <div class="modal-box" style="max-width:640px">
+      <h2 class="modal-title" id="modalTitle">Add Engagement</h2>
+      <input type="hidden" id="editEngId">
+      <div class="form-group">
+        <label>Talk / Topic Title</label>
+        <input type="text" id="fieldTitle" placeholder="Title of your talk or session">
+      </div>
+      <div class="form-group">
+        <label>Event Name</label>
+        <input type="text" id="fieldEventName" placeholder="Name of the event or conference">
+      </div>
+      <div class="form-group">
+        <label>Venue</label>
+        <select id="fieldVenueId">
+          <option value="">— TBD / No venue yet —</option>
+        </select>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Event Date</label>
+          <input type="date" id="fieldEventDate">
+        </div>
+        <div class="form-group">
+          <label>End Date (optional)</label>
+          <input type="date" id="fieldEventEndDate">
+        </div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Host Contact</label>
+          <input type="text" id="fieldHostContact" placeholder="Host name">
+        </div>
+        <div class="form-group">
+          <label>Host Email</label>
+          <input type="email" id="fieldHostEmail" placeholder="host@example.com">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Topic / Description</label>
+        <textarea id="fieldTopic" rows="3" placeholder="What will you be speaking about?"></textarea>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Audience Type</label>
+          <input type="text" id="fieldAudienceType" placeholder="e.g. Practitioners, General Public">
+        </div>
+        <div class="form-group">
+          <label>Expected Attendance</label>
+          <input type="number" id="fieldExpectedAttendance" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group">
+          <label>Compensation Type</label>
+          <select id="fieldCompensationType">
+            <option value="paid">Paid</option>
+            <option value="honorarium">Honorarium</option>
+            <option value="trade">Trade</option>
+            <option value="volunteer">Volunteer</option>
+            <option value="promotion">Promotion Only</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Amount in cents (if paid)</label>
+          <input type="number" id="fieldCompensationAmountCents" min="0" placeholder="e.g. 50000 = $500">
+        </div>
+      </div>
+      <div class="modal-grid-2">
+        <div class="form-group checkbox-row">
+          <input type="checkbox" id="fieldTravelCovered">
+          <label for="fieldTravelCovered">Travel covered</label>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="fieldStatus">
+            <option value="inquiry">Inquiry</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="preparing">Preparing</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="fieldNotes" rows="2" placeholder="Internal notes…"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="modalSaveBtn">Save Engagement</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    var allEngagements = [];
+    var activeFilter = 'all';
+    var searchQuery = '';
+
+    var statusBadge = {
+      inquiry: 'badge-yellow',
+      confirmed: 'badge-blue',
+      preparing: 'badge-purple',
+      completed: 'badge-green',
+      cancelled: 'badge-gray'
+    };
+    var statusLabel = { inquiry: 'Inquiry', confirmed: 'Confirmed', preparing: 'Preparing', completed: 'Completed', cancelled: 'Cancelled' };
+
+    function formatDate(iso) {
+      if (!iso) return '—';
+      var d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function formatCompensation(eng) {
+      if (eng.compensation_type === 'paid' || eng.compensation_type === 'honorarium') {
+        if (eng.compensation_amount_cents) {
+          return '$' + (eng.compensation_amount_cents / 100).toFixed(0);
+        }
+      }
+      var labels = { paid: 'Paid', honorarium: 'Honorarium', trade: 'Trade', volunteer: 'Volunteer', promotion: 'Promo Only' };
+      return labels[eng.compensation_type] || (eng.compensation_type || '—');
+    }
+
+    function renderTable(items) {
+      var tbody = document.getElementById('engBody');
+      if (!items.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">No engagements found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map(function(e) {
+        var sCls = statusBadge[e.status] || 'badge-gray';
+        var sLbl = statusLabel[e.status] || (e.status || '—');
+        return '<tr>' +
+          '<td><strong>' + escHtml(e.title || '—') + '</strong></td>' +
+          '<td>' + escHtml(e.event_name || '—') + '</td>' +
+          '<td>' + formatDate(e.event_date) + '</td>' +
+          '<td><span class="badge ' + sCls + '">' + escHtml(sLbl) + '</span></td>' +
+          '<td>' + escHtml(formatCompensation(e)) + '</td>' +
+          '<td>' +
+            '<button class="btn btn-secondary" style="padding:4px 12px;font-size:12px;" onclick="openModal(\'' + e.id + '\')">Edit</button> ' +
+            '<button class="btn btn-danger" style="padding:4px 12px;font-size:12px;" onclick="archiveEngagement(\'' + e.id + '\')">Archive</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function applyFilters() {
+      var filtered = allEngagements;
+      if (activeFilter !== 'all') {
+        filtered = filtered.filter(function(e) { return e.status === activeFilter; });
+      }
+      if (searchQuery) {
+        var q = searchQuery.toLowerCase();
+        filtered = filtered.filter(function(e) {
+          return (e.title || '').toLowerCase().includes(q) || (e.event_name || '').toLowerCase().includes(q);
+        });
+      }
+      renderTable(filtered);
+    }
+
+    function loadEngagements() {
+      document.getElementById('engBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#9ca3af;">Loading…</td></tr>';
+      supabase.from('speaking_engagements').select('*').eq('is_archived', false).order('event_date', { ascending: false })
+        .then(function(res) {
+          if (res.error) { showToast('Error loading engagements: ' + res.error.message, 'error'); return; }
+          allEngagements = res.data || [];
+          applyFilters();
+        });
+    }
+
+    function loadVenuesDropdown() {
+      supabase.from('venues').select('id, name, city').eq('is_archived', false).order('name', { ascending: true })
+        .then(function(res) {
+          var sel = document.getElementById('fieldVenueId');
+          var current = sel.value;
+          while (sel.options.length > 1) sel.remove(1);
+          (res.data || []).forEach(function(v) {
+            var opt = document.createElement('option');
+            opt.value = v.id;
+            opt.textContent = v.name + (v.city ? ' — ' + v.city : '');
+            sel.appendChild(opt);
+          });
+          if (current) sel.value = current;
+        });
+    }
+
+    document.getElementById('filterTabs').addEventListener('click', function(e) {
+      if (e.target.classList.contains('filter-tab')) {
+        document.querySelectorAll('.filter-tab').forEach(function(b) { b.classList.remove('active'); });
+        e.target.classList.add('active');
+        activeFilter = e.target.dataset.status;
+        applyFilters();
+      }
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      searchQuery = e.target.value.trim();
+      applyFilters();
+    });
+
+    function closeModal() { document.getElementById('engModal').classList.remove('open'); }
+
+    window.openModal = function(id) {
+      var e = id ? allEngagements.find(function(x) { return x.id === id; }) : null;
+      loadVenuesDropdown();
+      document.getElementById('editEngId').value = e ? e.id : '';
+      document.getElementById('modalTitle').textContent = e ? 'Edit Engagement' : 'Add Engagement';
+      document.getElementById('fieldTitle').value = e ? (e.title || '') : '';
+      document.getElementById('fieldEventName').value = e ? (e.event_name || '') : '';
+      document.getElementById('fieldVenueId').value = e ? (e.venue_id || '') : '';
+      document.getElementById('fieldEventDate').value = e ? (e.event_date || '') : '';
+      document.getElementById('fieldEventEndDate').value = e ? (e.event_end_date || '') : '';
+      document.getElementById('fieldHostContact').value = e ? (e.host_contact || '') : '';
+      document.getElementById('fieldHostEmail').value = e ? (e.host_email || '') : '';
+      document.getElementById('fieldTopic').value = e ? (e.topic || '') : '';
+      document.getElementById('fieldAudienceType').value = e ? (e.audience_type || '') : '';
+      document.getElementById('fieldExpectedAttendance').value = e ? (e.expected_attendance || '') : '';
+      document.getElementById('fieldCompensationType').value = e ? (e.compensation_type || 'paid') : 'paid';
+      document.getElementById('fieldCompensationAmountCents').value = e ? (e.compensation_amount_cents || '') : '';
+      document.getElementById('fieldTravelCovered').checked = e ? !!e.travel_covered : false;
+      document.getElementById('fieldStatus').value = e ? (e.status || 'inquiry') : 'inquiry';
+      document.getElementById('fieldNotes').value = e ? (e.notes || '') : '';
+      document.getElementById('engModal').classList.add('open');
+    };
+
+    document.getElementById('newEngBtn').addEventListener('click', function() { openModal(null); });
+    document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
+    document.getElementById('engModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    function saveEngagement() {
+      var id = document.getElementById('editEngId').value;
+      var venueId = document.getElementById('fieldVenueId').value;
+      var amountRaw = document.getElementById('fieldCompensationAmountCents').value;
+      var payload = {
+        title: document.getElementById('fieldTitle').value.trim(),
+        event_name: document.getElementById('fieldEventName').value.trim(),
+        venue_id: venueId || null,
+        event_date: document.getElementById('fieldEventDate').value || null,
+        event_end_date: document.getElementById('fieldEventEndDate').value || null,
+        host_contact: document.getElementById('fieldHostContact').value.trim(),
+        host_email: document.getElementById('fieldHostEmail').value.trim(),
+        topic: document.getElementById('fieldTopic').value.trim(),
+        audience_type: document.getElementById('fieldAudienceType').value.trim(),
+        expected_attendance: parseInt(document.getElementById('fieldExpectedAttendance').value) || null,
+        compensation_type: document.getElementById('fieldCompensationType').value,
+        compensation_amount_cents: amountRaw ? parseInt(amountRaw) : null,
+        travel_covered: document.getElementById('fieldTravelCovered').checked,
+        status: document.getElementById('fieldStatus').value,
+        notes: document.getElementById('fieldNotes').value.trim(),
+        updated_at: new Date().toISOString()
+      };
+      var op;
+      if (id) {
+        op = supabase.from('speaking_engagements').update(payload).eq('id', id);
+      } else {
+        payload.is_archived = false;
+        payload.created_at = new Date().toISOString();
+        op = supabase.from('speaking_engagements').insert(payload);
+      }
+      op.then(function(res) {
+        if (res.error) { showToast('Error saving engagement: ' + res.error.message, 'error'); return; }
+        showToast(id ? 'Engagement updated.' : 'Engagement added.', 'success');
+        closeModal();
+        loadEngagements();
+      });
+    }
+
+    window.archiveEngagement = function(id) {
+      if (!confirm('Archive this engagement? It will be hidden from the main list.')) return;
+      supabase.from('speaking_engagements').update({ is_archived: true, updated_at: new Date().toISOString() }).eq('id', id)
+        .then(function(res) {
+          if (res.error) { showToast('Error archiving engagement: ' + res.error.message, 'error'); return; }
+          showToast('Engagement archived.', 'success');
+          loadEngagements();
+        });
+    };
+
+    document.getElementById('modalSaveBtn').addEventListener('click', saveEngagement);
+
+    loadEngagements();
+  });
+  </script>
+</body>
+</html>

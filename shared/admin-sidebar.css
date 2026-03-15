@@ -1,0 +1,252 @@
+/* ============================================================
+   The Animist Apothecary — Admin Sidebar Layout
+   Include AFTER shared/admin.css on all admin pages
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body {
+  display: flex;
+  background: var(--aap-bg);
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--aap-text);
+}
+
+/* ── Sidebar ── */
+.admin-sidebar {
+  width: 248px;
+  flex-shrink: 0;
+  background: #3D0C17;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.admin-main {
+  margin-left: 248px;
+  flex: 1;
+  min-height: 100vh;
+}
+
+.admin-main-inner {
+  padding: 36px 40px;
+  max-width: 1260px;
+}
+
+/* ── Sidebar Brand ── */
+.sidebar-brand {
+  padding: 22px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+.sidebar-brand a {
+  display: block;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+}
+.sidebar-brand a em {
+  color: var(--aap-gold);
+  font-style: normal;
+}
+.sidebar-brand-sub {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-top: 5px;
+}
+
+/* ── Sidebar Nav ── */
+.sidebar-nav {
+  flex: 1;
+  padding: 10px 0 8px;
+  overflow-y: auto;
+}
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 20px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.sidebar-nav a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.06);
+}
+.sidebar-nav a.active {
+  color: #fff;
+  background: rgba(212,168,67,0.15);
+  border-right: 3px solid var(--aap-gold);
+}
+.sidebar-section-label {
+  padding: 14px 20px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+.sidebar-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 6px 0;
+}
+
+/* ── Sidebar User Section ── */
+.sidebar-user {
+  padding: 14px 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+.sidebar-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sidebar-user-email {
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sidebar-signout {
+  width: 100%;
+  padding: 7px 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  color: rgba(255,255,255,0.6);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.sidebar-signout:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+/* ── Page Header ── */
+.admin-page-header { margin-bottom: 28px; }
+.admin-page-header h1 {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--aap-accent-deep);
+  margin: 0 0 4px;
+}
+.admin-page-header p {
+  font-size: 14px;
+  color: var(--aap-text-dim);
+  margin: 0;
+}
+
+/* ── Pipeline / Kanban ── */
+.pipeline-board {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  align-items: flex-start;
+}
+.pipeline-col {
+  min-width: 200px;
+  max-width: 200px;
+  background: var(--aap-surface);
+  border: 1px solid var(--aap-border);
+  border-radius: var(--aap-radius-lg);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.pipeline-col-header {
+  padding: 12px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pipeline-col-body {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 100px;
+}
+.pipeline-card {
+  background: var(--aap-bg-warm);
+  border: 1px solid var(--aap-border-light);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pipeline-card:hover {
+  box-shadow: var(--aap-shadow-md);
+  transform: translateY(-1px);
+}
+.pipeline-card-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--aap-text);
+  margin-bottom: 2px;
+}
+.pipeline-card-sub {
+  font-size: 11px;
+  color: var(--aap-text-dim);
+}
+.pipeline-card-date {
+  font-size: 10px;
+  color: var(--aap-text-muted);
+  margin-top: 5px;
+}
+.pipeline-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0,0,0,0.25);
+}
+
+/* ── Toast position fix ── */
+.toast-notification { top: 24px !important; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .admin-sidebar { width: 200px; }
+  .admin-main { margin-left: 200px; }
+  .admin-main-inner { padding: 24px 20px; }
+}
+@media (max-width: 640px) {
+  .admin-sidebar { display: none; }
+  .admin-main { margin-left: 0; }
+}
