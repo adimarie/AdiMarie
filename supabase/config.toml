@@ -149,7 +149,15 @@ enabled = true
 # in emails.
 site_url = "http://127.0.0.1:3000"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+# NOTE: Production redirect URLs must also be added manually in the Supabase dashboard:
+#   Authentication → URL Configuration → Redirect URLs
+#   Add both: https://theanimistapothecary.com/auth/callback.html
+#             https://theanimistapothecary.com/portal/callback.html
+additional_redirect_urls = [
+  "https://127.0.0.1:3000",
+  "https://theanimistapothecary.com/auth/callback.html",
+  "https://theanimistapothecary.com/portal/callback.html"
+]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to the local API URL (http://127.0.0.1:<port>/auth/v1).
