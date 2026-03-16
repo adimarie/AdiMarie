@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Practice Analytics · Admin · The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/admin.css">
+  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+  <style>
+    /* Analytics tabs */
+    .analytics-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; }
+    .analytics-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .analytics-tab { padding: 9px 22px; border: 1.5px solid var(--aap-border); border-radius: 100px; background: none; font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 500; color: var(--aap-text-dim); cursor: pointer; transition: all 0.2s; }
+    .analytics-tab:hover { border-color: var(--aap-gold); color: var(--aap-text); }
+    .analytics-tab.active { background: var(--aap-gold); border-color: var(--aap-gold); color: #fff; }
+    .analytics-nav { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
+    .analytics-nav button { padding: 7px 16px; border: 1px solid var(--aap-border); border-radius: 8px; background: var(--aap-surface); font-family: inherit; font-size: 13px; font-weight: 600; color: var(--aap-text-dim); cursor: pointer; transition: all 0.2s; }
+    .analytics-nav button:hover { border-color: var(--aap-gold); color: var(--aap-text); }
+    #periodLabel { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 500; color: var(--aap-text); flex: 1; text-align: center; }
+
+    /* Section headers */
+    .analytics-section { margin-bottom: 40px; }
+    .analytics-section-header { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 500; color: var(--aap-accent-deep); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--aap-border); }
+
+    /* Two-col grid */
+    .analytics-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 900px) { .analytics-two-col { grid-template-columns: 1fr; } }
+
+    /* Metric cards */
+    .metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 40px; }
+    @media (max-width: 1100px) { .metrics-row { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .metrics-row { grid-template-columns: 1fr; } }
+    .metric-card { background: var(--aap-surface); border: 1px solid var(--aap-border); border-radius: var(--aap-radius-lg); padding: 24px; }
+    .metric-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--aap-text-dim); margin-bottom: 8px; }
+    .metric-value { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 500; color: var(--aap-text); line-height: 1; margin-bottom: 10px; }
+    .metric-change { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 100px; }
+    .metric-change.up { background: #dcfce7; color: #166534; }
+    .metric-change.down { background: #fef2f2; color: #991b1b; }
+    .metric-change.flat { background: #f3f4f6; color: #6b7280; }
+    .sparkline { display: flex; align-items: flex-end; gap: 2px; height: 32px; margin-top: 12px; }
+    .sparkline-bar { width: 4px; background: rgba(212,168,67,0.3); border-radius: 2px; transition: height 0.3s ease; }
+    .sparkline-bar.current { background: var(--aap-gold); }
+
+    /* Bar chart */
+    .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 180px; padding-bottom: 24px; position: relative; }
+    .bar-chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; justify-content: flex-end; }
+    .bar-chart-bar { width: 100%; background: linear-gradient(to top, #5B7553, #7A9470); border-radius: 4px 4px 0 0; min-height: 2px; transition: height 0.5s ease; cursor: default; }
+    .bar-chart-label { font-size: 10px; color: var(--aap-text-dim); text-align: center; white-space: nowrap; }
+
+    /* Donut chart */
+    .donut-wrap { position: relative; width: 160px; height: 160px; border-radius: 50%; margin: 0 auto 16px; }
+    .donut-center { position: absolute; inset: 30px; border-radius: 50%; background: var(--aap-surface); display: flex; align-items: center; justify-content: center; flex-direction: column; }
+    .donut-total { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 500; }
+    .donut-total-label { font-size: 10px; color: var(--aap-text-dim); }
+    .donut-legend { display: flex; flex-direction: column; gap: 6px; }
+    .donut-legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    .donut-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    /* Pipeline */
+    .pipeline-bar-wrap { height: 32px; border-radius: 8px; overflow: hidden; display: flex; margin: 12px 0; }
+    .pipeline-bar-seg { height: 100%; transition: width 0.5s ease; cursor: default; }
+    .pipeline-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .pipeline-legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--aap-text-dim); }
+    .pipeline-legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* Theme pills */
+    .theme-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .theme-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; background: var(--aap-bg-warm); border: 1px solid var(--aap-border); border-radius: 100px; font-size: 12px; color: var(--aap-text-soft); }
+    .theme-count { background: var(--aap-gold); color: white; border-radius: 100px; padding: 0px 5px; font-size: 10px; font-weight: 700; }
+
+    /* Network mini-cards */
+    .network-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 900px) { .network-grid { grid-template-columns: 1fr; } }
+    .network-card { background: var(--aap-surface); border: 1px solid var(--aap-border); border-radius: var(--aap-radius-lg); padding: 20px; }
+    .network-card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--aap-text-dim); margin-bottom: 12px; }
+    .network-stat { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 6px; color: var(--aap-text-soft); }
+    .network-stat-val { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 500; color: var(--aap-text); }
+    .health-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+    .health-green { background: #22c55e; }
+    .health-yellow { background: #eab308; }
+    .health-red { background: #ef4444; }
+
+    /* Goals */
+    .goals-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    @media (max-width: 900px) { .goals-grid { grid-template-columns: 1fr; } }
+    .goal-card { background: var(--aap-surface); border: 1px solid var(--aap-border); border-radius: var(--aap-radius-lg); padding: 20px 24px; }
+    .goal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .goal-title { font-size: 15px; font-weight: 600; color: var(--aap-text); }
+    .goal-category { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--aap-text-dim); }
+    .goal-progress-bar { height: 6px; background: var(--aap-border); border-radius: 3px; margin: 10px 0; overflow: hidden; }
+    .goal-progress-fill { height: 100%; background: #5B7553; border-radius: 3px; transition: width 0.5s ease; }
+    .goal-values { display: flex; justify-content: space-between; font-size: 12px; color: var(--aap-text-dim); }
+    .goal-actions { display: flex; gap: 6px; margin-top: 12px; }
+    .goal-action-btn { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--aap-border); background: none; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; color: var(--aap-text-dim); }
+    .goal-action-btn:hover { border-color: var(--aap-gold); color: var(--aap-text); }
+    .goal-action-btn.achieved { border-color: #5B7553; color: #5B7553; }
+    .goal-action-btn.achieved:hover { background: #5B7553; color: white; }
+    .goal-action-btn.missed { border-color: #991b1b; color: #991b1b; }
+    .goal-action-btn.missed:hover { background: #991b1b; color: white; }
+    .goal-status-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 8px; border-radius: 100px; }
+    .goal-status-active { background: #dcfce7; color: #166534; }
+    .goal-status-achieved { background: #dbeafe; color: #1e40af; }
+    .goal-status-missed { background: #fef2f2; color: #991b1b; }
+    .goal-status-abandoned { background: #f3f4f6; color: #6b7280; }
+
+    /* Reflection */
+    .reflection-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--aap-text-dim); margin-bottom: 6px; }
+    .reflection-section-text { font-size: 14px; color: var(--aap-text-soft); line-height: 1.7; white-space: pre-wrap; padding-left: 12px; border-left: 3px solid var(--aap-gold); margin-bottom: 20px; }
+    .reflection-empty { text-align: center; padding: 48px 24px; background: var(--aap-surface); border: 1px solid var(--aap-border); border-radius: var(--aap-radius-lg); }
+    .reflection-empty-text { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-style: italic; color: var(--aap-text-dim); margin-bottom: 20px; }
+    .reflection-card { background: var(--aap-surface); border: 1px solid var(--aap-border); border-radius: var(--aap-radius-lg); padding: 28px; }
+    .reflection-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 500; margin-bottom: 6px; color: var(--aap-text); }
+    .reflection-meta { font-size: 12px; color: var(--aap-text-dim); margin-bottom: 20px; }
+    .reflection-body-text { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; line-height: 1.8; color: var(--aap-text-soft); margin-bottom: 24px; white-space: pre-wrap; }
+    .reflection-edit-btn { padding: 7px 16px; border: 1px solid var(--aap-border); border-radius: 8px; background: none; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--aap-text-dim); cursor: pointer; transition: all 0.2s; }
+    .reflection-edit-btn:hover { border-color: var(--aap-gold); color: var(--aap-text); }
+
+    /* Mood selector */
+    .mood-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .mood-pill { padding: 6px 14px; border: 1.5px solid var(--aap-border); border-radius: 100px; background: none; font-family: inherit; font-size: 13px; cursor: pointer; transition: all 0.2s; color: var(--aap-text-soft); }
+    .mood-pill:hover { border-color: var(--aap-gold); }
+    .mood-pill.selected { background: var(--aap-gold); border-color: var(--aap-gold); color: #fff; }
+
+    /* Seasonal cards */
+    .seasonal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media (max-width: 900px) { .seasonal-grid { grid-template-columns: repeat(2, 1fr); } }
+    .seasonal-card { padding: 24px; border-radius: var(--aap-radius-lg); border: 1px solid transparent; text-align: center; }
+    .seasonal-icon { font-size: 32px; margin-bottom: 8px; }
+    .seasonal-name { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-style: italic; font-weight: 500; margin-bottom: 4px; }
+    .seasonal-metaphor { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.6; margin-bottom: 12px; }
+    .seasonal-stats { font-size: 13px; opacity: 0.8; }
+
+    /* Revenue / Invoice panel */
+    .panel-card { background: var(--aap-surface); border: 1px solid var(--aap-border); border-radius: var(--aap-radius-lg); padding: 24px; }
+    .panel-title { font-size: 13px; font-weight: 600; color: var(--aap-text-soft); margin-bottom: 16px; }
+    .invoice-col { display: flex; flex-direction: column; align-items: center; }
+
+    /* Speaking / travel list */
+    .engagement-item { padding: 12px 0; border-bottom: 1px solid var(--aap-border-light); }
+    .engagement-item:last-child { border-bottom: none; }
+    .engagement-title { font-size: 14px; font-weight: 600; color: var(--aap-text); margin-bottom: 2px; }
+    .engagement-sub { font-size: 12px; color: var(--aap-text-dim); }
+    .status-badge { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 8px; border-radius: 100px; }
+    .badge-confirmed { background: #dcfce7; color: #166534; }
+    .badge-pending { background: #fffbeb; color: #92400e; }
+    .badge-completed { background: #dbeafe; color: #1e40af; }
+    .badge-cancelled { background: #f3f4f6; color: #6b7280; }
+    .badge-booked { background: #dcfce7; color: #166534; }
+    .badge-planning { background: #ede9fe; color: #5b21b6; }
+
+    /* Misc */
+    .muted-text { color: var(--aap-text-dim); font-style: italic; font-size: 13px; }
+    .add-btn { padding: 9px 20px; background: var(--aap-gold); color: white; border: none; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .add-btn:hover { background: var(--aap-gold-dim); }
+    .section-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--aap-border); }
+    .page-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 500; color: var(--aap-text); margin: 0; }
+  </style>
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <a href="index.html">The Animist <em>Apothecary</em></a>
+      <div class="sidebar-brand-sub">Command Center</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html">📊 Dashboard</a>
+      <div class="sidebar-section-label">Intelligence</div>
+      <a href="analytics.html" class="active">📈 Practice Analytics</a>
+      <a href="strategy.html">🗺️ Strategy Map</a>
+      <div class="sidebar-section-label">Client Dossier</div>
+      <a href="clients.html">👤 Clients</a>
+      <a href="pipeline.html">🔮 Pipeline</a>
+      <a href="intake-forms.html">📋 Intake Forms</a>
+      <a href="session-notes.html">📝 Session Notes</a>
+      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+      <a href="agreements.html">📜 Agreements</a>
+      <div class="sidebar-section-label">Practice</div>
+      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+      <a href="services.html">✨ Offerings</a>
+      <a href="mentorship.html">🌀 Mentorship Arcs</a>
+      <a href="payments.html">💳 Payments</a>
+      <a href="invoices.html">🧾 Invoices</a>
+      <div class="sidebar-section-label">Communications</div>
+      <a href="emails.html">✉️ Email Center</a>
+      <div class="sidebar-section-label">Network</div>
+      <a href="collaborators.html">🤝 Collaborators</a>
+      <a href="referrals.html">🔗 Referral Network</a>
+      <a href="vip-contacts.html">⭐ People of Import</a>
+      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <div class="sidebar-section-label">Engagements</div>
+      <a href="speaking.html">🎤 Speaking Engagements</a>
+      <a href="venues.html">🏛️ Venues</a>
+      <a href="travel.html">✈️ Travel Itinerary</a>
+      <div class="sidebar-section-label">CRM</div>
+      <a href="../crm/">🔮 CRM Overview</a>
+      <div class="sidebar-divider"></div>
+      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="../index.html">← Public Site</a>
+    </nav>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebarUserName"></div>
+      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-content">
+
+      <!-- Page Header -->
+      <div class="analytics-header">
+        <h1 class="page-title">Practice Analytics</h1>
+        <div class="analytics-tabs">
+          <button class="analytics-tab" data-view="weekly">Weekly</button>
+          <button class="analytics-tab active" data-view="monthly">Monthly</button>
+          <button class="analytics-tab" data-view="seasonal">Seasonal</button>
+          <button class="analytics-tab" data-view="annual">Annual</button>
+        </div>
+      </div>
+
+      <!-- Date Navigator -->
+      <div class="analytics-nav">
+        <button id="prevBtn">← Previous</button>
+        <span id="periodLabel">Loading…</span>
+        <button id="nextBtn">Next →</button>
+      </div>
+
+      <!-- Section 1: Key Metrics -->
+      <div class="metrics-row" id="metricsRow">
+        <div class="metric-card"><div class="metric-label">New Clients</div><div class="metric-value" id="m-clients">—</div><span class="metric-change flat" id="mc-clients">—</span><div class="sparkline" id="sp-clients"></div></div>
+        <div class="metric-card"><div class="metric-label">Sessions Held</div><div class="metric-value" id="m-sessions">—</div><span class="metric-change flat" id="mc-sessions">—</span><div class="sparkline" id="sp-sessions"></div></div>
+        <div class="metric-card"><div class="metric-label">Revenue</div><div class="metric-value" id="m-revenue">—</div><span class="metric-change flat" id="mc-revenue">—</span><div class="sparkline" id="sp-revenue"></div></div>
+        <div class="metric-card"><div class="metric-label">Active Arcs</div><div class="metric-value" id="m-arcs">—</div><span class="metric-change flat" id="mc-arcs">—</span><div class="sparkline" id="sp-arcs"></div></div>
+        <div class="metric-card"><div class="metric-label">Network Touchpoints</div><div class="metric-value" id="m-network">—</div><span class="metric-change flat" id="mc-network">—</span><div class="sparkline" id="sp-network"></div></div>
+        <div class="metric-card"><div class="metric-label">Engagements</div><div class="metric-value" id="m-engagements">—</div><span class="metric-change flat" id="mc-engagements">—</span><div class="sparkline" id="sp-engagements"></div></div>
+      </div>
+
+      <!-- Section 2: Pipeline Flow -->
+      <div class="analytics-section">
+        <div class="analytics-section-header">Client Journey Flow</div>
+        <div id="pipelineContent">
+          <div class="pipeline-bar-wrap" id="pipelineBar"></div>
+          <div class="pipeline-legend" id="pipelineLegend"></div>
+        </div>
+      </div>
+
+      <!-- Section 3: Revenue & Invoicing -->
+      <div class="analytics-section">
+        <div class="analytics-section-header">Revenue &amp; Invoicing</div>
+        <div class="analytics-two-col">
+          <div class="panel-card">
+            <div class="panel-title">Revenue by Period</div>
+            <div class="bar-chart" id="revenueBarChart"></div>
+          </div>
+          <div class="panel-card invoice-col">
+            <div class="panel-title">Invoice Status</div>
+            <div class="donut-wrap" id="donutChart">
+              <div class="donut-center">
+                <div class="donut-total" id="donutTotal">—</div>
+                <div class="donut-total-label">invoices</div>
+              </div>
+            </div>
+            <div class="donut-legend" id="donutLegend"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Sessions & Engagements -->
+      <div class="analytics-section">
+        <div class="analytics-section-header">Sessions &amp; Engagements</div>
+        <div class="analytics-two-col">
+          <div class="panel-card">
+            <div class="panel-title">Session Activity</div>
+            <div id="sessionActivity"></div>
+          </div>
+          <div class="panel-card">
+            <div class="panel-title">Speaking &amp; Travel</div>
+            <div id="speakingTravel"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Network Health -->
+      <div class="analytics-section">
+        <div class="analytics-section-header">Network Health</div>
+        <div class="network-grid">
+          <div class="network-card" id="networkCollaborators"></div>
+          <div class="network-card" id="networkReferrals"></div>
+          <div class="network-card" id="networkVIP"></div>
+        </div>
+      </div>
+
+      <!-- Section 6: Practice Goals -->
+      <div class="analytics-section">
+        <div class="section-header-row">
+          <div class="analytics-section-header" style="margin-bottom:0;border-bottom:none;padding-bottom:0;">Intentions &amp; Goals</div>
+          <button class="add-btn" id="addGoalBtn">+ Add Goal</button>
+        </div>
+        <div class="goals-grid" id="goalsGrid"><div class="muted-text">Loading goals…</div></div>
+      </div>
+
+      <!-- Section 7: Reflection -->
+      <div class="analytics-section">
+        <div class="analytics-section-header">Reflection &amp; Integration</div>
+        <div id="reflectionSection"></div>
+      </div>
+
+      <!-- Section 8: Seasonal Awareness (seasonal/annual only) -->
+      <div class="analytics-section" id="seasonalSection" style="display:none;">
+        <div class="analytics-section-header">Seasonal Rhythm</div>
+        <div class="seasonal-grid" id="seasonalGrid"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Goal Modal -->
+  <div class="admin-modal-overlay" id="goalModal" style="display:none;">
+    <div class="admin-modal" style="max-width:560px;">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title" id="goalModalTitle">Add Goal</h2>
+        <button class="admin-modal-close" id="goalModalClose">&times;</button>
+      </div>
+      <div class="admin-modal-body">
+        <input type="hidden" id="goalId">
+        <div class="admin-form-group">
+          <label class="admin-form-label">Title</label>
+          <input type="text" id="goalTitle" class="admin-form-input" placeholder="e.g. Onboard 4 new clients">
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-form-label">Description</label>
+          <textarea id="goalDescription" class="admin-form-input" rows="2" placeholder="Optional context…"></textarea>
+        </div>
+        <div class="admin-form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Category</label>
+            <select id="goalCategory" class="admin-form-input">
+              <option value="revenue">Revenue</option>
+              <option value="clients">Clients</option>
+              <option value="sessions">Sessions</option>
+              <option value="network">Network</option>
+              <option value="content">Content</option>
+              <option value="travel">Travel</option>
+              <option value="personal">Personal</option>
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Metric Type</label>
+            <select id="goalMetricType" class="admin-form-input">
+              <option value="count">Count</option>
+              <option value="currency">Currency</option>
+              <option value="percentage">Percentage</option>
+              <option value="boolean">Boolean</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Target Value</label>
+            <input type="number" id="goalTarget" class="admin-form-input" placeholder="e.g. 4">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Current Value</label>
+            <input type="number" id="goalCurrent" class="admin-form-input" placeholder="e.g. 1">
+          </div>
+        </div>
+        <div class="admin-form-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Timeframe</label>
+            <input type="text" id="goalTimeframe" class="admin-form-input" readonly>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Period Start</label>
+            <input type="date" id="goalPeriodStart" class="admin-form-input">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Period End</label>
+            <input type="date" id="goalPeriodEnd" class="admin-form-input">
+          </div>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-form-label">Status</label>
+          <select id="goalStatus" class="admin-form-input">
+            <option value="active">Active</option>
+            <option value="achieved">Achieved</option>
+            <option value="missed">Missed</option>
+            <option value="abandoned">Abandoned</option>
+          </select>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-form-label">Notes</label>
+          <textarea id="goalNotes" class="admin-form-input" rows="2" placeholder="Optional notes…"></textarea>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button class="admin-btn-secondary" id="goalModalCancel">Cancel</button>
+        <button class="admin-btn-primary" id="goalModalSave">Save Goal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reflection Modal -->
+  <div class="admin-modal-overlay" id="reflectionModal" style="display:none;">
+    <div class="admin-modal" style="max-width:640px;">
+      <div class="admin-modal-header">
+        <h2 class="admin-modal-title" id="reflectionModalTitle">Begin Reflection</h2>
+        <button class="admin-modal-close" id="reflectionModalClose">&times;</button>
+      </div>
+      <div class="admin-modal-body">
+        <input type="hidden" id="reflectionId">
+        <div class="admin-form-group">
+          <label class="admin-form-label">Title</label>
+          <input type="text" id="reflectionTitle" class="admin-form-input" placeholder="e.g. March Review">
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-form-label">Reflection</label>
+          <textarea id="reflectionBody" class="admin-form-input" rows="5" style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;line-height:1.7;" placeholder="What arose this period…"></textarea>
+        </div>
+        <div class="admin-form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Wins</label>
+            <textarea id="reflectionWins" class="admin-form-input" rows="3" placeholder="Celebrations &amp; victories…"></textarea>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Challenges</label>
+            <textarea id="reflectionChallenges" class="admin-form-input" rows="3" placeholder="Difficulties &amp; friction…"></textarea>
+          </div>
+        </div>
+        <div class="admin-form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Insights</label>
+            <textarea id="reflectionInsights" class="admin-form-input" rows="3" placeholder="What revealed itself…"></textarea>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Intentions</label>
+            <textarea id="reflectionIntentions" class="admin-form-input" rows="3" placeholder="Forward movement…"></textarea>
+          </div>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-form-label">Gratitudes</label>
+          <textarea id="reflectionGratitudes" class="admin-form-input" rows="2" placeholder="What you're grateful for…"></textarea>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-form-label">Mood</label>
+          <div class="mood-pills" id="moodPills">
+            <button type="button" class="mood-pill" data-mood="grounded">Grounded</button>
+            <button type="button" class="mood-pill" data-mood="expansive">Expansive</button>
+            <button type="button" class="mood-pill" data-mood="tender">Tender</button>
+            <button type="button" class="mood-pill" data-mood="fiery">Fiery</button>
+            <button type="button" class="mood-pill" data-mood="contemplative">Contemplative</button>
+            <button type="button" class="mood-pill" data-mood="electric">Electric</button>
+            <button type="button" class="mood-pill" data-mood="still">Still</button>
+          </div>
+        </div>
+        <div class="admin-form-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+          <div class="admin-form-group">
+            <label class="admin-form-label">Type</label>
+            <input type="text" id="reflectionType" class="admin-form-input" readonly>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Period Start</label>
+            <input type="date" id="reflectionPeriodStart" class="admin-form-input">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Period End</label>
+            <input type="date" id="reflectionPeriodEnd" class="admin-form-input">
+          </div>
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-form-label">Tags (comma-separated)</label>
+          <input type="text" id="reflectionTags" class="admin-form-input" placeholder="e.g. growth, boundaries, transitions">
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button class="admin-btn-secondary" id="reflectionModalCancel">Cancel</button>
+        <button class="admin-btn-primary" id="reflectionModalSave">Save Reflection</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+  function showToast(msg, type) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function(){ t.style.opacity='1'; });
+    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+  }
+
+  requireAuth(function(user, supabase) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+    document.getElementById('sidebarUserName').textContent = name;
+    document.getElementById('sidebarUserEmail').textContent = user.email;
+    document.getElementById('sidebarSignOut').addEventListener('click', function() {
+      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+    });
+
+    // ── State ──
+    var currentView = 'monthly';
+    var currentOffset = 0;
+    var selectedMood = '';
+    var currentReflectionRange = null;
+
+    // ── Date Helpers ──
+    function getDateRange(view, offset) {
+      var now = new Date();
+      var start, end, label;
+      if (view === 'weekly') {
+        var dayOfWeek = now.getDay();
+        var monday = new Date(now);
+        monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+        monday.setHours(0,0,0,0);
+        start = new Date(monday);
+        start.setDate(start.getDate() + (offset * 7));
+        end = new Date(start);
+        end.setDate(end.getDate() + 6);
+        end.setHours(23,59,59,999);
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        label = months[start.getMonth()] + ' ' + start.getDate() + ' — ' + months[end.getMonth()] + ' ' + end.getDate() + ', ' + end.getFullYear();
+      } else if (view === 'monthly') {
+        var d = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+        start = new Date(d.getFullYear(), d.getMonth(), 1);
+        start.setHours(0,0,0,0);
+        end = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+        end.setHours(23,59,59,999);
+        var mNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        label = mNames[start.getMonth()] + ' ' + start.getFullYear();
+      } else if (view === 'seasonal') {
+        var month = now.getMonth();
+        var year = now.getFullYear();
+        var seasonMonth, seasonName;
+        if (month >= 2 && month <= 4) { seasonMonth = 2; seasonName = 'Spring'; }
+        else if (month >= 5 && month <= 7) { seasonMonth = 5; seasonName = 'Summer'; }
+        else if (month >= 8 && month <= 10) { seasonMonth = 8; seasonName = 'Autumn'; }
+        else { seasonMonth = 11; seasonName = 'Winter'; if (month < 2) seasonMonth = -1; }
+        var baseDate = new Date(year, (seasonMonth < 0 ? 11 : seasonMonth) + (offset * 3), 1);
+        var bMonth = baseDate.getMonth();
+        var bYear = baseDate.getFullYear();
+        if (bMonth >= 2 && bMonth <= 4) { start = new Date(bYear, 2, 1); end = new Date(bYear, 5, 0); seasonName = 'Spring'; }
+        else if (bMonth >= 5 && bMonth <= 7) { start = new Date(bYear, 5, 1); end = new Date(bYear, 8, 0); seasonName = 'Summer'; }
+        else if (bMonth >= 8 && bMonth <= 10) { start = new Date(bYear, 8, 1); end = new Date(bYear, 11, 0); seasonName = 'Autumn'; }
+        else {
+          if (bMonth === 11) { start = new Date(bYear, 11, 1); end = new Date(bYear+1, 2, 0); seasonName = 'Winter'; }
+          else { start = new Date(bYear-1, 11, 1); end = new Date(bYear, 2, 0); seasonName = 'Winter'; }
+        }
+        start.setHours(0,0,0,0); end.setHours(23,59,59,999);
+        var mAbbr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        label = seasonName + ' ' + (start.getFullYear() !== end.getFullYear() ? start.getFullYear() + '/' + end.getFullYear() : start.getFullYear()) + ' (' + mAbbr[start.getMonth()] + '–' + mAbbr[end.getMonth()] + ')';
+      } else {
+        var yr = now.getFullYear() + offset;
+        start = new Date(yr, 0, 1); start.setHours(0,0,0,0);
+        end = new Date(yr, 11, 31); end.setHours(23,59,59,999);
+        label = String(yr);
+      }
+      return { start: start, end: end, label: label };
+    }
+
+    function fmtDate(d) { return d.toISOString().split('T')[0]; }
+    function formatCurrency(cents) {
+      if (cents === null || cents === undefined) return '$0';
+      return '$' + (cents/100).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
+    }
+    function pctChange(curr, prev) {
+      if (!prev || prev === 0) return { val: 0, dir: 'flat', label: '—' };
+      var p = Math.round(((curr - prev) / prev) * 100);
+      return { val: Math.abs(p), dir: p > 0 ? 'up' : p < 0 ? 'down' : 'flat', label: (p >= 0 ? '↑' : '↓') + Math.abs(p) + '%' };
+    }
+    function safeQuery(promise, fallback) {
+      return promise.catch(function() { return fallback; });
+    }
+    function escHtml(s) {
+      if (!s) return '';
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── Tab Switching ──
+    document.querySelectorAll('.analytics-tab').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.analytics-tab').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentView = btn.dataset.view;
+        currentOffset = 0;
+        loadAll();
+      });
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', function(){ currentOffset--; loadAll(); });
+    document.getElementById('nextBtn').addEventListener('click', function(){ currentOffset++; loadAll(); });
+
+    // ── Main Load ──
+    function loadAll() {
+      var range = getDateRange(currentView, currentOffset);
+      var prevRange = getDateRange(currentView, currentOffset - 1);
+      document.getElementById('periodLabel').textContent = range.label;
+      var seasonalSection = document.getElementById('seasonalSection');
+      if (seasonalSection) {
+        seasonalSection.style.display = (currentView === 'seasonal' || currentView === 'annual') ? 'block' : 'none';
+      }
+      loadMetrics(range, prevRange);
+      loadPipeline();
+      loadRevenue(range);
+      loadSessions(range);
+      loadNetwork(range);
+      loadGoals(range);
+      loadReflection(range);
+      if (currentView === 'seasonal' || currentView === 'annual') loadSeasonal();
+    }
+
+    // ── SECTION 1: Metrics ──
+    function renderMetric(id, sparkId, changeId, val, prevVal, displayFn) {
+      displayFn = displayFn || function(v){ return v; };
+      document.getElementById(id).textContent = displayFn(val);
+      var ch = pctChange(val, prevVal);
+      var el = document.getElementById(changeId);
+      el.textContent = ch.label;
+      el.className = 'metric-change ' + ch.dir;
+    }
+
+    function renderSparkline(containerId, values) {
+      var el = document.getElementById(containerId);
+      if (!el) return;
+      var max = Math.max.apply(null, values) || 1;
+      el.innerHTML = '';
+      values.forEach(function(v, i) {
+        var bar = document.createElement('div');
+        bar.className = 'sparkline-bar' + (i === values.length - 1 ? ' current' : '');
+        bar.style.height = Math.max(2, Math.round((v / max) * 32)) + 'px';
+        el.appendChild(bar);
+      });
+    }
+
+    function countInRange(rows, dateField, start, end) {
+      if (!rows) return 0;
+      var s = fmtDate(start), e = fmtDate(end);
+      return rows.filter(function(r){ var d = (r[dateField] || '').substring(0,10); return d >= s && d <= e; }).length;
+    }
+
+    function sumInRange(rows, amountField, dateField, start, end) {
+      if (!rows) return 0;
+      var s = fmtDate(start), e = fmtDate(end);
+      return rows.filter(function(r){ var d = (r[dateField] || '').substring(0,10); return d >= s && d <= e; })
+        .reduce(function(acc, r){ return acc + (r[amountField] || 0); }, 0);
+    }
+
+    function loadMetrics(range, prevRange) {
+      var sparkPromises = [];
+      for (var i = -5; i <= 0; i++) {
+        sparkPromises.push(getDateRange(currentView, currentOffset + i));
+      }
+
+      // Clients
+      safeQuery(supabase.from('clients').select('id,created_at,is_archived').eq('is_archived', false), {data:[]})
+        .then(function(res) {
+          var rows = res.data || [];
+          var curr = countInRange(rows, 'created_at', range.start, range.end);
+          var prev = countInRange(rows, 'created_at', prevRange.start, prevRange.end);
+          renderMetric('m-clients', 'sp-clients', 'mc-clients', curr, prev);
+          var sparkVals = sparkPromises.map(function(r){ return countInRange(rows, 'created_at', r.start, r.end); });
+          renderSparkline('sp-clients', sparkVals);
+        });
+
+      // Sessions
+      safeQuery(supabase.from('appointments').select('id,start_time,status').eq('status','completed'), {data:[]})
+        .then(function(res) {
+          var rows = res.data || [];
+          var curr = countInRange(rows, 'start_time', range.start, range.end);
+          var prev = countInRange(rows, 'start_time', prevRange.start, prevRange.end);
+          renderMetric('m-sessions', 'sp-sessions', 'mc-sessions', curr, prev);
+          var sparkVals = sparkPromises.map(function(r){ return countInRange(rows, 'start_time', r.start, r.end); });
+          renderSparkline('sp-sessions', sparkVals);
+        });
+
+      // Revenue
+      safeQuery(supabase.from('payments').select('id,amount_cents,payment_date,status').eq('status','completed'), {data:[]})
+        .then(function(res) {
+          var rows = res.data || [];
+          var curr = sumInRange(rows, 'amount_cents', 'payment_date', range.start, range.end);
+          var prev = sumInRange(rows, 'amount_cents', 'payment_date', prevRange.start, prevRange.end);
+          renderMetric('m-revenue', 'sp-revenue', 'mc-revenue', curr, prev, formatCurrency);
+          var sparkVals = sparkPromises.map(function(r){ return sumInRange(rows, 'amount_cents', 'payment_date', r.start, r.end); });
+          renderSparkline('sp-revenue', sparkVals);
+        });
+
+      // Active Arcs
+      safeQuery(supabase.from('mentorship_containers').select('id,status,created_at'), {data:[]})
+        .then(function(res) {
+          var rows = res.data || [];
+          var curr = rows.filter(function(r){ return r.status === 'active'; }).length;
+          var prev = curr; // static count, show flat
+          renderMetric('m-arcs', 'sp-arcs', 'mc-arcs', curr, prev);
+          var sparkVals = sparkPromises.map(function(){ return curr; });
+          renderSparkline('sp-arcs', sparkVals);
+        });
+
+      // Network Touchpoints
+      Promise.all([
+        safeQuery(supabase.from('collaborators').select('id,last_contact'), {data:[]}),
+        safeQuery(supabase.from('referral_network').select('id,last_contact'), {data:[]}),
+        safeQuery(supabase.from('contacts_vip').select('id,last_contact'), {data:[]})
+      ]).then(function(results) {
+        var all = (results[0].data||[]).concat(results[1].data||[]).concat(results[2].data||[]);
+        var curr = countInRange(all, 'last_contact', range.start, range.end);
+        var prev = countInRange(all, 'last_contact', prevRange.start, prevRange.end);
+        renderMetric('m-network', 'sp-network', 'mc-network', curr, prev);
+        var sparkVals = sparkPromises.map(function(r){ return countInRange(all, 'last_contact', r.start, r.end); });
+        renderSparkline('sp-network', sparkVals);
+      });
+
+      // Engagements
+      safeQuery(supabase.from('speaking_engagements').select('id,event_date'), {data:[]})
+        .then(function(res) {
+          var rows = res.data || [];
+          var curr = countInRange(rows, 'event_date', range.start, range.end);
+          var prev = countInRange(rows, 'event_date', prevRange.start, prevRange.end);
+          renderMetric('m-engagements', 'sp-engagements', 'mc-engagements', curr, prev);
+          var sparkVals = sparkPromises.map(function(r){ return countInRange(rows, 'event_date', r.start, r.end); });
+          renderSparkline('sp-engagements', sparkVals);
+        });
+    }
+
+    // ── SECTION 2: Pipeline ──
+    var STAGE_COLORS = {
+      inquiry: '#D4A843', intake: '#6B9BD2', active: '#5B7553',
+      aftercare: '#9B7EC8', integration: '#C4836A', community: '#5B9E8A', alumni: '#A89E95'
+    };
+    var STAGE_ORDER = ['inquiry','intake','active','aftercare','integration','community','alumni'];
+
+    function loadPipeline() {
+      safeQuery(supabase.from('clients').select('id,pipeline_stage,is_archived').eq('is_archived', false), {data:[]})
+        .then(function(res) {
+          var rows = res.data || [];
+          var counts = {};
+          STAGE_ORDER.forEach(function(s){ counts[s] = 0; });
+          rows.forEach(function(r){ if (r.pipeline_stage && counts[r.pipeline_stage] !== undefined) counts[r.pipeline_stage]++; });
+          var total = rows.length || 1;
+
+          var barEl = document.getElementById('pipelineBar');
+          var legendEl = document.getElementById('pipelineLegend');
+          barEl.innerHTML = '';
+          legendEl.innerHTML = '';
+
+          STAGE_ORDER.forEach(function(stage) {
+            if (counts[stage] === 0) return;
+            var pct = ((counts[stage] / total) * 100).toFixed(1);
+            var seg = document.createElement('div');
+            seg.className = 'pipeline-bar-seg';
+            seg.style.width = pct + '%';
+            seg.style.background = STAGE_COLORS[stage];
+            seg.title = stage + ': ' + counts[stage];
+            barEl.appendChild(seg);
+
+            var item = document.createElement('div');
+            item.className = 'pipeline-legend-item';
+            item.innerHTML = '<div class="pipeline-legend-dot" style="background:' + STAGE_COLORS[stage] + '"></div>' +
+              '<span>' + stage.charAt(0).toUpperCase() + stage.slice(1) + ' (' + counts[stage] + ')</span>';
+            legendEl.appendChild(item);
+          });
+
+          if (rows.length === 0) {
+            barEl.innerHTML = '<span class="muted-text">No client data</span>';
+          }
+        });
+    }
+
+    // ── SECTION 3: Revenue & Invoicing ──
+    function getSubPeriods(range) {
+      var periods = [];
+      if (currentView === 'weekly') {
+        for (var d = 0; d < 7; d++) {
+          var s = new Date(range.start); s.setDate(s.getDate() + d); s.setHours(0,0,0,0);
+          var e = new Date(s); e.setHours(23,59,59,999);
+          var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+          periods.push({ start: s, end: e, label: days[d] });
+        }
+      } else if (currentView === 'monthly') {
+        var ms = new Date(range.start.getFullYear(), range.start.getMonth(), 1);
+        for (var w = 0; w < 4; w++) {
+          var ws = new Date(ms); ws.setDate(ws.getDate() + (w * 7));
+          var we = new Date(ws); we.setDate(we.getDate() + 6); we.setHours(23,59,59,999);
+          if (we > range.end) we = new Date(range.end);
+          if (ws <= range.end) periods.push({ start: ws, end: we, label: 'Wk ' + (w+1) });
+        }
+      } else if (currentView === 'seasonal') {
+        var mAbbr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var cur = new Date(range.start.getFullYear(), range.start.getMonth(), 1);
+        while (cur <= range.end) {
+          var mStart = new Date(cur.getFullYear(), cur.getMonth(), 1);
+          var mEnd = new Date(cur.getFullYear(), cur.getMonth() + 1, 0); mEnd.setHours(23,59,59,999);
+          periods.push({ start: mStart, end: mEnd, label: mAbbr[cur.getMonth()] });
+          cur.setMonth(cur.getMonth() + 1);
+        }
+      } else { // annual
+        var mNames2 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        for (var mo = 0; mo < 12; mo++) {
+          var yr = range.start.getFullYear();
+          var mS = new Date(yr, mo, 1); mS.setHours(0,0,0,0);
+          var mE = new Date(yr, mo + 1, 0); mE.setHours(23,59,59,999);
+          periods.push({ start: mS, end: mE, label: mNames2[mo] });
+        }
+      }
+      return periods;
+    }
+
+    function loadRevenue(range) {
+      safeQuery(supabase.from('payments').select('id,amount_cents,payment_date,status').eq('status','completed'), {data:[]})
+        .then(function(res) {
+          var rows = res.data || [];
+          var periods = getSubPeriods(range);
+          var values = periods.map(function(p){ return sumInRange(rows, 'amount_cents', 'payment_date', p.start, p.end); });
+          var maxVal = Math.max.apply(null, values) || 1;
+          var chartEl = document.getElementById('revenueBarChart');
+          chartEl.innerHTML = '';
+          periods.forEach(function(p, i) {
+            var h = Math.max(2, Math.round((values[i] / maxVal) * 160));
+            var wrap = document.createElement('div');
+            wrap.className = 'bar-chart-bar-wrap';
+            wrap.innerHTML = '<div class="bar-chart-bar" style="height:' + h + 'px" title="' + formatCurrency(values[i]) + '"></div>' +
+              '<div class="bar-chart-label">' + escHtml(p.label) + '</div>';
+            chartEl.appendChild(wrap);
+          });
+        });
+
+      // Invoices donut
+      safeQuery(supabase.from('invoices').select('id,status,due_date,is_archived'), {data:[]})
+        .then(function(res) {
+          var rows = (res.data || []).filter(function(r){ return !r.is_archived; });
+          var counts = { draft: 0, sent: 0, paid: 0, overdue: 0, cancelled: 0 };
+          rows.forEach(function(r){
+            var s = r.status;
+            if (counts[s] !== undefined) counts[s]++;
+          });
+          var total = rows.length;
+          document.getElementById('donutTotal').textContent = total;
+
+          if (total === 0) {
+            document.getElementById('donutChart').style.background = 'var(--aap-border)';
+            document.getElementById('donutLegend').innerHTML = '<span class="muted-text">No invoices</span>';
+            return;
+          }
+
+          var statusColors = { paid: '#D4A843', sent: '#5B7553', draft: '#9B7EC8', overdue: '#C4836A', cancelled: '#A89E95' };
+          var statusOrder = ['paid','sent','draft','overdue','cancelled'];
+          var pcts = [];
+          var cumulative = 0;
+          statusOrder.forEach(function(s){ pcts.push({ s: s, pct: (counts[s]/total)*100, color: statusColors[s] }); });
+
+          var gradParts = [];
+          pcts.forEach(function(p) {
+            if (p.pct === 0) return;
+            gradParts.push(p.color + ' ' + cumulative.toFixed(1) + '% ' + (cumulative + p.pct).toFixed(1) + '%');
+            cumulative += p.pct;
+          });
+          if (gradParts.length === 0) gradParts.push('#e5e7eb 0% 100%');
+          document.getElementById('donutChart').style.background = 'conic-gradient(' + gradParts.join(', ') + ')';
+
+          var legendEl = document.getElementById('donutLegend');
+          legendEl.innerHTML = '';
+          pcts.forEach(function(p) {
+            if (counts[p.s] === 0) return;
+            var item = document.createElement('div');
+            item.className = 'donut-legend-item';
+            item.innerHTML = '<div class="donut-legend-dot" style="background:' + p.color + '"></div>' +
+              '<span>' + p.s.charAt(0).toUpperCase() + p.s.slice(1) + ' — ' + counts[p.s] + '</span>';
+            legendEl.appendChild(item);
+          });
+        });
+    }
+
+    // ── SECTION 4: Sessions & Engagements ──
+    function loadSessions(range) {
+      var s = fmtDate(range.start), e = fmtDate(range.end);
+
+      // Session activity
+      safeQuery(supabase.from('session_notes').select('id,session_date,session_themes,follow_up_date')
+        .gte('session_date', s).lte('session_date', e), {data:[]})
+        .then(function(res) {
+          var rows = res.data || [];
+          var themeCounts = {};
+          rows.forEach(function(r) {
+            if (Array.isArray(r.session_themes)) {
+              r.session_themes.forEach(function(t){ if (t) themeCounts[t] = (themeCounts[t]||0)+1; });
+            }
+          });
+          var followUps = rows.filter(function(r){ return r.follow_up_date && r.follow_up_date >= s && r.follow_up_date <= e; }).length;
+          var sorted = Object.keys(themeCounts).sort(function(a,b){ return themeCounts[b]-themeCounts[a]; }).slice(0,5);
+          var pillsHtml = sorted.length ? '<div class="theme-pills">' + sorted.map(function(t){
+            return '<span class="theme-pill">' + escHtml(t) + '<span class="theme-count">' + themeCounts[t] + '</span></span>';
+          }).join('') + '</div>' : '<span class="muted-text">No session themes recorded</span>';
+
+          document.getElementById('sessionActivity').innerHTML =
+            '<div style="margin-bottom:12px;"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--aap-text-dim);">Completed Sessions</span></div>' +
+            '<div style="font-family:Cormorant Garamond,serif;font-size:2rem;font-weight:500;margin-bottom:16px;">' + rows.length + '</div>' +
+            '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--aap-text-dim);margin-bottom:8px;">Top Themes</div>' +
+            pillsHtml +
+            '<div style="margin-top:16px;font-size:13px;color:var(--aap-text-dim);">Follow-ups due this period: <strong>' + followUps + '</strong></div>';
+        });
+
+      // Speaking & Travel
+      Promise.all([
+        safeQuery(supabase.from('speaking_engagements').select('id,title,event_name,status,event_date,compensation_amount_cents')
+          .gte('event_date', s).lte('event_date', e).order('event_date'), {data:[]}),
+        safeQuery(supabase.from('travel_itinerary').select('id,destination,start_date,end_date,purpose,status')
+          .gte('start_date', s).lte('start_date', e).order('start_date'), {data:[]})
+      ]).then(function(results) {
+        var engagements = results[0].data || [];
+        var travel = results[1].data || [];
+        var totalComp = engagements.reduce(function(a,r){ return a + (r.compensation_amount_cents||0); }, 0);
+
+        var html = '';
+
+        if (engagements.length) {
+          html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--aap-text-dim);margin-bottom:8px;">Speaking</div>';
+          engagements.forEach(function(e) {
+            var badgeClass = 'badge-' + (e.status||'pending');
+            html += '<div class="engagement-item"><div class="engagement-title">' + escHtml(e.title||e.event_name||'—') + '</div>' +
+              '<div class="engagement-sub">' + escHtml(e.event_name||'') + ' &nbsp; <span class="status-badge ' + badgeClass + '">' + escHtml(e.status||'—') + '</span></div></div>';
+          });
+          if (totalComp > 0) html += '<div style="font-size:12px;color:var(--aap-text-dim);margin-top:8px;">Total compensation: <strong>' + formatCurrency(totalComp) + '</strong></div>';
+        } else {
+          html += '<div style="margin-bottom:12px;"><span class="muted-text">No speaking engagements this period</span></div>';
+        }
+
+        if (travel.length) {
+          html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--aap-text-dim);margin-top:16px;margin-bottom:8px;">Travel</div>';
+          travel.forEach(function(t) {
+            var badgeClass = 'badge-' + (t.status||'planning');
+            html += '<div class="engagement-item"><div class="engagement-title">' + escHtml(t.destination||'—') + '</div>' +
+              '<div class="engagement-sub">' + escHtml(t.start_date||'') + (t.end_date ? ' – ' + escHtml(t.end_date) : '') +
+              ' &nbsp; <span class="status-badge ' + badgeClass + '">' + escHtml(t.purpose||t.status||'—') + '</span></div></div>';
+          });
+        } else {
+          html += '<div style="margin-top:8px;"><span class="muted-text">No travel this period</span></div>';
+        }
+
+        document.getElementById('speakingTravel').innerHTML = html;
+      });
+    }
+
+    // ── SECTION 5: Network Health ──
+    function loadNetwork(range) {
+      var s = fmtDate(range.start), e = fmtDate(range.end);
+      var now = new Date();
+
+      // Collaborators
+      safeQuery(supabase.from('collaborators').select('id,last_contact'), {data:[]})
+        .then(function(res) {
+          var rows = res.data || [];
+          var touched = rows.filter(function(r){ return r.last_contact && r.last_contact >= s && r.last_contact <= e; }).length;
+          var green = 0, yellow = 0, red = 0;
+          rows.forEach(function(r) {
+            if (!r.last_contact) { red++; return; }
+            var diff = (now - new Date(r.last_contact)) / (1000*60*60*24);
+            if (diff < 30) green++;
+            else if (diff < 90) yellow++;
+            else red++;
+          });
+          document.getElementById('networkCollaborators').innerHTML =
+            '<div class="network-card-title">Collaborators</div>' +
+            '<div class="network-stat"><span>Total</span><span class="network-stat-val">' + rows.length + '</span></div>' +
+            '<div class="network-stat"><span>Contacted this period</span><span class="network-stat-val">' + touched + '</span></div>' +
+            '<div style="margin-top:12px;font-size:12px;color:var(--aap-text-dim);">' +
+            '<span class="health-dot health-green"></span>' + green + ' recent &nbsp; ' +
+            '<span class="health-dot health-yellow"></span>' + yellow + ' warm &nbsp; ' +
+            '<span class="health-dot health-red"></span>' + red + ' cold</div>';
+        });
+
+      // Referral Network
+      safeQuery(supabase.from('referral_network').select('id,name,clients_referred,last_contact'), {data:[]})
+        .then(function(res) {
+          var rows = res.data || [];
+          var newReferred = rows.filter(function(r){ return r.last_contact && r.last_contact >= s && r.last_contact <= e; }).length;
+          var top3 = rows.slice().sort(function(a,b){ return (b.clients_referred||0)-(a.clients_referred||0); }).slice(0,3);
+          var top3Html = top3.map(function(r){ return '<div style="font-size:12px;color:var(--aap-text-dim);">' + escHtml(r.name||'—') + ' <strong>(' + (r.clients_referred||0) + ')</strong></div>'; }).join('');
+          document.getElementById('networkReferrals').innerHTML =
+            '<div class="network-card-title">Referral Network</div>' +
+            '<div class="network-stat"><span>Total Partners</span><span class="network-stat-val">' + rows.length + '</span></div>' +
+            '<div class="network-stat"><span>Active this period</span><span class="network-stat-val">' + newReferred + '</span></div>' +
+            '<div style="margin-top:10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--aap-text-dim);margin-bottom:6px;">Top Referrers</div>' +
+            (top3Html || '<span class="muted-text">—</span>');
+        });
+
+      // VIP Contacts
+      safeQuery(supabase.from('contacts_vip').select('id,last_contact,relationship_status'), {data:[]})
+        .then(function(res) {
+          var rows = res.data || [];
+          var touched = rows.filter(function(r){ return r.last_contact && r.last_contact >= s && r.last_contact <= e; }).length;
+          var statusCounts = {};
+          rows.forEach(function(r){ var rs = r.relationship_status||'unknown'; statusCounts[rs] = (statusCounts[rs]||0)+1; });
+          var statusHtml = Object.keys(statusCounts).map(function(k){
+            return '<span style="font-size:12px;color:var(--aap-text-dim);">' + escHtml(k) + ': <strong>' + statusCounts[k] + '</strong></span>';
+          }).join(' &nbsp; ');
+          document.getElementById('networkVIP').innerHTML =
+            '<div class="network-card-title">People of Import</div>' +
+            '<div class="network-stat"><span>Total</span><span class="network-stat-val">' + rows.length + '</span></div>' +
+            '<div class="network-stat"><span>Touched this period</span><span class="network-stat-val">' + touched + '</span></div>' +
+            '<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">' + (statusHtml||'<span class="muted-text">—</span>') + '</div>';
+        });
+    }
+
+    // ── SECTION 6: Goals ──
+    var goalsRangeRef = null;
+
+    function loadGoals(range) {
+      goalsRangeRef = range;
+      safeQuery(
+        supabase.from('practice_goals').select('*')
+          .eq('is_archived', false)
+          .eq('timeframe', currentView)
+          .lte('period_start', fmtDate(range.end))
+          .gte('period_end', fmtDate(range.start)),
+        {data:[]}
+      ).then(function(res) {
+        var rows = res.data || [];
+        var grid = document.getElementById('goalsGrid');
+        if (rows.length === 0) {
+          grid.innerHTML = '<div class="muted-text" style="grid-column:1/-1;">No goals set for this period. Add one to begin tracking your intentions.</div>';
+          return;
+        }
+        grid.innerHTML = rows.map(function(g) {
+          var progress = g.target_value ? Math.min(100, Math.round(((g.current_value||0)/g.target_value)*100)) : 0;
+          var statusClass = 'goal-status-' + (g.status||'active');
+          var displayTarget = g.metric_type === 'currency' ? formatCurrency(g.target_value) : (g.target_value||0);
+          var displayCurrent = g.metric_type === 'currency' ? formatCurrency(g.current_value) : (g.current_value||0);
+          return '<div class="goal-card">' +
+            '<div class="goal-header">' +
+            '<div><div class="goal-title">' + escHtml(g.title) + '</div><div class="goal-category">' + escHtml(g.category||'') + '</div></div>' +
+            '<span class="goal-status-badge ' + statusClass + '">' + escHtml(g.status||'active') + '</span>' +
+            '</div>' +
+            (g.description ? '<div style="font-size:13px;color:var(--aap-text-dim);margin-bottom:8px;">' + escHtml(g.description) + '</div>' : '') +
+            '<div class="goal-progress-bar"><div class="goal-progress-fill" style="width:' + progress + '%"></div></div>' +
+            '<div class="goal-values"><span>' + displayCurrent + ' / ' + displayTarget + '</span><span>' + progress + '%</span></div>' +
+            '<div class="goal-actions">' +
+            '<button class="goal-action-btn" onclick="openGoalModal(' + JSON.stringify(g) + ')">Edit</button>' +
+            '<button class="goal-action-btn achieved" onclick="updateGoalStatus(' + g.id + ',\'achieved\')">Achieved</button>' +
+            '<button class="goal-action-btn missed" onclick="updateGoalStatus(' + g.id + ',\'missed\')">Missed</button>' +
+            '</div></div>';
+        }).join('');
+      });
+    }
+
+    window.openGoalModal = function(g) {
+      document.getElementById('goalModalTitle').textContent = g ? 'Edit Goal' : 'Add Goal';
+      document.getElementById('goalId').value = g ? g.id : '';
+      document.getElementById('goalTitle').value = g ? (g.title||'') : '';
+      document.getElementById('goalDescription').value = g ? (g.description||'') : '';
+      document.getElementById('goalCategory').value = g ? (g.category||'clients') : 'clients';
+      document.getElementById('goalMetricType').value = g ? (g.metric_type||'count') : 'count';
+      document.getElementById('goalTarget').value = g ? (g.target_value||'') : '';
+      document.getElementById('goalCurrent').value = g ? (g.current_value||'') : '';
+      document.getElementById('goalStatus').value = g ? (g.status||'active') : 'active';
+      document.getElementById('goalNotes').value = g ? (g.notes||'') : '';
+      document.getElementById('goalTimeframe').value = currentView;
+      if (!g && goalsRangeRef) {
+        document.getElementById('goalPeriodStart').value = fmtDate(goalsRangeRef.start);
+        document.getElementById('goalPeriodEnd').value = fmtDate(goalsRangeRef.end);
+      } else if (g) {
+        document.getElementById('goalPeriodStart').value = g.period_start||'';
+        document.getElementById('goalPeriodEnd').value = g.period_end||'';
+      }
+      document.getElementById('goalModal').style.display = 'flex';
+    };
+
+    window.updateGoalStatus = function(id, status) {
+      supabase.from('practice_goals').update({ status: status }).eq('id', id)
+        .then(function(res) {
+          if (res.error) { showToast('Failed to update goal', 'error'); return; }
+          showToast('Goal marked as ' + status, 'success');
+          loadGoals(goalsRangeRef || getDateRange(currentView, currentOffset));
+        });
+    };
+
+    document.getElementById('addGoalBtn').addEventListener('click', function(){ openGoalModal(null); });
+    document.getElementById('goalModalClose').addEventListener('click', function(){ document.getElementById('goalModal').style.display = 'none'; });
+    document.getElementById('goalModalCancel').addEventListener('click', function(){ document.getElementById('goalModal').style.display = 'none'; });
+
+    document.getElementById('goalModalSave').addEventListener('click', function() {
+      var id = document.getElementById('goalId').value;
+      var payload = {
+        title: document.getElementById('goalTitle').value.trim(),
+        description: document.getElementById('goalDescription').value.trim(),
+        category: document.getElementById('goalCategory').value,
+        metric_type: document.getElementById('goalMetricType').value,
+        target_value: parseFloat(document.getElementById('goalTarget').value) || null,
+        current_value: parseFloat(document.getElementById('goalCurrent').value) || null,
+        timeframe: currentView,
+        period_start: document.getElementById('goalPeriodStart').value,
+        period_end: document.getElementById('goalPeriodEnd').value,
+        status: document.getElementById('goalStatus').value,
+        notes: document.getElementById('goalNotes').value.trim(),
+        is_archived: false
+      };
+      if (!payload.title) { showToast('Title is required', 'error'); return; }
+      var q = id ? supabase.from('practice_goals').update(payload).eq('id', id) : supabase.from('practice_goals').insert(payload);
+      q.then(function(res) {
+        if (res.error) { showToast('Failed to save goal: ' + res.error.message, 'error'); return; }
+        showToast('Goal saved', 'success');
+        document.getElementById('goalModal').style.display = 'none';
+        loadGoals(goalsRangeRef || getDateRange(currentView, currentOffset));
+      });
+    });
+
+    // ── SECTION 7: Reflection ──
+    var reflectionRangeRef = null;
+
+    var viewToReflectionType = {
+      weekly: 'weekly_review', monthly: 'monthly_review',
+      seasonal: 'seasonal_review', annual: 'annual_review'
+    };
+
+    function loadReflection(range) {
+      reflectionRangeRef = range;
+      var rType = viewToReflectionType[currentView];
+      safeQuery(
+        supabase.from('practice_reflections').select('*')
+          .eq('reflection_type', rType)
+          .eq('is_archived', false)
+          .gte('period_start', fmtDate(range.start))
+          .lte('period_end', fmtDate(range.end))
+          .order('created_at', { ascending: false })
+          .limit(1),
+        {data:[]}
+      ).then(function(res) {
+        var el = document.getElementById('reflectionSection');
+        var rows = res.data || [];
+        if (rows.length === 0) {
+          el.innerHTML = '<div class="reflection-empty">' +
+            '<div class="reflection-empty-text">This period awaits its reflection. What arose? What was learned? What deserves to be witnessed?</div>' +
+            '<button class="add-btn" id="beginReflectionBtn">Begin Reflection</button>' +
+            '</div>';
+          document.getElementById('beginReflectionBtn').addEventListener('click', function(){ openReflectionModal(null); });
+        } else {
+          var r = rows[0];
+          var sections = [
+            { key: 'wins', label: 'Wins' }, { key: 'challenges', label: 'Challenges' },
+            { key: 'insights', label: 'Insights' }, { key: 'intentions', label: 'Intentions' },
+            { key: 'gratitudes', label: 'Gratitudes' }
+          ];
+          var sectionsHtml = sections.filter(function(s){ return r[s.key]; }).map(function(s) {
+            return '<div style="margin-bottom:16px;"><div class="reflection-section-label">' + s.label + '</div>' +
+              '<div class="reflection-section-text">' + escHtml(r[s.key]) + '</div></div>';
+          }).join('');
+          el.innerHTML = '<div class="reflection-card">' +
+            '<div class="reflection-title">' + escHtml(r.title||'Reflection') + '</div>' +
+            '<div class="reflection-meta">' + escHtml(r.reflection_type||'') + (r.mood ? ' · ' + escHtml(r.mood) : '') + (r.period_start ? ' · ' + escHtml(r.period_start) : '') + '</div>' +
+            (r.body ? '<div class="reflection-body-text">' + escHtml(r.body) + '</div>' : '') +
+            sectionsHtml +
+            '<button class="reflection-edit-btn" id="editReflectionBtn">Edit Reflection</button>' +
+            '</div>';
+          document.getElementById('editReflectionBtn').addEventListener('click', function(){ openReflectionModal(r); });
+        }
+      });
+    }
+
+    window.openReflectionModal = function(r) {
+      selectedMood = r ? (r.mood||'') : '';
+      document.getElementById('reflectionModalTitle').textContent = r ? 'Edit Reflection' : 'Begin Reflection';
+      document.getElementById('reflectionId').value = r ? r.id : '';
+      document.getElementById('reflectionTitle').value = r ? (r.title||'') : '';
+      document.getElementById('reflectionBody').value = r ? (r.body||'') : '';
+      document.getElementById('reflectionWins').value = r ? (r.wins||'') : '';
+      document.getElementById('reflectionChallenges').value = r ? (r.challenges||'') : '';
+      document.getElementById('reflectionInsights').value = r ? (r.insights||'') : '';
+      document.getElementById('reflectionIntentions').value = r ? (r.intentions||'') : '';
+      document.getElementById('reflectionGratitudes').value = r ? (r.gratitudes||'') : '';
+      document.getElementById('reflectionTags').value = r && r.tags ? (Array.isArray(r.tags) ? r.tags.join(', ') : r.tags) : '';
+      document.getElementById('reflectionType').value = viewToReflectionType[currentView];
+      if (reflectionRangeRef) {
+        document.getElementById('reflectionPeriodStart').value = r ? (r.period_start||'') : fmtDate(reflectionRangeRef.start);
+        document.getElementById('reflectionPeriodEnd').value = r ? (r.period_end||'') : fmtDate(reflectionRangeRef.end);
+      }
+      document.querySelectorAll('.mood-pill').forEach(function(btn) {
+        btn.classList.toggle('selected', btn.dataset.mood === selectedMood);
+      });
+      document.getElementById('reflectionModal').style.display = 'flex';
+    };
+
+    document.querySelectorAll('.mood-pill').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        selectedMood = btn.dataset.mood;
+        document.querySelectorAll('.mood-pill').forEach(function(b){ b.classList.remove('selected'); });
+        btn.classList.add('selected');
+      });
+    });
+
+    document.getElementById('reflectionModalClose').addEventListener('click', function(){ document.getElementById('reflectionModal').style.display = 'none'; });
+    document.getElementById('reflectionModalCancel').addEventListener('click', function(){ document.getElementById('reflectionModal').style.display = 'none'; });
+
+    document.getElementById('reflectionModalSave').addEventListener('click', function() {
+      var id = document.getElementById('reflectionId').value;
+      var tagsRaw = document.getElementById('reflectionTags').value.trim();
+      var tags = tagsRaw ? tagsRaw.split(',').map(function(t){ return t.trim(); }).filter(Boolean) : [];
+      var payload = {
+        title: document.getElementById('reflectionTitle').value.trim(),
+        body: document.getElementById('reflectionBody').value.trim(),
+        wins: document.getElementById('reflectionWins').value.trim(),
+        challenges: document.getElementById('reflectionChallenges').value.trim(),
+        insights: document.getElementById('reflectionInsights').value.trim(),
+        intentions: document.getElementById('reflectionIntentions').value.trim(),
+        gratitudes: document.getElementById('reflectionGratitudes').value.trim(),
+        mood: selectedMood,
+        tags: tags,
+        reflection_type: viewToReflectionType[currentView],
+        period_start: document.getElementById('reflectionPeriodStart').value,
+        period_end: document.getElementById('reflectionPeriodEnd').value,
+        is_archived: false
+      };
+      var q = id ? supabase.from('practice_reflections').update(payload).eq('id', id) : supabase.from('practice_reflections').insert(payload);
+      q.then(function(res) {
+        if (res.error) { showToast('Failed to save reflection: ' + res.error.message, 'error'); return; }
+        showToast('Reflection saved', 'success');
+        document.getElementById('reflectionModal').style.display = 'none';
+        loadReflection(reflectionRangeRef || getDateRange(currentView, currentOffset));
+      });
+    });
+
+    // ── SECTION 8: Seasonal Awareness ──
+    var SEASONS = [
+      { name: 'Spring', icon: '🌱', metaphor: 'Planting', months: [2,3,4], color: '#f0fdf4', borderColor: '#bbf7d0' },
+      { name: 'Summer', icon: '☀️', metaphor: 'Tending', months: [5,6,7], color: '#fffbeb', borderColor: '#fde68a' },
+      { name: 'Autumn', icon: '🍂', metaphor: 'Harvesting', months: [8,9,10], color: '#fff7ed', borderColor: '#fed7aa' },
+      { name: 'Winter', icon: '❄️', metaphor: 'Composting', months: [11,0,1], color: '#eff6ff', borderColor: '#bfdbfe' }
+    ];
+
+    function loadSeasonal() {
+      var yr = new Date().getFullYear() + (currentView === 'annual' ? currentOffset : 0);
+      var grid = document.getElementById('seasonalGrid');
+      grid.innerHTML = SEASONS.map(function(season) {
+        return '<div class="seasonal-card" style="background:' + season.color + ';border-color:' + season.borderColor + ';">' +
+          '<div class="seasonal-icon">' + season.icon + '</div>' +
+          '<div class="seasonal-name">' + season.name + '</div>' +
+          '<div class="seasonal-metaphor">' + season.metaphor + '</div>' +
+          '<div class="seasonal-stats" id="seasonal-stats-' + season.name + '">Loading…</div>' +
+          '</div>';
+      }).join('');
+
+      SEASONS.forEach(function(season) {
+        var months = season.months;
+        var startYear = yr, endYear = yr;
+        if (season.name === 'Winter') {
+          // Winter spans Dec of startYear to Feb of endYear+1
+          var decStart = new Date(yr, 11, 1); decStart.setHours(0,0,0,0);
+          var febEnd = new Date(yr+1, 2, 0); febEnd.setHours(23,59,59,999);
+          fetchSeasonStats(season.name, decStart, febEnd);
+        } else {
+          var sStart = new Date(yr, months[0], 1); sStart.setHours(0,0,0,0);
+          var sEnd = new Date(yr, months[2]+1, 0); sEnd.setHours(23,59,59,999);
+          fetchSeasonStats(season.name, sStart, sEnd);
+        }
+      });
+    }
+
+    function fetchSeasonStats(seasonName, start, end) {
+      var s = fmtDate(start), e = fmtDate(end);
+      Promise.all([
+        safeQuery(supabase.from('appointments').select('id,start_time').eq('status','completed')
+          .gte('start_time', s).lte('start_time', e), {data:[]}),
+        safeQuery(supabase.from('payments').select('id,amount_cents,payment_date').eq('status','completed')
+          .gte('payment_date', s).lte('payment_date', e), {data:[]})
+      ]).then(function(results) {
+        var sessions = (results[0].data||[]).length;
+        var revenue = (results[1].data||[]).reduce(function(a,r){ return a+(r.amount_cents||0); }, 0);
+        var el = document.getElementById('seasonal-stats-' + seasonName);
+        if (el) el.innerHTML = sessions + ' sessions<br>' + formatCurrency(revenue);
+      });
+    }
+
+    // ── Modal close on overlay click ──
+    document.getElementById('goalModal').addEventListener('click', function(e){ if (e.target === this) this.style.display = 'none'; });
+    document.getElementById('reflectionModal').addEventListener('click', function(e){ if (e.target === this) this.style.display = 'none'; });
+
+    // ── Initial load ──
+    loadAll();
+  });
+  </script>
+</body>
+</html>
