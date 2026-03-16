@@ -68,7 +68,7 @@
     document.getElementById('googleLoginBtn').addEventListener('click', function() {
       window.adminSupabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin + '/portal/index.html' }
+        options: { redirectTo: window.location.origin + '/portal/callback.html' }
       });
     });
 
