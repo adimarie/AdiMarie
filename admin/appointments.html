@@ -19,38 +19,38 @@
       <div class="sidebar-brand-sub">Command Center</div>
     </div>
     <nav class="sidebar-nav">
-      <a href="index.html">📊 Dashboard</a>
+      <a href="index.html">Dashboard</a>
       <div class="sidebar-section-label">Intelligence</div>
-      <a href="analytics.html">📈 Practice Analytics</a>
-      <a href="strategy.html">🗺️ Strategy Map</a>
+      <a href="analytics.html">Practice Analytics</a>
+      <a href="strategy.html">Strategy Map</a>
       <div class="sidebar-section-label">Client Dossier</div>
-      <a href="clients.html">👤 Clients</a>
-      <a href="pipeline.html">🔮 Pipeline</a>
-      <a href="intake-forms.html">📋 Intake Forms</a>
-      <a href="session-notes.html">📝 Session Notes</a>
-      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
-      <a href="agreements.html">📜 Agreements</a>
+      <a href="clients.html">Clients</a>
+      <a href="pipeline.html">Pipeline</a>
+      <a href="intake-forms.html">Intake Forms</a>
+      <a href="session-notes.html">Session Notes</a>
+      <a href="integration.html">Aftercare &amp; Integration</a>
+      <a href="agreements.html">Agreements</a>
       <div class="sidebar-section-label">Practice</div>
-      <a href="appointments.html" class="active">📅 Calendar &amp; Scheduling</a>
-      <a href="services.html">✨ Offerings</a>
-      <a href="mentorship.html">🌀 Mentorship Arcs</a>
-      <a href="payments.html">💳 Payments</a>
-      <a href="invoices.html">🧾 Invoices</a>
+      <a href="appointments.html" class="active">Calendar &amp; Scheduling</a>
+      <a href="services.html">Offerings</a>
+      <a href="mentorship.html">Mentorship Arcs</a>
+      <a href="payments.html">Payments</a>
+      <a href="invoices.html">Invoices</a>
       <div class="sidebar-section-label">Communications</div>
-      <a href="emails.html">✉️ Email Center</a>
+      <a href="emails.html">Email Center</a>
       <div class="sidebar-section-label">Network</div>
-      <a href="collaborators.html">🤝 Collaborators</a>
-      <a href="referrals.html">🔗 Referral Network</a>
-      <a href="vip-contacts.html">⭐ People of Import</a>
-      <a href="regional-hubs.html">🌍 Regional Hubs</a>
+      <a href="collaborators.html">Collaborators</a>
+      <a href="referrals.html">Referral Network</a>
+      <a href="vip-contacts.html">People of Import</a>
+      <a href="regional-hubs.html">Regional Hubs</a>
       <div class="sidebar-section-label">Engagements</div>
-      <a href="speaking.html">🎤 Speaking Engagements</a>
-      <a href="venues.html">🏛️ Venues</a>
-      <a href="travel.html">✈️ Travel Itinerary</a>
+      <a href="speaking.html">Speaking Engagements</a>
+      <a href="venues.html">Venues</a>
+      <a href="travel.html">Travel Itinerary</a>
       <div class="sidebar-section-label">CRM</div>
-      <a href="../crm/">🔮 CRM Overview</a>
+      <a href="../crm/">CRM Overview</a>
       <div class="sidebar-divider"></div>
-      <a href="community-resources.html">📚 Community Resources</a>
+      <a href="community-resources.html">Community Resources</a>
       <a href="../index.html">← Public Site</a>
     </nav>
     <div class="sidebar-user">
@@ -105,7 +105,7 @@
       </div>
 
       <div class="admin-empty" id="emptyState" style="display:none;">
-        <div class="admin-empty__icon">📅</div>
+        <div class="admin-empty__icon"></div>
         <div class="admin-empty__text">No appointments yet</div>
       </div>
 
@@ -168,7 +168,7 @@
 
         <div class="admin-modal__actions">
           <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
-          <button type="button" class="btn-sm btn-secondary" id="syncCalBtn" style="display:none" title="Sync to Google Calendar">📅 Sync to Google Cal</button>
+          <button type="button" class="btn-sm btn-secondary" id="syncCalBtn" style="display:none" title="Sync to Google Calendar"> Sync to Google Cal</button>
           <button type="submit" class="btn-sm btn-primary" id="saveBtn">Save Appointment</button>
         </div>
       </form>
@@ -401,10 +401,10 @@
       btn.disabled = true; btn.textContent = 'Syncing…';
       calendarService.sync(id).then(function() {
         showToast('Synced to Google Calendar', 'success');
-        btn.disabled = false; btn.textContent = '📅 Sync to Google Cal';
+        btn.disabled = false; btn.textContent = ' Sync to Google Cal';
       }).catch(function(e) {
         showToast('Calendar sync failed: ' + e.message, 'error');
-        btn.disabled = false; btn.textContent = '📅 Sync to Google Cal';
+        btn.disabled = false; btn.textContent = ' Sync to Google Cal';
       });
     });
 
