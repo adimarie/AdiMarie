@@ -1,9 +1,9 @@
 {
-  "version": "v260316.01 7:19pm",
-  "release": 1,
-  "sha": "e50f9a6",
-  "fullSha": "e50f9a62d5ae5a75eb644c3d6f3c0e4e025734f4",
+  "version": "v260316.02 8:03pm",
+  "release": 2,
+  "sha": "3c758af",
+  "fullSha": "3c758af8028ced3756eb0c5feff2fa1a23d48fe5",
   "actor": "adimarie",
-  "pushedAt": "2026-03-16T00:19:36Z",
-  "commits": [{"sha": "654fd0f", "message": "Add Practice Analytics + Strategic Concept Map", "author": "Adi"}, {"sha": "e50f9a6", "message": "Update analytics and strategy pages with final versions", "author": "Adi"}]
+  "pushedAt": "2026-03-16T01:03:42Z",
+  "commits": [{"sha": "3c758af", "message": "Consolidate WorkHub into AdiMarie \u2014 single repo with all integrations", "author": "Adi"}]
 }
