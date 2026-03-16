@@ -158,6 +158,7 @@
 
         <div class="admin-modal__actions">
           <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+          <button type="button" class="btn-sm btn-secondary" id="aiDescribeBtn" title="Generate an offering description using AI">✦ AI Describe</button>
           <button type="submit" class="btn-sm btn-primary" id="saveBtn">Save Offering</button>
         </div>
       </form>
@@ -167,6 +168,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../shared/supabase.js"></script>
   <script src="../shared/auth.js"></script>
+  <script src="../shared/ai-service.js"></script>
   <script>
   function showToast(msg, type) {
     var t = document.createElement('div');
@@ -326,6 +328,23 @@
     // Events
     document.getElementById('newServiceBtn').addEventListener('click', function() { openModal(null); });
     document.getElementById('cancelBtn').addEventListener('click', closeModal);
+
+    document.getElementById('aiDescribeBtn').addEventListener('click', function() {
+      var btn = this;
+      var name = document.getElementById('fieldName').value.trim();
+      var existing = document.getElementById('fieldDescription').value.trim();
+      if (!name) { showToast('Enter the offering name first', 'error'); return; }
+      btn.disabled = true; btn.textContent = 'Writing…';
+      aiHelpers.writeServiceDescription({ serviceName: name, details: existing || 'somatic and ceremonial practice' })
+        .then(function(result) {
+          document.getElementById('fieldDescription').value = result.text || result;
+          btn.disabled = false; btn.textContent = '✦ AI Describe';
+          showToast('AI description ready — review before saving', 'success');
+        }).catch(function(e) {
+          showToast('AI describe failed: ' + e.message, 'error');
+          btn.disabled = false; btn.textContent = '✦ AI Describe';
+        });
+    });
     document.getElementById('modalBackdrop').addEventListener('click', closeModal);
     document.getElementById('serviceForm').addEventListener('submit', saveService);
 

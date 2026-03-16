@@ -21,10 +21,13 @@
 
 | File | Purpose |
 |------|---------|
-| `shared/supabase.js` | Supabase client init — exports `SUPABASE_URL`, `SUPABASE_ANON_KEY`, initializes client |
-| `shared/auth.js` | Auth module — profile button, login modal, `requireAuth()` guard, `window.adminSupabase` |
+| `shared/supabase.js` | Supabase client init — exports `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `STORAGE` buckets (media, photos, documents) |
+| `shared/auth.js` | Auth module — profile button, login modal, Google OAuth (`signInWithGoogle`), `requireAuth()` guard, `window.adminSupabase` |
 | `shared/admin.css` | Admin UI component styles — stat cards, tables, modals, badges, forms |
 | `shared/admin-sidebar.css` | Admin sidebar layout — sidebar nav, wine bg, gold active accents, main content area |
+| `shared/ai-service.js` | AI helper — calls `gemini` edge function; `ai(prompt, opts)` + `aiHelpers.*` (draftMessage, summarizeNotes, suggestIntakeQuestions, writeServiceDescription) |
+| `shared/calendar-service.js` | Google Calendar sync — calls `sync-calendar` edge function; `calendarService.sync(apptId)`, `.remove(apptId)` |
+| `shared/email-service.js` | Email sender — calls `send-email` edge function; `sendEmail(opts)` + `emailTemplates.*` (appointmentConfirmation, intakeFormInvitation, notification) |
 
 ## Admin Command Center (`/admin/`)
 
@@ -95,13 +98,39 @@ All pages (except login.html) use the `initPortal()` auth guard which verifies `
 | `portal/profile.html` | Profile — client info, journey stage, sign out |
 | `portal/portal.css` | Portal design system — sage/cream palette, sanctuary aesthetic |
 
+## Auth Callback (`/auth/`)
+
+| File | Purpose |
+|------|---------|
+| `auth/callback.html` | OAuth callback page — exchanges Google OAuth code for session, redirects to admin/index.html |
+
+## CRM (`/crm/`)
+
+| File | Purpose |
+|------|---------|
+| `crm/index.html` | CRM shell — auth guard, React + Babel bootstrap, Supabase `crm_store` persistence |
+| `crm/app.jsx` | WorkHub CRM React app — client management, service flows, automation sequences |
+
 ## Database & Infrastructure
 
 | File | Purpose |
 |------|---------|
-| `supabase/migrations/20250315_command_center.sql` | Command Center DB migration — all new tables + RLS policies |
+| `supabase/migrations/001_page_display_config.sql` | Page display config table |
+| `supabase/migrations/20250315_command_center.sql` | Command Center tables — 14 tables + RLS policies |
+| `supabase/migrations/20250315_analytics_strategy.sql` | Analytics/Strategy tables — practice_goals, practice_reflections, strategic_nodes, strategic_connections |
+| `supabase/functions/gemini/` | Edge function — Google Gemini AI proxy |
+| `supabase/functions/send-email/` | Edge function — Resend email sender |
+| `supabase/functions/sync-calendar/` | Edge function — Google Calendar two-way sync (JWT required) |
+| `supabase/functions/calendar-webhook/` | Edge function — Google Calendar push notifications (no-verify-jwt) |
+| `supabase/functions/import-calendar/` | Edge function — one-time Google Calendar import |
+| `supabase/config.toml` | Supabase CLI local dev config |
 | `docs/SCHEMA.md` | Full database schema reference |
 | `docs/KEY-FILES.md` | This file |
+| `docs/INTEGRATIONS.md` | External service config — Resend, Google Calendar, Gemini AI, credentials |
+| `docs/DEPLOY.md` | Deployment workflow and live URLs |
+| `docs/PATTERNS.md` | Code patterns and UI conventions |
+| `docs/BUILD-SUMMARY.md` | Build history and feature inventory |
+| `docs/CHANGELOG.md` | Change log |
 | `CLAUDE.md` | AI assistant context — tech stack, deployment, auth patterns, conventions |
 
 ## Next.js App (`/src/`) — Coexisting

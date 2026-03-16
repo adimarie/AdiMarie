@@ -1,123 +1,123 @@
-# CLAUDE.md - [Your Project Name]
+# CLAUDE.md — The Animist Apothecary
 
-This file provides context for Claude (AI assistant) when working on this codebase.
-
-> **IMPORTANT: You have direct database access!**
-> Always run SQL migrations directly using `psql` - never ask the user to run SQL manually.
+This file provides context for Claude when working on this codebase.
 
 > **IMPORTANT: Push changes immediately!**
-> This is a GitHub Pages site - changes only go live after pushing.
-> Always `git push` as soon as changes are ready.
+> This is a GitHub Pages site — changes only go live after `git push`.
+> Always push as soon as changes are ready.
 
-> **IMPORTANT: First-time setup!**
-> Run `/setup-alpacapps-infra` to set up the full infrastructure interactively.
-> If the Supabase CLI is not installed or linked, run:
-> `npm install -g supabase && supabase login && supabase link --project-ref YOUR_REF`
+> **IMPORTANT: Supabase CLI is broken on this macOS version.**
+> (`dyld: Symbol not found: _SecTrustCopyCertificateChain`)
+> Save SQL as migration files for manual execution in the Supabase SQL Editor.
+> Do NOT try to run `supabase db push` directly.
 
 ## Project Overview
 
-[Your project] is a [type of system] for [purpose]. It manages [core entities].
+**The Animist Apothecary** is a somatic & ceremonial practice management system. It manages clients, services/offerings, appointments, intake forms, mentorship containers, payments, and a full Command Center for the practitioner.
 
 **Tech Stack:**
-- Frontend: Next.js 16 (React 19, TypeScript, Tailwind CSS)
-- Backend: Supabase (PostgreSQL + Storage + Auth)
-- Hosting: GitHub Pages (static export)
-- i18n: Dictionary-based multi-language support
+- Frontend: Static HTML/CSS/JS (no build step)
+- Backend: Supabase (PostgreSQL + Storage + Auth + Edge Functions)
+- Hosting: GitHub Pages with custom domain `theanimistapothecary.com`
+- Auth: Supabase Auth (email/password + Google OAuth)
 
 **Live URLs:**
-- Public site: https://USERNAME.github.io/REPO/
-- Intranet: https://USERNAME.github.io/REPO/en/intranet/
+- Public site: https://theanimistapothecary.com
+- Admin Command Center: https://theanimistapothecary.com/admin/
+- Client Portal: https://theanimistapothecary.com/portal/
+- CRM: https://theanimistapothecary.com/crm/
+- Auth callback: https://theanimistapothecary.com/auth/callback.html
 
 ## Deployment
 
 Push to main and it's live. No build step, no PR process.
-**For Claude:** Always push changes immediately.
+```bash
+git add -A && git commit -m "message" && git push
+```
+
+## Supabase Details
+
+- **Project ID:** `wdecjlrfulsdklqeetqb` (us-west-2)
+- **Dashboard:** https://supabase.com/dashboard/project/wdecjlrfulsdklqeetqb
+- **URL:** `https://wdecjlrfulsdklqeetqb.supabase.co`
+- **Anon key:** in `shared/supabase.js`
+- **Edge function base URL:** `https://wdecjlrfulsdklqeetqb.supabase.co/functions/v1/`
+
+### Edge Function Deployment
+
+```bash
+supabase functions deploy gemini
+supabase functions deploy send-email
+supabase functions deploy sync-calendar
+supabase functions deploy calendar-webhook --no-verify-jwt
+supabase functions deploy import-calendar
+supabase secrets set KEY=value
+supabase functions logs <function-name>
+```
 
 ## Shared Files
 
-- `shared/supabase.js` — Supabase client init (URL + anon key as globals)
-- `shared/auth.js` — Auth module: profile button, login modal, page guard
-- `shared/admin.css` — Admin styles: layout, tables, modals, badges (themeable via `--aap-*` CSS vars)
+- `shared/supabase.js` — Supabase URL + anon key globals + STORAGE buckets (media, photos, documents)
+- `shared/auth.js` — Auth: profile button, Google OAuth, email/password modal, `requireAuth()` guard
+- `shared/admin.css` — Admin styles: stat cards, tables, modals, badges (themeable via `--aap-*` CSS vars)
+- `shared/admin-sidebar.css` — Admin sidebar: 248px fixed, wine bg (#3D0C17), gold active accents
+- `shared/ai-service.js` — AI: `ai(prompt, opts)` + `aiHelpers.*` → calls `gemini` edge function
+- `shared/calendar-service.js` — Calendar: `calendarService.sync/remove(apptId)` → calls `sync-calendar`
+- `shared/email-service.js` — Email: `sendEmail(opts)` + `emailTemplates.*` → calls `send-email`
 
 ### Auth System (`shared/auth.js`)
 
-Provides login/profile functionality on all pages:
+- **Google OAuth**: `window.signInWithGoogle()` — redirects to `auth/callback.html`
+- **Login modal**: Email/password fallback + Google button
+- **Avatar**: Shows photo (from Google) or initials
+- **Page guard**: `requireAuth(callback)` — hides body until auth confirmed, redirects to `../index.html` if not authenticated
+- **Supabase client**: Exposed as `window.adminSupabase`
 
-- **Profile button**: Auto-inserts into nav bar. Shows person icon when logged out, initials avatar when logged in.
-- **Login modal**: Email/password via `supabase.auth.signInWithPassword()`. Opens on profile icon click.
-- **Dropdown menu**: When logged in, clicking avatar shows dropdown with "Admin" link and "Sign Out".
-- **Page guard**: Admin pages call `requireAuth(callback)` — redirects to `../index.html` if not authenticated.
-- **Supabase client**: Exposed as `window.adminSupabase` for admin page data access.
-
-**Script loading order on every page:**
+**Script loading order (ALL admin pages):**
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="shared/supabase.js"></script>
-<script src="shared/auth.js"></script>
-```
-
-**`shared/supabase.js` must export globals** (auth.js reads these):
-```javascript
-var SUPABASE_URL = 'https://YOUR_REF.supabase.co';
-var SUPABASE_ANON_KEY = 'your-anon-key';
+<script src="../shared/supabase.js"></script>
+<script src="../shared/auth.js"></script>
 ```
 
 ### Admin Pages (`admin/`)
 
-- All admin pages are in `admin/` directory with `<meta name="robots" content="noindex, nofollow">`
-- Each page loads `shared/admin.css` and calls `requireAuth()`:
+- All admin pages: `<meta name="robots" content="noindex, nofollow">`, load `shared/admin.css` + `shared/admin-sidebar.css`
+- Auth guard pattern:
 ```javascript
 requireAuth(function(user, supabase) {
-    // Page is authenticated — load data using supabase client
+    // authenticated — load data
 });
 ```
-- Admin topbar nav links between admin sub-pages
 - CRUD pattern: `admin-table` for listing, `admin-modal` for add/edit forms
-- CSS classes are themeable via `--aap-*` custom properties
+- Always use `showToast()` not `alert()`
+- Filter archived: `.filter(s => !s.is_archived)` client-side
 
-## Supabase Details
+### Admin Sidebar
 
-- Project ID: `YOUR_PROJECT_REF`
-- URL: `https://YOUR_PROJECT_REF.supabase.co`
-- Anon key is in `src/lib/supabase.ts` and `shared/supabase.js`
-
-### Direct Database Access (for Claude)
-
-```bash
-psql "postgres://postgres.YOUR_REF:YOUR_PASSWORD@aws-0-REGION.pooler.supabase.com:5432/postgres" -c "SQL HERE"
-```
-
-### Supabase CLI Access (for Claude)
-
-```bash
-supabase functions deploy <function-name>
-supabase functions logs <function-name>
-supabase secrets set KEY=value
-```
-
-Run these directly. If CLI not installed, install and link first.
-
-## Key Files
-
-- `src/lib/supabase.ts` — Supabase client (Next.js app)
-- `shared/supabase.js` — Supabase client (vanilla JS pages)
-- `next.config.ts` — basePath must match GitHub repo name
-- `src/i18n/config.ts` — supported locales
-- `src/i18n/dictionaries/*.json` — translation files
-- `src/contexts/auth-context.tsx` — authentication
+- 248px fixed, background `#3D0C17` (wine), gold active border (`--aap-gold: #D4A843`)
+- All 21 pages + analytics.html + strategy.html have the full sidebar nav
+- Sidebar includes CRM link: `<a href="../crm/">🔮 CRM Overview</a>`
 
 ## External Services
 
-### Email (Resend)
-- API key stored as Supabase secret: `RESEND_API_KEY`
+### Email (Resend) ✅
+- Secret: `RESEND_API_KEY` in Supabase
+- Edge function: `send-email`
+- Client module: `shared/email-service.js`
 
-### SMS (Telnyx)
-- Config in `telnyx_config` table
-- Edge functions: `send-sms`, `telnyx-webhook` (deploy with `--no-verify-jwt`)
+### AI (Google Gemini) ✅
+- Secret: `GEMINI_API_KEY` in Supabase
+- Model: `gemini-2.0-flash`
+- Edge function: `gemini`
+- Client module: `shared/ai-service.js`
+- Free tier: 1,500 req/day, 15 RPM
 
-### Payments (Square)
-- Config in `square_config` table
-- Edge function: `process-square-payment`
+### Google Calendar ✅
+- Secrets: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALENDAR_REFRESH_TOKEN`, `GOOGLE_CALENDAR_ID`
+- Edge functions: `sync-calendar` (JWT required), `calendar-webhook` (no-verify-jwt), `import-calendar`
+- Client module: `shared/calendar-service.js`
+- **⚠️ Push channel expires ~March 17, 2026** — see `docs/INTEGRATIONS.md` for renewal instructions
 
 ### E-Signatures (SignWell)
 - Config in `signwell_config` table
@@ -125,7 +125,8 @@ Run these directly. If CLI not installed, install and link first.
 
 ## Conventions
 
-1. Use toast notifications, not alert()
-2. Filter archived items client-side
-3. Don't expose personal info in public views
-4. Client-side image compression for files > 500KB
+1. `showToast()` not `alert()` in all admin pages
+2. Filter archived items: `.filter(s => !s.is_archived)` client-side
+3. Don't expose personal info in public/portal views
+4. `openLightbox(url)` for images
+5. Client-side image compression for files > 500KB

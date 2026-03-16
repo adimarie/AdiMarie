@@ -10,6 +10,10 @@ const supabase = window.supabase
 
 // Storage helpers
 const STORAGE = {
+    media: {
+        bucket: 'media',
+        getPublicUrl: (path) => `${SUPABASE_URL}/storage/v1/object/public/media/${path}`,
+    },
     photos: {
         bucket: 'photos',
         getPublicUrl: (path) => `${SUPABASE_URL}/storage/v1/object/public/photos/${path}`,

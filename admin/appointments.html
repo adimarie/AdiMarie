@@ -71,6 +71,7 @@
       <div class="admin-toolbar">
         <input class="admin-toolbar__search" type="text" id="searchInput" placeholder="Search appointments…">
         <div class="admin-toolbar__actions">
+          <button class="btn-sm btn-secondary" id="importCalBtn" title="Import events from Google Calendar into Supabase">↓ Import from Google Cal</button>
           <button class="btn-sm btn-primary" id="newAppointmentBtn">+ New Appointment</button>
         </div>
       </div>
@@ -167,6 +168,7 @@
 
         <div class="admin-modal__actions">
           <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+          <button type="button" class="btn-sm btn-secondary" id="syncCalBtn" style="display:none" title="Sync to Google Calendar">📅 Sync to Google Cal</button>
           <button type="submit" class="btn-sm btn-primary" id="saveBtn">Save Appointment</button>
         </div>
       </form>
@@ -176,6 +178,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../shared/supabase.js"></script>
   <script src="../shared/auth.js"></script>
+  <script src="../shared/calendar-service.js"></script>
   <script>
   function showToast(msg, type) {
     var t = document.createElement('div');
@@ -329,6 +332,9 @@
       document.getElementById('modalTitle').textContent = item ? 'Edit Appointment' : 'New Appointment';
       document.getElementById('fieldClient').value = item ? (item.client_id || '') : '';
       document.getElementById('fieldService').value = item ? (item.service_id || '') : '';
+      // Show sync button only when editing an existing appointment
+      var syncBtn = document.getElementById('syncCalBtn');
+      if (syncBtn) syncBtn.style.display = item ? '' : 'none';
 
       // Convert ISO to datetime-local format
       var startVal = '';
@@ -386,6 +392,44 @@
         loadAppointments();
       });
     }
+
+    // Google Calendar sync (for existing appointments)
+    document.getElementById('syncCalBtn').addEventListener('click', function() {
+      var id = document.getElementById('fieldId').value;
+      if (!id) return;
+      var btn = this;
+      btn.disabled = true; btn.textContent = 'Syncing…';
+      calendarService.sync(id).then(function() {
+        showToast('Synced to Google Calendar', 'success');
+        btn.disabled = false; btn.textContent = '📅 Sync to Google Cal';
+      }).catch(function(e) {
+        showToast('Calendar sync failed: ' + e.message, 'error');
+        btn.disabled = false; btn.textContent = '📅 Sync to Google Cal';
+      });
+    });
+
+    // Import from Google Calendar
+    document.getElementById('importCalBtn').addEventListener('click', function() {
+      var btn = this;
+      btn.disabled = true; btn.textContent = 'Importing…';
+      var session = window.adminSupabase.auth.getSession().then(function(r) {
+        var token = r && r.data && r.data.session && r.data.session.access_token;
+        if (!token) { showToast('Not authenticated', 'error'); btn.disabled = false; btn.textContent = '↓ Import from Google Cal'; return; }
+        fetch(SUPABASE_URL + '/functions/v1/import-calendar', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        }).then(function(res) { return res.json(); }).then(function(data) {
+          if (data.error) throw new Error(data.error);
+          showToast('Import complete: ' + (data.imported || 0) + ' events', 'success');
+          loadAppointments();
+        }).catch(function(e) {
+          showToast('Import failed: ' + e.message, 'error');
+        }).finally(function() {
+          btn.disabled = false; btn.textContent = '↓ Import from Google Cal';
+        });
+      });
+    });
 
     // Events
     document.getElementById('newAppointmentBtn').addEventListener('click', function() { openModal(null); });

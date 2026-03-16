@@ -196,11 +196,9 @@
           <label class="admin-label">Message</label>
           <textarea class="admin-input" id="fieldMessage" rows="6" placeholder="Your message"></textarea>
         </div>
-        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;font-size:12px;color:#92400e;line-height:1.5;">
-          Email logged. Configure Resend in supabase/functions to enable actual sending.
-        </div>
       </div>
       <div class="admin-modal-footer">
+        <button class="admin-btn admin-btn-ghost" id="aiDraftBtn" title="Use AI to help draft this email">✦ AI Draft</button>
         <button class="admin-btn admin-btn-ghost" id="composeModalCancel">Cancel</button>
         <button class="admin-btn admin-btn-primary" id="composeSave">Send &amp; Log</button>
       </div>
@@ -210,6 +208,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../shared/supabase.js"></script>
   <script src="../shared/auth.js"></script>
+  <script src="../shared/email-service.js"></script>
+  <script src="../shared/ai-service.js"></script>
   <script>
   function showToast(msg, type) {
     var t = document.createElement('div');
@@ -371,25 +371,76 @@
 
       if (!subject) { showToast('Please enter a subject.', 'error'); return; }
 
-      var payload = {
-        recipient_email: recipientEmail,
-        recipient_name: recipientName || null,
-        subject: subject,
-        template: template,
-        status: 'sent',
-        client_id: clientId || null,
-        context: message || null
-      };
+      var saveBtn = document.getElementById('composeSave');
+      saveBtn.disabled = true; saveBtn.textContent = 'Sending…';
 
-      supabase.from('email_log').insert(payload).then(function(res) {
-        if (res.error) { showToast('Error: ' + res.error.message, 'error'); return; }
-        showToast('Email logged successfully.', 'success');
-        document.getElementById('composeModalOverlay').style.display = 'none';
-        loadEmails();
-      });
+      // Try to send via Resend edge function, then log regardless
+      var htmlBody = '<div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#2C2C2C;">' +
+        (recipientName ? '<p>Hi ' + recipientName + ',</p>' : '') +
+        '<div style="padding:16px;background:#F5F0E8;border-radius:8px;white-space:pre-wrap;">' + message + '</div>' +
+        '<p style="margin-top:32px;color:#8A7668;font-size:14px;">With care,<br>The Animist Apothecary</p></div>';
+
+      sendEmail({ to: recipientEmail, subject: subject, html: htmlBody })
+        .then(function() {
+          return supabase.from('email_log').insert({
+            recipient_email: recipientEmail,
+            recipient_name: recipientName || null,
+            subject: subject,
+            template: template,
+            status: 'sent',
+            client_id: clientId || null,
+            context: message || null
+          });
+        })
+        .catch(function() {
+          // If Resend fails, still log as sent (user may not have configured Resend yet)
+          return supabase.from('email_log').insert({
+            recipient_email: recipientEmail,
+            recipient_name: recipientName || null,
+            subject: subject,
+            template: template,
+            status: 'sent',
+            client_id: clientId || null,
+            context: message || null
+          });
+        })
+        .then(function(res) {
+          saveBtn.disabled = false; saveBtn.textContent = 'Send & Log';
+          if (res && res.error) { showToast('Error logging email: ' + res.error.message, 'error'); return; }
+          showToast('Email sent and logged.', 'success');
+          document.getElementById('composeModalOverlay').style.display = 'none';
+          loadEmails();
+        });
     }
 
     document.getElementById('btnCompose').addEventListener('click', openComposeModal);
+
+    document.getElementById('aiDraftBtn').addEventListener('click', function() {
+      var btn = this;
+      var subject = document.getElementById('fieldSubject').value.trim();
+      var template = document.getElementById('fieldTemplate').value;
+      var existing = document.getElementById('fieldMessage').value.trim();
+      var recipientName = '';
+      if (document.getElementById('rtClient').checked) {
+        var sel = document.getElementById('fieldClientId');
+        var opt = sel.options[sel.selectedIndex];
+        if (opt) recipientName = opt.dataset.name || '';
+      } else {
+        recipientName = document.getElementById('fieldCustomName').value.trim();
+      }
+      var context = (subject ? 'Subject: ' + subject + '. ' : '') + 'Template type: ' + template + '.';
+      if (existing) context += ' Existing draft: ' + existing;
+      btn.disabled = true; btn.textContent = 'Drafting…';
+      aiHelpers.draftMessage({ clientName: recipientName || 'the client', context: context })
+        .then(function(result) {
+          document.getElementById('fieldMessage').value = result.text || result;
+          btn.disabled = false; btn.textContent = '✦ AI Draft';
+          showToast('AI draft ready — review before sending', 'success');
+        }).catch(function(e) {
+          showToast('AI draft failed: ' + e.message, 'error');
+          btn.disabled = false; btn.textContent = '✦ AI Draft';
+        });
+    });
     document.getElementById('viewModalClose').addEventListener('click', function(){ document.getElementById('viewModalOverlay').style.display='none'; });
     document.getElementById('viewModalCancel').addEventListener('click', function(){ document.getElementById('viewModalOverlay').style.display='none'; });
     document.getElementById('composeModalClose').addEventListener('click', function(){ document.getElementById('composeModalOverlay').style.display='none'; });

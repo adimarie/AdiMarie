@@ -177,6 +177,7 @@
 
       <div class="modal-actions">
         <button class="btn btn-secondary" id="noteCancelBtn">Cancel</button>
+        <button class="btn btn-secondary" id="aiSummarizeBtn" title="Summarize practitioner notes into client-visible notes using AI">✦ AI Summarize</button>
         <button class="btn btn-primary" id="noteSaveBtn">Save Note</button>
       </div>
     </div>
@@ -185,6 +186,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../shared/supabase.js"></script>
   <script src="../shared/auth.js"></script>
+  <script src="../shared/ai-service.js"></script>
   <script>
   function showToast(msg, type) {
     var t = document.createElement('div');
@@ -363,6 +365,26 @@
     });
 
     document.getElementById('noteCancelBtn').addEventListener('click', closeModal);
+
+    document.getElementById('aiSummarizeBtn').addEventListener('click', function() {
+      var btn = this;
+      var practitionerNotes = document.getElementById('fieldPractitionerNotes').value.trim();
+      if (!practitionerNotes) { showToast('Add practitioner notes first', 'error'); return; }
+      var clientNameEl = document.getElementById('fieldClient');
+      var clientName = clientNameEl && clientNameEl.options && clientNameEl.options[clientNameEl.selectedIndex]
+        ? clientNameEl.options[clientNameEl.selectedIndex].text : 'the client';
+      btn.disabled = true; btn.textContent = 'Summarizing…';
+      aiHelpers.summarizeNotes({ clientName: clientName, notes: practitionerNotes })
+        .then(function(result) {
+          var visibleEl = document.getElementById('fieldClientVisibleNotes');
+          if (visibleEl) visibleEl.value = result.text || result;
+          btn.disabled = false; btn.textContent = '✦ AI Summarize';
+          showToast('AI summary ready — review before saving', 'success');
+        }).catch(function(e) {
+          showToast('AI summarize failed: ' + e.message, 'error');
+          btn.disabled = false; btn.textContent = '✦ AI Summarize';
+        });
+    });
     document.getElementById('noteModal').addEventListener('click', function(e) {
       if (e.target === this) closeModal();
     });
