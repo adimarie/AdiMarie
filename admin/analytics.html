@@ -1,166 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
   <title>Practice Analytics · Admin · The Animist Apothecary</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../shared/admin.css">
-  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/admin.css" />
   <style>
-    /* Analytics tabs */
-    .analytics-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; }
-    .analytics-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
-    .analytics-tab { padding: 9px 22px; border: 1.5px solid var(--aap-border); border-radius: 100px; background: none; font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 500; color: var(--aap-text-dim); cursor: pointer; transition: all 0.2s; }
-    .analytics-tab:hover { border-color: var(--aap-gold); color: var(--aap-text); }
-    .analytics-tab.active { background: var(--aap-gold); border-color: var(--aap-gold); color: #fff; }
-    .analytics-nav { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
-    .analytics-nav button { padding: 7px 16px; border: 1px solid var(--aap-border); border-radius: 8px; background: var(--aap-surface); font-family: inherit; font-size: 13px; font-weight: 600; color: var(--aap-text-dim); cursor: pointer; transition: all 0.2s; }
-    .analytics-nav button:hover { border-color: var(--aap-gold); color: var(--aap-text); }
-    #periodLabel { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 500; color: var(--aap-text); flex: 1; text-align: center; }
-
-    /* Section headers */
-    .analytics-section { margin-bottom: 40px; }
-    .analytics-section-header { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 500; color: var(--aap-accent-deep); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--aap-border); }
-
-    /* Two-col grid */
-    .analytics-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    @media (max-width: 900px) { .analytics-two-col { grid-template-columns: 1fr; } }
-
-    /* Metric cards */
-    .metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 40px; }
-    @media (max-width: 1100px) { .metrics-row { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 600px) { .metrics-row { grid-template-columns: 1fr; } }
-    .metric-card { background: var(--aap-surface); border: 1px solid var(--aap-border); border-radius: var(--aap-radius-lg); padding: 24px; }
-    .metric-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--aap-text-dim); margin-bottom: 8px; }
-    .metric-value { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 500; color: var(--aap-text); line-height: 1; margin-bottom: 10px; }
-    .metric-change { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 100px; }
-    .metric-change.up { background: #dcfce7; color: #166534; }
-    .metric-change.down { background: #fef2f2; color: #991b1b; }
-    .metric-change.flat { background: #f3f4f6; color: #6b7280; }
-    .sparkline { display: flex; align-items: flex-end; gap: 2px; height: 32px; margin-top: 12px; }
-    .sparkline-bar { width: 4px; background: rgba(212,168,67,0.3); border-radius: 2px; transition: height 0.3s ease; }
-    .sparkline-bar.current { background: var(--aap-gold); }
-
-    /* Bar chart */
-    .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 180px; padding-bottom: 24px; position: relative; }
-    .bar-chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; justify-content: flex-end; }
-    .bar-chart-bar { width: 100%; background: linear-gradient(to top, #5B7553, #7A9470); border-radius: 4px 4px 0 0; min-height: 2px; transition: height 0.5s ease; cursor: default; }
-    .bar-chart-label { font-size: 10px; color: var(--aap-text-dim); text-align: center; white-space: nowrap; }
-
-    /* Donut chart */
-    .donut-wrap { position: relative; width: 160px; height: 160px; border-radius: 50%; margin: 0 auto 16px; }
-    .donut-center { position: absolute; inset: 30px; border-radius: 50%; background: var(--aap-surface); display: flex; align-items: center; justify-content: center; flex-direction: column; }
-    .donut-total { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 500; }
-    .donut-total-label { font-size: 10px; color: var(--aap-text-dim); }
-    .donut-legend { display: flex; flex-direction: column; gap: 6px; }
-    .donut-legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
-    .donut-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-
-    /* Pipeline */
-    .pipeline-bar-wrap { height: 32px; border-radius: 8px; overflow: hidden; display: flex; margin: 12px 0; }
-    .pipeline-bar-seg { height: 100%; transition: width 0.5s ease; cursor: default; }
-    .pipeline-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-    .pipeline-legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--aap-text-dim); }
-    .pipeline-legend-dot { width: 10px; height: 10px; border-radius: 50%; }
-
-    /* Theme pills */
-    .theme-pills { display: flex; flex-wrap: wrap; gap: 6px; }
-    .theme-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; background: var(--aap-bg-warm); border: 1px solid var(--aap-border); border-radius: 100px; font-size: 12px; color: var(--aap-text-soft); }
-    .theme-count { background: var(--aap-gold); color: white; border-radius: 100px; padding: 0px 5px; font-size: 10px; font-weight: 700; }
-
-    /* Network mini-cards */
-    .network-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    @media (max-width: 900px) { .network-grid { grid-template-columns: 1fr; } }
-    .network-card { background: var(--aap-surface); border: 1px solid var(--aap-border); border-radius: var(--aap-radius-lg); padding: 20px; }
-    .network-card-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--aap-text-dim); margin-bottom: 12px; }
-    .network-stat { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 6px; color: var(--aap-text-soft); }
-    .network-stat-val { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 500; color: var(--aap-text); }
-    .health-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
-    .health-green { background: #22c55e; }
-    .health-yellow { background: #eab308; }
-    .health-red { background: #ef4444; }
-
-    /* Goals */
-    .goals-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-    @media (max-width: 900px) { .goals-grid { grid-template-columns: 1fr; } }
-    .goal-card { background: var(--aap-surface); border: 1px solid var(--aap-border); border-radius: var(--aap-radius-lg); padding: 20px 24px; }
-    .goal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-    .goal-title { font-size: 15px; font-weight: 600; color: var(--aap-text); }
-    .goal-category { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--aap-text-dim); }
-    .goal-progress-bar { height: 6px; background: var(--aap-border); border-radius: 3px; margin: 10px 0; overflow: hidden; }
-    .goal-progress-fill { height: 100%; background: #5B7553; border-radius: 3px; transition: width 0.5s ease; }
-    .goal-values { display: flex; justify-content: space-between; font-size: 12px; color: var(--aap-text-dim); }
-    .goal-actions { display: flex; gap: 6px; margin-top: 12px; }
-    .goal-action-btn { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--aap-border); background: none; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; color: var(--aap-text-dim); }
-    .goal-action-btn:hover { border-color: var(--aap-gold); color: var(--aap-text); }
-    .goal-action-btn.achieved { border-color: #5B7553; color: #5B7553; }
-    .goal-action-btn.achieved:hover { background: #5B7553; color: white; }
-    .goal-action-btn.missed { border-color: #991b1b; color: #991b1b; }
-    .goal-action-btn.missed:hover { background: #991b1b; color: white; }
-    .goal-status-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 8px; border-radius: 100px; }
-    .goal-status-active { background: #dcfce7; color: #166534; }
-    .goal-status-achieved { background: #dbeafe; color: #1e40af; }
-    .goal-status-missed { background: #fef2f2; color: #991b1b; }
-    .goal-status-abandoned { background: #f3f4f6; color: #6b7280; }
-
-    /* Reflection */
-    .reflection-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--aap-text-dim); margin-bottom: 6px; }
-    .reflection-section-text { font-size: 14px; color: var(--aap-text-soft); line-height: 1.7; white-space: pre-wrap; padding-left: 12px; border-left: 3px solid var(--aap-gold); margin-bottom: 20px; }
-    .reflection-empty { text-align: center; padding: 48px 24px; background: var(--aap-surface); border: 1px solid var(--aap-border); border-radius: var(--aap-radius-lg); }
-    .reflection-empty-text { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-style: italic; color: var(--aap-text-dim); margin-bottom: 20px; }
-    .reflection-card { background: var(--aap-surface); border: 1px solid var(--aap-border); border-radius: var(--aap-radius-lg); padding: 28px; }
-    .reflection-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 500; margin-bottom: 6px; color: var(--aap-text); }
-    .reflection-meta { font-size: 12px; color: var(--aap-text-dim); margin-bottom: 20px; }
-    .reflection-body-text { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; line-height: 1.8; color: var(--aap-text-soft); margin-bottom: 24px; white-space: pre-wrap; }
-    .reflection-edit-btn { padding: 7px 16px; border: 1px solid var(--aap-border); border-radius: 8px; background: none; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--aap-text-dim); cursor: pointer; transition: all 0.2s; }
-    .reflection-edit-btn:hover { border-color: var(--aap-gold); color: var(--aap-text); }
-
-    /* Mood selector */
-    .mood-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .mood-pill { padding: 6px 14px; border: 1.5px solid var(--aap-border); border-radius: 100px; background: none; font-family: inherit; font-size: 13px; cursor: pointer; transition: all 0.2s; color: var(--aap-text-soft); }
-    .mood-pill:hover { border-color: var(--aap-gold); }
-    .mood-pill.selected { background: var(--aap-gold); border-color: var(--aap-gold); color: #fff; }
-
-    /* Seasonal cards */
-    .seasonal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    @media (max-width: 900px) { .seasonal-grid { grid-template-columns: repeat(2, 1fr); } }
-    .seasonal-card { padding: 24px; border-radius: var(--aap-radius-lg); border: 1px solid transparent; text-align: center; }
-    .seasonal-icon { font-size: 32px; margin-bottom: 8px; }
-    .seasonal-name { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-style: italic; font-weight: 500; margin-bottom: 4px; }
-    .seasonal-metaphor { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.6; margin-bottom: 12px; }
-    .seasonal-stats { font-size: 13px; opacity: 0.8; }
-
-    /* Revenue / Invoice panel */
-    .panel-card { background: var(--aap-surface); border: 1px solid var(--aap-border); border-radius: var(--aap-radius-lg); padding: 24px; }
-    .panel-title { font-size: 13px; font-weight: 600; color: var(--aap-text-soft); margin-bottom: 16px; }
-    .invoice-col { display: flex; flex-direction: column; align-items: center; }
-
-    /* Speaking / travel list */
-    .engagement-item { padding: 12px 0; border-bottom: 1px solid var(--aap-border-light); }
-    .engagement-item:last-child { border-bottom: none; }
-    .engagement-title { font-size: 14px; font-weight: 600; color: var(--aap-text); margin-bottom: 2px; }
-    .engagement-sub { font-size: 12px; color: var(--aap-text-dim); }
-    .status-badge { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 8px; border-radius: 100px; }
-    .badge-confirmed { background: #dcfce7; color: #166534; }
-    .badge-pending { background: #fffbeb; color: #92400e; }
-    .badge-completed { background: #dbeafe; color: #1e40af; }
-    .badge-cancelled { background: #f3f4f6; color: #6b7280; }
-    .badge-booked { background: #dcfce7; color: #166534; }
-    .badge-planning { background: #ede9fe; color: #5b21b6; }
-
-    /* Misc */
-    .muted-text { color: var(--aap-text-dim); font-style: italic; font-size: 13px; }
-    .add-btn { padding: 9px 20px; background: var(--aap-gold); color: white; border: none; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-    .add-btn:hover { background: var(--aap-gold-dim); }
-    .section-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--aap-border); }
-    .page-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 500; color: var(--aap-text); margin: 0; }
+    .analytics-tabs { display:flex; gap:0; border-bottom:2px solid var(--aap-border); margin-bottom:28px; }
+    .analytics-tab { padding:10px 24px; font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:600; color:var(--aap-text-dim); cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; background:none; border-top:none; border-left:none; border-right:none; transition:all 0.15s; }
+    .analytics-tab.active { color:var(--aap-gold); border-bottom-color:var(--aap-gold); }
+    .analytics-tab:hover:not(.active) { color:var(--aap-text); }
+    .analytics-nav { display:flex; align-items:center; gap:16px; margin-bottom:32px; }
+    .analytics-nav-btn { background:var(--aap-surface); border:1px solid var(--aap-border); border-radius:8px; padding:6px 14px; cursor:pointer; font-size:14px; font-weight:600; color:var(--aap-text); transition:all 0.15s; }
+    .analytics-nav-btn:hover { background:var(--aap-border); }
+    .analytics-period-label { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--aap-accent-deep); flex:1; text-align:center; }
+    .analytics-section { margin-bottom:40px; }
+    .analytics-section-title { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:600; color:var(--aap-accent-deep); margin:0 0 16px; padding-bottom:8px; border-bottom:1px solid var(--aap-border); }
+    .metric-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:14px; }
+    .metric-card { background:var(--aap-surface); border:1px solid var(--aap-border); border-radius:var(--aap-radius-lg); padding:16px; }
+    .metric-icon { font-size:22px; margin-bottom:6px; }
+    .metric-value { font-size:28px; font-weight:700; color:var(--aap-accent-deep); font-family:'Cormorant Garamond',serif; }
+    .metric-label { font-size:12px; color:var(--aap-text-dim); margin-top:2px; }
+    .sparkline { display:flex; align-items:flex-end; gap:2px; height:24px; margin-top:8px; }
+    .sparkline-bar { width:4px; background:var(--aap-gold); border-radius:2px; opacity:0.6; min-height:2px; }
+    .pipeline-bar-wrap { background:var(--aap-surface); border:1px solid var(--aap-border); border-radius:var(--aap-radius-lg); padding:16px; }
+    .pipeline-bar { display:flex; height:32px; border-radius:8px; overflow:hidden; gap:1px; }
+    .pipeline-seg { height:100%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; transition:all 0.3s; overflow:hidden; }
+    .pipeline-legend { display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+    .pipeline-leg-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--aap-text); }
+    .pipeline-leg-dot { width:10px; height:10px; border-radius:50%; }
+    .revenue-panels { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .revenue-chart-wrap { background:var(--aap-surface); border:1px solid var(--aap-border); border-radius:var(--aap-radius-lg); padding:16px; }
+    .bar-chart { display:flex; align-items:flex-end; gap:8px; height:120px; padding:8px 0; }
+    .bar-chart-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; }
+    .bar-chart-bar { width:100%; background:var(--aap-gold); border-radius:4px 4px 0 0; opacity:0.8; min-height:2px; transition:height 0.4s; }
+    .bar-chart-label { font-size:9px; color:var(--aap-text-dim); text-align:center; }
+    .donut-wrap { display:flex; align-items:center; gap:20px; }
+    .donut { width:100px; height:100px; border-radius:50%; flex-shrink:0; }
+    .donut-legend { font-size:12px; }
+    .donut-legend-item { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+    .donut-leg-dot { width:10px; height:10px; border-radius:50%; }
+    .session-panels { display:grid; grid-template-columns:3fr 2fr; gap:20px; }
+    .network-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .net-card { background:var(--aap-surface); border:1px solid var(--aap-border); border-radius:var(--aap-radius-lg); padding:16px; text-align:center; }
+    .net-card-value { font-size:36px; font-weight:700; font-family:'Cormorant Garamond',serif; color:var(--aap-accent-deep); }
+    .net-card-label { font-size:13px; color:var(--aap-text-dim); margin:2px 0 6px; }
+    .net-card-sub { font-size:11px; color:var(--aap-text-muted); }
+    .goals-grid { display:flex; flex-direction:column; gap:8px; }
+    .goal-row { background:var(--aap-surface); border:1px solid var(--aap-border); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:16px; }
+    .goal-title { font-weight:600; font-size:14px; flex:1; }
+    .goal-cat { font-size:11px; color:var(--aap-text-dim); }
+    .goal-progress-wrap { width:120px; }
+    .goal-progress-bar { height:6px; background:var(--aap-border); border-radius:3px; overflow:hidden; }
+    .goal-progress-fill { height:100%; background:var(--aap-gold); border-radius:3px; transition:width 0.4s; }
+    .goal-progress-label { font-size:10px; color:var(--aap-text-dim); margin-top:2px; text-align:right; }
+    .reflection-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; }
+    .reflection-card { background:var(--aap-surface); border:1px solid var(--aap-border); border-radius:var(--aap-radius-lg); padding:16px; cursor:pointer; transition:all 0.15s; }
+    .reflection-card:hover { box-shadow:var(--aap-shadow-md); transform:translateY(-1px); }
+    .reflection-type-badge { display:inline-block; font-size:10px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; padding:2px 8px; border-radius:20px; background:rgba(212,168,67,0.15); color:var(--aap-gold); margin-bottom:6px; }
+    .reflection-title { font-weight:600; font-size:15px; margin-bottom:4px; }
+    .reflection-period { font-size:11px; color:var(--aap-text-dim); margin-bottom:6px; }
+    .reflection-body-preview { font-size:13px; color:var(--aap-text); line-height:1.5; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+    .mood-chip { display:inline-block; font-size:10px; padding:2px 8px; border-radius:20px; background:var(--aap-bg-warm); color:var(--aap-text-dim); margin-top:6px; }
+    .season-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+    .season-card { background:var(--aap-surface); border:1px solid var(--aap-border); border-radius:var(--aap-radius-lg); padding:16px; }
+    .season-icon { font-size:28px; margin-bottom:6px; }
+    .season-name { font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:600; color:var(--aap-accent-deep); margin-bottom:8px; }
+    .season-stat { font-size:12px; color:var(--aap-text-dim); margin-bottom:2px; }
+    .empty-state { text-align:center; padding:32px; color:var(--aap-text-dim); font-size:14px; background:var(--aap-surface); border:1px solid var(--aap-border); border-radius:var(--aap-radius-lg); }
+    /* Modal */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:1000; display:flex; align-items:center; justify-content:center; padding:24px; }
+    .modal-box { background:var(--aap-bg); border:1px solid var(--aap-border); border-radius:var(--aap-radius-lg); padding:28px; width:100%; max-width:560px; max-height:85vh; overflow-y:auto; position:relative; }
+    .modal-title { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--aap-accent-deep); margin:0 0 20px; }
+    .modal-close { position:absolute; top:16px; right:16px; background:none; border:none; font-size:20px; cursor:pointer; color:var(--aap-text-dim); line-height:1; }
+    .modal-close:hover { color:var(--aap-text); }
+    .form-group { margin-bottom:14px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--aap-text-dim); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.04em; }
+    .form-group input, .form-group textarea, .form-group select { width:100%; padding:8px 10px; border:1px solid var(--aap-border); border-radius:8px; background:var(--aap-surface); color:var(--aap-text); font-size:14px; font-family:inherit; box-sizing:border-box; }
+    .form-group textarea { resize:vertical; min-height:80px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; padding-top:16px; border-top:1px solid var(--aap-border); }
+    .btn { padding:8px 18px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; border:none; transition:all 0.15s; font-family:inherit; }
+    .btn-primary { background:var(--aap-gold); color:#fff; }
+    .btn-primary:hover { opacity:0.9; }
+    .btn-secondary { background:var(--aap-surface); border:1px solid var(--aap-border); color:var(--aap-text); }
+    .btn-secondary:hover { background:var(--aap-border); }
+    .btn-danger { background:#fee2e2; color:#991b1b; border:1px solid #fecaca; }
+    .btn-danger:hover { background:#fecaca; }
+    .btn-sm { padding:4px 10px; font-size:12px; border-radius:6px; }
+    .section-header-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; border-bottom:1px solid var(--aap-border); padding-bottom:8px; }
+    .section-header-row .analytics-section-title { margin:0; padding:0; border:none; }
+    table.data-table { width:100%; border-collapse:collapse; font-size:13px; }
+    table.data-table th { text-align:left; font-size:11px; font-weight:600; color:var(--aap-text-dim); text-transform:uppercase; letter-spacing:0.04em; padding:6px 8px; border-bottom:1px solid var(--aap-border); }
+    table.data-table td { padding:8px 8px; border-bottom:1px solid var(--aap-border); color:var(--aap-text); vertical-align:top; }
+    table.data-table tr:last-child td { border-bottom:none; }
+    .panel-box { background:var(--aap-surface); border:1px solid var(--aap-border); border-radius:var(--aap-radius-lg); padding:16px; }
+    .panel-title { font-family:'Cormorant Garamond',serif; font-size:15px; font-weight:600; color:var(--aap-accent-deep); margin:0 0 12px; }
+    .engagement-item { padding:8px 0; border-bottom:1px solid var(--aap-border); font-size:13px; }
+    .engagement-item:last-child { border-bottom:none; }
+    .engagement-date { font-size:11px; color:var(--aap-text-dim); }
+    .status-badge { display:inline-block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:2px 7px; border-radius:20px; }
+    .status-active { background:rgba(91,117,83,0.15); color:#5B7553; }
+    .status-completed { background:rgba(91,117,83,0.15); color:#5B7553; }
+    .status-pending { background:rgba(212,168,67,0.15); color:#D4A843; }
+    .status-cancelled { background:rgba(168,158,149,0.15); color:#A89E95; }
+    .reflection-full-section { margin-bottom:14px; }
+    .reflection-full-label { font-size:11px; font-weight:600; color:var(--aap-text-dim); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px; }
+    .reflection-full-content { font-size:13px; color:var(--aap-text); line-height:1.6; white-space:pre-wrap; }
   </style>
 </head>
-<body>
+<body class="admin-layout">
 
   <aside class="admin-sidebar">
     <div class="sidebar-brand">
@@ -196,8 +149,6 @@
       <a href="speaking.html">🎤 Speaking Engagements</a>
       <a href="venues.html">🏛️ Venues</a>
       <a href="travel.html">✈️ Travel Itinerary</a>
-      <div class="sidebar-section-label">CRM</div>
-      <a href="../crm/">🔮 CRM Overview</a>
       <div class="sidebar-divider"></div>
       <a href="community-resources.html">📚 Community Resources</a>
       <a href="../index.html">← Public Site</a>
@@ -210,275 +161,347 @@
   </aside>
 
   <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-page-title">📈 Practice Analytics</div>
+    </div>
+
     <div class="admin-content">
 
-      <!-- Page Header -->
-      <div class="analytics-header">
-        <h1 class="page-title">Practice Analytics</h1>
-        <div class="analytics-tabs">
-          <button class="analytics-tab" data-view="weekly">Weekly</button>
-          <button class="analytics-tab active" data-view="monthly">Monthly</button>
-          <button class="analytics-tab" data-view="seasonal">Seasonal</button>
-          <button class="analytics-tab" data-view="annual">Annual</button>
+      <!-- Time horizon tabs -->
+      <div class="analytics-tabs" id="analyticsTabs">
+        <button class="analytics-tab" data-view="weekly">Weekly</button>
+        <button class="analytics-tab active" data-view="monthly">Monthly</button>
+        <button class="analytics-tab" data-view="seasonal">Seasonal</button>
+        <button class="analytics-tab" data-view="annual">Annual</button>
+      </div>
+
+      <!-- Date navigator -->
+      <div class="analytics-nav">
+        <button class="analytics-nav-btn" id="navPrev">← Prev</button>
+        <div class="analytics-period-label" id="periodLabel">Loading...</div>
+        <button class="analytics-nav-btn" id="navNext">Next →</button>
+      </div>
+
+      <!-- Section 1: Overview Metrics -->
+      <div class="analytics-section">
+        <div class="analytics-section-title">Overview Metrics</div>
+        <div class="metric-cards">
+          <div class="metric-card">
+            <div class="metric-icon">👤</div>
+            <div class="metric-value" id="metricClients">—</div>
+            <div class="metric-label">Active Clients</div>
+            <div class="sparkline" id="sparkClients"></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">🌿</div>
+            <div class="metric-value" id="metricSessions">—</div>
+            <div class="metric-label">Sessions Held</div>
+            <div class="sparkline" id="sparkSessions"></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">💳</div>
+            <div class="metric-value" id="metricRevenue">—</div>
+            <div class="metric-label">Revenue Collected</div>
+            <div class="sparkline" id="sparkRevenue"></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">📋</div>
+            <div class="metric-value" id="metricIntakes">—</div>
+            <div class="metric-label">New Intakes</div>
+            <div class="sparkline" id="sparkIntakes"></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">🎤</div>
+            <div class="metric-value" id="metricEngagements">—</div>
+            <div class="metric-label">Engagements</div>
+            <div class="sparkline" id="sparkEngagements"></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">✈️</div>
+            <div class="metric-value" id="metricTravel">—</div>
+            <div class="metric-label">Travel Days</div>
+            <div class="sparkline" id="sparkTravel"></div>
+          </div>
         </div>
       </div>
 
-      <!-- Date Navigator -->
-      <div class="analytics-nav">
-        <button id="prevBtn">← Previous</button>
-        <span id="periodLabel">Loading…</span>
-        <button id="nextBtn">Next →</button>
-      </div>
-
-      <!-- Section 1: Key Metrics -->
-      <div class="metrics-row" id="metricsRow">
-        <div class="metric-card"><div class="metric-label">New Clients</div><div class="metric-value" id="m-clients">—</div><span class="metric-change flat" id="mc-clients">—</span><div class="sparkline" id="sp-clients"></div></div>
-        <div class="metric-card"><div class="metric-label">Sessions Held</div><div class="metric-value" id="m-sessions">—</div><span class="metric-change flat" id="mc-sessions">—</span><div class="sparkline" id="sp-sessions"></div></div>
-        <div class="metric-card"><div class="metric-label">Revenue</div><div class="metric-value" id="m-revenue">—</div><span class="metric-change flat" id="mc-revenue">—</span><div class="sparkline" id="sp-revenue"></div></div>
-        <div class="metric-card"><div class="metric-label">Active Arcs</div><div class="metric-value" id="m-arcs">—</div><span class="metric-change flat" id="mc-arcs">—</span><div class="sparkline" id="sp-arcs"></div></div>
-        <div class="metric-card"><div class="metric-label">Network Touchpoints</div><div class="metric-value" id="m-network">—</div><span class="metric-change flat" id="mc-network">—</span><div class="sparkline" id="sp-network"></div></div>
-        <div class="metric-card"><div class="metric-label">Engagements</div><div class="metric-value" id="m-engagements">—</div><span class="metric-change flat" id="mc-engagements">—</span><div class="sparkline" id="sp-engagements"></div></div>
-      </div>
-
-      <!-- Section 2: Pipeline Flow -->
+      <!-- Section 2: Client Pipeline Flow -->
       <div class="analytics-section">
-        <div class="analytics-section-header">Client Journey Flow</div>
-        <div id="pipelineContent">
-          <div class="pipeline-bar-wrap" id="pipelineBar"></div>
+        <div class="analytics-section-title">Client Pipeline Flow</div>
+        <div class="pipeline-bar-wrap">
+          <div class="pipeline-bar" id="pipelineBar">
+            <div style="flex:1;background:var(--aap-border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--aap-text-dim);">Loading...</div>
+          </div>
           <div class="pipeline-legend" id="pipelineLegend"></div>
         </div>
       </div>
 
-      <!-- Section 3: Revenue & Invoicing -->
+      <!-- Section 3: Revenue -->
       <div class="analytics-section">
-        <div class="analytics-section-header">Revenue &amp; Invoicing</div>
-        <div class="analytics-two-col">
-          <div class="panel-card">
-            <div class="panel-title">Revenue by Period</div>
-            <div class="bar-chart" id="revenueBarChart"></div>
+        <div class="analytics-section-title">Revenue</div>
+        <div class="revenue-panels">
+          <div class="revenue-chart-wrap">
+            <div class="panel-title">Revenue — Last 6 Months</div>
+            <div class="bar-chart" id="revenueBarChart">
+              <div style="color:var(--aap-text-dim);font-size:13px;align-self:center;width:100%;text-align:center;">Loading...</div>
+            </div>
           </div>
-          <div class="panel-card invoice-col">
+          <div class="revenue-chart-wrap">
             <div class="panel-title">Invoice Status</div>
-            <div class="donut-wrap" id="donutChart">
-              <div class="donut-center">
-                <div class="donut-total" id="donutTotal">—</div>
-                <div class="donut-total-label">invoices</div>
+            <div class="donut-wrap">
+              <div class="donut" id="invoiceDonut" style="background:conic-gradient(#d1d5db 0% 100%);"></div>
+              <div class="donut-legend" id="invoiceLegend">
+                <div style="color:var(--aap-text-dim);font-size:13px;">Loading...</div>
               </div>
             </div>
-            <div class="donut-legend" id="donutLegend"></div>
           </div>
         </div>
       </div>
 
       <!-- Section 4: Sessions & Engagements -->
       <div class="analytics-section">
-        <div class="analytics-section-header">Sessions &amp; Engagements</div>
-        <div class="analytics-two-col">
-          <div class="panel-card">
-            <div class="panel-title">Session Activity</div>
-            <div id="sessionActivity"></div>
+        <div class="analytics-section-title">Sessions &amp; Engagements</div>
+        <div class="session-panels">
+          <div class="panel-box">
+            <div class="panel-title">Completed Sessions</div>
+            <div id="sessionsTableWrap">
+              <div style="color:var(--aap-text-dim);font-size:13px;">Loading...</div>
+            </div>
           </div>
-          <div class="panel-card">
+          <div class="panel-box">
             <div class="panel-title">Speaking &amp; Travel</div>
-            <div id="speakingTravel"></div>
+            <div id="engagementsListWrap">
+              <div style="color:var(--aap-text-dim);font-size:13px;">Loading...</div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Section 5: Network Health -->
       <div class="analytics-section">
-        <div class="analytics-section-header">Network Health</div>
-        <div class="network-grid">
-          <div class="network-card" id="networkCollaborators"></div>
-          <div class="network-card" id="networkReferrals"></div>
-          <div class="network-card" id="networkVIP"></div>
+        <div class="analytics-section-title">Network Health</div>
+        <div class="network-cards">
+          <div class="net-card">
+            <div class="net-card-value" id="netCollaborators">—</div>
+            <div class="net-card-label">Collaborators</div>
+            <div class="net-card-sub" id="netCollaboratorsSub">—</div>
+          </div>
+          <div class="net-card">
+            <div class="net-card-value" id="netReferrals">—</div>
+            <div class="net-card-label">Referral Network</div>
+            <div class="net-card-sub" id="netReferralsSub">—</div>
+          </div>
+          <div class="net-card">
+            <div class="net-card-value" id="netVIP">—</div>
+            <div class="net-card-label">VIP Contacts</div>
+            <div class="net-card-sub" id="netVIPSub">—</div>
+          </div>
         </div>
       </div>
 
       <!-- Section 6: Practice Goals -->
       <div class="analytics-section">
         <div class="section-header-row">
-          <div class="analytics-section-header" style="margin-bottom:0;border-bottom:none;padding-bottom:0;">Intentions &amp; Goals</div>
-          <button class="add-btn" id="addGoalBtn">+ Add Goal</button>
+          <div class="analytics-section-title">Practice Goals</div>
+          <button class="btn btn-primary btn-sm" id="addGoalBtn">+ Add Goal</button>
         </div>
-        <div class="goals-grid" id="goalsGrid"><div class="muted-text">Loading goals…</div></div>
+        <div id="goalsContent">
+          <div class="empty-state">Loading goals...</div>
+        </div>
       </div>
 
-      <!-- Section 7: Reflection -->
+      <!-- Section 7: Practice Reflections -->
       <div class="analytics-section">
-        <div class="analytics-section-header">Reflection &amp; Integration</div>
-        <div id="reflectionSection"></div>
+        <div class="section-header-row">
+          <div class="analytics-section-title">Practice Reflections</div>
+          <button class="btn btn-primary btn-sm" id="addReflectionBtn">+ Add Reflection</button>
+        </div>
+        <div id="reflectionsContent">
+          <div class="empty-state">Loading reflections...</div>
+        </div>
       </div>
 
       <!-- Section 8: Seasonal Awareness (seasonal/annual only) -->
       <div class="analytics-section" id="seasonalSection" style="display:none;">
-        <div class="analytics-section-header">Seasonal Rhythm</div>
-        <div class="seasonal-grid" id="seasonalGrid"></div>
+        <div class="analytics-section-title">Seasonal Awareness</div>
+        <div class="season-grid" id="seasonGrid"></div>
       </div>
 
     </div>
   </main>
 
   <!-- Goal Modal -->
-  <div class="admin-modal-overlay" id="goalModal" style="display:none;">
-    <div class="admin-modal" style="max-width:560px;">
-      <div class="admin-modal-header">
-        <h2 class="admin-modal-title" id="goalModalTitle">Add Goal</h2>
-        <button class="admin-modal-close" id="goalModalClose">&times;</button>
+  <div class="modal-overlay" id="goalModal" style="display:none;">
+    <div class="modal-box">
+      <button class="modal-close" id="goalModalClose">×</button>
+      <div class="modal-title" id="goalModalTitle">Add Goal</div>
+      <input type="hidden" id="goalId" />
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" id="goalTitle" placeholder="Goal title" />
       </div>
-      <div class="admin-modal-body">
-        <input type="hidden" id="goalId">
-        <div class="admin-form-group">
-          <label class="admin-form-label">Title</label>
-          <input type="text" id="goalTitle" class="admin-form-input" placeholder="e.g. Onboard 4 new clients">
-        </div>
-        <div class="admin-form-group">
-          <label class="admin-form-label">Description</label>
-          <textarea id="goalDescription" class="admin-form-input" rows="2" placeholder="Optional context…"></textarea>
-        </div>
-        <div class="admin-form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <div class="admin-form-group">
-            <label class="admin-form-label">Category</label>
-            <select id="goalCategory" class="admin-form-input">
-              <option value="revenue">Revenue</option>
-              <option value="clients">Clients</option>
-              <option value="sessions">Sessions</option>
-              <option value="network">Network</option>
-              <option value="content">Content</option>
-              <option value="travel">Travel</option>
-              <option value="personal">Personal</option>
-            </select>
-          </div>
-          <div class="admin-form-group">
-            <label class="admin-form-label">Metric Type</label>
-            <select id="goalMetricType" class="admin-form-input">
-              <option value="count">Count</option>
-              <option value="currency">Currency</option>
-              <option value="percentage">Percentage</option>
-              <option value="boolean">Boolean</option>
-            </select>
-          </div>
-        </div>
-        <div class="admin-form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <div class="admin-form-group">
-            <label class="admin-form-label">Target Value</label>
-            <input type="number" id="goalTarget" class="admin-form-input" placeholder="e.g. 4">
-          </div>
-          <div class="admin-form-group">
-            <label class="admin-form-label">Current Value</label>
-            <input type="number" id="goalCurrent" class="admin-form-input" placeholder="e.g. 1">
-          </div>
-        </div>
-        <div class="admin-form-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
-          <div class="admin-form-group">
-            <label class="admin-form-label">Timeframe</label>
-            <input type="text" id="goalTimeframe" class="admin-form-input" readonly>
-          </div>
-          <div class="admin-form-group">
-            <label class="admin-form-label">Period Start</label>
-            <input type="date" id="goalPeriodStart" class="admin-form-input">
-          </div>
-          <div class="admin-form-group">
-            <label class="admin-form-label">Period End</label>
-            <input type="date" id="goalPeriodEnd" class="admin-form-input">
-          </div>
-        </div>
-        <div class="admin-form-group">
-          <label class="admin-form-label">Status</label>
-          <select id="goalStatus" class="admin-form-input">
-            <option value="active">Active</option>
-            <option value="achieved">Achieved</option>
-            <option value="missed">Missed</option>
-            <option value="abandoned">Abandoned</option>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="goalDescription" placeholder="Describe this goal..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="goalCategory">
+            <option value="">Select category</option>
+            <option value="revenue">Revenue</option>
+            <option value="clients">Clients</option>
+            <option value="sessions">Sessions</option>
+            <option value="community">Community</option>
+            <option value="learning">Learning</option>
+            <option value="wellbeing">Wellbeing</option>
+            <option value="marketing">Marketing</option>
+            <option value="other">Other</option>
           </select>
         </div>
-        <div class="admin-form-group">
-          <label class="admin-form-label">Notes</label>
-          <textarea id="goalNotes" class="admin-form-input" rows="2" placeholder="Optional notes…"></textarea>
+        <div class="form-group">
+          <label>Metric Type</label>
+          <select id="goalMetricType">
+            <option value="number">Number</option>
+            <option value="currency">Currency</option>
+            <option value="percentage">Percentage</option>
+            <option value="boolean">Yes/No</option>
+          </select>
         </div>
       </div>
-      <div class="admin-modal-footer">
-        <button class="admin-btn-secondary" id="goalModalCancel">Cancel</button>
-        <button class="admin-btn-primary" id="goalModalSave">Save Goal</button>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Target Value</label>
+          <input type="number" id="goalTargetValue" placeholder="e.g. 10" step="any" />
+        </div>
+        <div class="form-group">
+          <label>Current Value</label>
+          <input type="number" id="goalCurrentValue" placeholder="e.g. 3" step="any" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Timeframe</label>
+          <select id="goalTimeframe">
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="seasonal">Seasonal</option>
+            <option value="annual">Annual</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="goalStatus">
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+            <option value="paused">Paused</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Period Start</label>
+          <input type="date" id="goalPeriodStart" />
+        </div>
+        <div class="form-group">
+          <label>Period End</label>
+          <input type="date" id="goalPeriodEnd" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="goalNotes" placeholder="Any notes..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-danger btn-sm" id="goalDeleteBtn" style="display:none;margin-right:auto;">Delete</button>
+        <button class="btn btn-secondary" id="goalCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="goalSaveBtn">Save Goal</button>
       </div>
     </div>
   </div>
 
-  <!-- Reflection Modal -->
-  <div class="admin-modal-overlay" id="reflectionModal" style="display:none;">
-    <div class="admin-modal" style="max-width:640px;">
-      <div class="admin-modal-header">
-        <h2 class="admin-modal-title" id="reflectionModalTitle">Begin Reflection</h2>
-        <button class="admin-modal-close" id="reflectionModalClose">&times;</button>
+  <!-- Reflection Add/Edit Modal -->
+  <div class="modal-overlay" id="reflectionModal" style="display:none;">
+    <div class="modal-box">
+      <button class="modal-close" id="reflectionModalClose">×</button>
+      <div class="modal-title" id="reflectionModalTitle">Add Reflection</div>
+      <input type="hidden" id="reflectionId" />
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" id="reflectionTitle" placeholder="Reflection title" />
       </div>
-      <div class="admin-modal-body">
-        <input type="hidden" id="reflectionId">
-        <div class="admin-form-group">
-          <label class="admin-form-label">Title</label>
-          <input type="text" id="reflectionTitle" class="admin-form-input" placeholder="e.g. March Review">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Type</label>
+          <select id="reflectionType">
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="seasonal">Seasonal</option>
+            <option value="annual">Annual</option>
+          </select>
         </div>
-        <div class="admin-form-group">
-          <label class="admin-form-label">Reflection</label>
-          <textarea id="reflectionBody" class="admin-form-input" rows="5" style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;line-height:1.7;" placeholder="What arose this period…"></textarea>
-        </div>
-        <div class="admin-form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <div class="admin-form-group">
-            <label class="admin-form-label">Wins</label>
-            <textarea id="reflectionWins" class="admin-form-input" rows="3" placeholder="Celebrations &amp; victories…"></textarea>
-          </div>
-          <div class="admin-form-group">
-            <label class="admin-form-label">Challenges</label>
-            <textarea id="reflectionChallenges" class="admin-form-input" rows="3" placeholder="Difficulties &amp; friction…"></textarea>
-          </div>
-        </div>
-        <div class="admin-form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <div class="admin-form-group">
-            <label class="admin-form-label">Insights</label>
-            <textarea id="reflectionInsights" class="admin-form-input" rows="3" placeholder="What revealed itself…"></textarea>
-          </div>
-          <div class="admin-form-group">
-            <label class="admin-form-label">Intentions</label>
-            <textarea id="reflectionIntentions" class="admin-form-input" rows="3" placeholder="Forward movement…"></textarea>
-          </div>
-        </div>
-        <div class="admin-form-group">
-          <label class="admin-form-label">Gratitudes</label>
-          <textarea id="reflectionGratitudes" class="admin-form-input" rows="2" placeholder="What you're grateful for…"></textarea>
-        </div>
-        <div class="admin-form-group">
-          <label class="admin-form-label">Mood</label>
-          <div class="mood-pills" id="moodPills">
-            <button type="button" class="mood-pill" data-mood="grounded">Grounded</button>
-            <button type="button" class="mood-pill" data-mood="expansive">Expansive</button>
-            <button type="button" class="mood-pill" data-mood="tender">Tender</button>
-            <button type="button" class="mood-pill" data-mood="fiery">Fiery</button>
-            <button type="button" class="mood-pill" data-mood="contemplative">Contemplative</button>
-            <button type="button" class="mood-pill" data-mood="electric">Electric</button>
-            <button type="button" class="mood-pill" data-mood="still">Still</button>
-          </div>
-        </div>
-        <div class="admin-form-row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
-          <div class="admin-form-group">
-            <label class="admin-form-label">Type</label>
-            <input type="text" id="reflectionType" class="admin-form-input" readonly>
-          </div>
-          <div class="admin-form-group">
-            <label class="admin-form-label">Period Start</label>
-            <input type="date" id="reflectionPeriodStart" class="admin-form-input">
-          </div>
-          <div class="admin-form-group">
-            <label class="admin-form-label">Period End</label>
-            <input type="date" id="reflectionPeriodEnd" class="admin-form-input">
-          </div>
-        </div>
-        <div class="admin-form-group">
-          <label class="admin-form-label">Tags (comma-separated)</label>
-          <input type="text" id="reflectionTags" class="admin-form-input" placeholder="e.g. growth, boundaries, transitions">
+        <div class="form-group">
+          <label>Mood</label>
+          <input type="text" id="reflectionMood" placeholder="e.g. Grounded, Open" />
         </div>
       </div>
-      <div class="admin-modal-footer">
-        <button class="admin-btn-secondary" id="reflectionModalCancel">Cancel</button>
-        <button class="admin-btn-primary" id="reflectionModalSave">Save Reflection</button>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Period Start</label>
+          <input type="date" id="reflectionPeriodStart" />
+        </div>
+        <div class="form-group">
+          <label>Period End</label>
+          <input type="date" id="reflectionPeriodEnd" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Body</label>
+        <textarea id="reflectionBody" placeholder="Your reflection..." style="min-height:120px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Wins</label>
+        <textarea id="reflectionWins" placeholder="What went well..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Challenges</label>
+        <textarea id="reflectionChallenges" placeholder="What was difficult..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Insights</label>
+        <textarea id="reflectionInsights" placeholder="Key learnings..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Intentions</label>
+        <textarea id="reflectionIntentions" placeholder="Intentions going forward..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Gratitudes</label>
+        <textarea id="reflectionGratitudes" placeholder="What you're grateful for..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Tags (comma-separated)</label>
+        <input type="text" id="reflectionTags" placeholder="e.g. growth, community, abundance" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-danger btn-sm" id="reflectionDeleteBtn" style="display:none;margin-right:auto;">Delete</button>
+        <button class="btn btn-secondary" id="reflectionCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="reflectionSaveBtn">Save Reflection</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reflection View Modal -->
+  <div class="modal-overlay" id="reflectionViewModal" style="display:none;">
+    <div class="modal-box" style="max-width:640px;">
+      <button class="modal-close" id="reflectionViewClose">×</button>
+      <div class="modal-title" id="rvTitle"></div>
+      <div id="rvMeta" style="margin-bottom:16px;font-size:12px;color:var(--aap-text-dim);"></div>
+      <div id="rvBody"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="rvEditBtn">Edit</button>
+        <button class="btn btn-secondary" id="rvCloseBtn">Close</button>
       </div>
     </div>
   </div>
@@ -487,802 +510,771 @@
   <script src="../shared/supabase.js"></script>
   <script src="../shared/auth.js"></script>
   <script>
-  function showToast(msg, type) {
-    var t = document.createElement('div');
-    t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
-    if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
-    else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
-    else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
-    t.textContent = msg;
-    document.body.appendChild(t);
-    requestAnimationFrame(function(){ t.style.opacity='1'; });
-    setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
-  }
+    function showToast(msg, type) {
+      var t = document.createElement('div');
+      t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+      if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+      else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+      else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+      t.textContent = msg;
+      document.body.appendChild(t);
+      requestAnimationFrame(function(){ t.style.opacity='1'; });
+      setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+    }
 
-  requireAuth(function(user, supabase) {
-    var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
-    document.getElementById('sidebarUserName').textContent = name;
-    document.getElementById('sidebarUserEmail').textContent = user.email;
-    document.getElementById('sidebarSignOut').addEventListener('click', function() {
-      supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
-    });
-
-    // ── State ──
-    var currentView = 'monthly';
-    var currentOffset = 0;
-    var selectedMood = '';
-    var currentReflectionRange = null;
-
-    // ── Date Helpers ──
     function getDateRange(view, offset) {
       var now = new Date();
       var start, end, label;
       if (view === 'weekly') {
-        var dayOfWeek = now.getDay();
-        var monday = new Date(now);
-        monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-        monday.setHours(0,0,0,0);
-        start = new Date(monday);
-        start.setDate(start.getDate() + (offset * 7));
-        end = new Date(start);
-        end.setDate(end.getDate() + 6);
-        end.setHours(23,59,59,999);
-        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        label = months[start.getMonth()] + ' ' + start.getDate() + ' — ' + months[end.getMonth()] + ' ' + end.getDate() + ', ' + end.getFullYear();
+        var day = now.getDay();
+        var monday = new Date(now); monday.setDate(now.getDate() - day + (day===0?-6:1) + offset*7);
+        var sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
+        start = monday.toISOString().split('T')[0];
+        end = sunday.toISOString().split('T')[0];
+        label = 'Week of ' + monday.toLocaleDateString('en-US',{month:'short',day:'numeric'});
       } else if (view === 'monthly') {
         var d = new Date(now.getFullYear(), now.getMonth() + offset, 1);
-        start = new Date(d.getFullYear(), d.getMonth(), 1);
-        start.setHours(0,0,0,0);
-        end = new Date(d.getFullYear(), d.getMonth() + 1, 0);
-        end.setHours(23,59,59,999);
-        var mNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-        label = mNames[start.getMonth()] + ' ' + start.getFullYear();
+        start = d.toISOString().split('T')[0];
+        var endD = new Date(d.getFullYear(), d.getMonth()+1, 0);
+        end = endD.toISOString().split('T')[0];
+        label = d.toLocaleDateString('en-US',{month:'long',year:'numeric'});
       } else if (view === 'seasonal') {
-        var month = now.getMonth();
-        var year = now.getFullYear();
-        var seasonMonth, seasonName;
-        if (month >= 2 && month <= 4) { seasonMonth = 2; seasonName = 'Spring'; }
-        else if (month >= 5 && month <= 7) { seasonMonth = 5; seasonName = 'Summer'; }
-        else if (month >= 8 && month <= 10) { seasonMonth = 8; seasonName = 'Autumn'; }
-        else { seasonMonth = 11; seasonName = 'Winter'; if (month < 2) seasonMonth = -1; }
-        var baseDate = new Date(year, (seasonMonth < 0 ? 11 : seasonMonth) + (offset * 3), 1);
-        var bMonth = baseDate.getMonth();
-        var bYear = baseDate.getFullYear();
-        if (bMonth >= 2 && bMonth <= 4) { start = new Date(bYear, 2, 1); end = new Date(bYear, 5, 0); seasonName = 'Spring'; }
-        else if (bMonth >= 5 && bMonth <= 7) { start = new Date(bYear, 5, 1); end = new Date(bYear, 8, 0); seasonName = 'Summer'; }
-        else if (bMonth >= 8 && bMonth <= 10) { start = new Date(bYear, 8, 1); end = new Date(bYear, 11, 0); seasonName = 'Autumn'; }
-        else {
-          if (bMonth === 11) { start = new Date(bYear, 11, 1); end = new Date(bYear+1, 2, 0); seasonName = 'Winter'; }
-          else { start = new Date(bYear-1, 11, 1); end = new Date(bYear, 2, 0); seasonName = 'Winter'; }
-        }
-        start.setHours(0,0,0,0); end.setHours(23,59,59,999);
-        var mAbbr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        label = seasonName + ' ' + (start.getFullYear() !== end.getFullYear() ? start.getFullYear() + '/' + end.getFullYear() : start.getFullYear()) + ' (' + mAbbr[start.getMonth()] + '–' + mAbbr[end.getMonth()] + ')';
-      } else {
-        var yr = now.getFullYear() + offset;
-        start = new Date(yr, 0, 1); start.setHours(0,0,0,0);
-        end = new Date(yr, 11, 31); end.setHours(23,59,59,999);
-        label = String(yr);
-      }
-      return { start: start, end: end, label: label };
-    }
-
-    function fmtDate(d) { return d.toISOString().split('T')[0]; }
-    function formatCurrency(cents) {
-      if (cents === null || cents === undefined) return '$0';
-      return '$' + (cents/100).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
-    }
-    function pctChange(curr, prev) {
-      if (!prev || prev === 0) return { val: 0, dir: 'flat', label: '—' };
-      var p = Math.round(((curr - prev) / prev) * 100);
-      return { val: Math.abs(p), dir: p > 0 ? 'up' : p < 0 ? 'down' : 'flat', label: (p >= 0 ? '↑' : '↓') + Math.abs(p) + '%' };
-    }
-    function safeQuery(promise, fallback) {
-      return promise.catch(function() { return fallback; });
-    }
-    function escHtml(s) {
-      if (!s) return '';
-      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    // ── Tab Switching ──
-    document.querySelectorAll('.analytics-tab').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('.analytics-tab').forEach(function(b){ b.classList.remove('active'); });
-        btn.classList.add('active');
-        currentView = btn.dataset.view;
-        currentOffset = 0;
-        loadAll();
-      });
-    });
-
-    document.getElementById('prevBtn').addEventListener('click', function(){ currentOffset--; loadAll(); });
-    document.getElementById('nextBtn').addEventListener('click', function(){ currentOffset++; loadAll(); });
-
-    // ── Main Load ──
-    function loadAll() {
-      var range = getDateRange(currentView, currentOffset);
-      var prevRange = getDateRange(currentView, currentOffset - 1);
-      document.getElementById('periodLabel').textContent = range.label;
-      var seasonalSection = document.getElementById('seasonalSection');
-      if (seasonalSection) {
-        seasonalSection.style.display = (currentView === 'seasonal' || currentView === 'annual') ? 'block' : 'none';
-      }
-      loadMetrics(range, prevRange);
-      loadPipeline();
-      loadRevenue(range);
-      loadSessions(range);
-      loadNetwork(range);
-      loadGoals(range);
-      loadReflection(range);
-      if (currentView === 'seasonal' || currentView === 'annual') loadSeasonal();
-    }
-
-    // ── SECTION 1: Metrics ──
-    function renderMetric(id, sparkId, changeId, val, prevVal, displayFn) {
-      displayFn = displayFn || function(v){ return v; };
-      document.getElementById(id).textContent = displayFn(val);
-      var ch = pctChange(val, prevVal);
-      var el = document.getElementById(changeId);
-      el.textContent = ch.label;
-      el.className = 'metric-change ' + ch.dir;
-    }
-
-    function renderSparkline(containerId, values) {
-      var el = document.getElementById(containerId);
-      if (!el) return;
-      var max = Math.max.apply(null, values) || 1;
-      el.innerHTML = '';
-      values.forEach(function(v, i) {
-        var bar = document.createElement('div');
-        bar.className = 'sparkline-bar' + (i === values.length - 1 ? ' current' : '');
-        bar.style.height = Math.max(2, Math.round((v / max) * 32)) + 'px';
-        el.appendChild(bar);
-      });
-    }
-
-    function countInRange(rows, dateField, start, end) {
-      if (!rows) return 0;
-      var s = fmtDate(start), e = fmtDate(end);
-      return rows.filter(function(r){ var d = (r[dateField] || '').substring(0,10); return d >= s && d <= e; }).length;
-    }
-
-    function sumInRange(rows, amountField, dateField, start, end) {
-      if (!rows) return 0;
-      var s = fmtDate(start), e = fmtDate(end);
-      return rows.filter(function(r){ var d = (r[dateField] || '').substring(0,10); return d >= s && d <= e; })
-        .reduce(function(acc, r){ return acc + (r[amountField] || 0); }, 0);
-    }
-
-    function loadMetrics(range, prevRange) {
-      var sparkPromises = [];
-      for (var i = -5; i <= 0; i++) {
-        sparkPromises.push(getDateRange(currentView, currentOffset + i));
-      }
-
-      // Clients
-      safeQuery(supabase.from('clients').select('id,created_at,is_archived').eq('is_archived', false), {data:[]})
-        .then(function(res) {
-          var rows = res.data || [];
-          var curr = countInRange(rows, 'created_at', range.start, range.end);
-          var prev = countInRange(rows, 'created_at', prevRange.start, prevRange.end);
-          renderMetric('m-clients', 'sp-clients', 'mc-clients', curr, prev);
-          var sparkVals = sparkPromises.map(function(r){ return countInRange(rows, 'created_at', r.start, r.end); });
-          renderSparkline('sp-clients', sparkVals);
-        });
-
-      // Sessions
-      safeQuery(supabase.from('appointments').select('id,start_time,status').eq('status','completed'), {data:[]})
-        .then(function(res) {
-          var rows = res.data || [];
-          var curr = countInRange(rows, 'start_time', range.start, range.end);
-          var prev = countInRange(rows, 'start_time', prevRange.start, prevRange.end);
-          renderMetric('m-sessions', 'sp-sessions', 'mc-sessions', curr, prev);
-          var sparkVals = sparkPromises.map(function(r){ return countInRange(rows, 'start_time', r.start, r.end); });
-          renderSparkline('sp-sessions', sparkVals);
-        });
-
-      // Revenue
-      safeQuery(supabase.from('payments').select('id,amount_cents,payment_date,status').eq('status','completed'), {data:[]})
-        .then(function(res) {
-          var rows = res.data || [];
-          var curr = sumInRange(rows, 'amount_cents', 'payment_date', range.start, range.end);
-          var prev = sumInRange(rows, 'amount_cents', 'payment_date', prevRange.start, prevRange.end);
-          renderMetric('m-revenue', 'sp-revenue', 'mc-revenue', curr, prev, formatCurrency);
-          var sparkVals = sparkPromises.map(function(r){ return sumInRange(rows, 'amount_cents', 'payment_date', r.start, r.end); });
-          renderSparkline('sp-revenue', sparkVals);
-        });
-
-      // Active Arcs
-      safeQuery(supabase.from('mentorship_containers').select('id,status,created_at'), {data:[]})
-        .then(function(res) {
-          var rows = res.data || [];
-          var curr = rows.filter(function(r){ return r.status === 'active'; }).length;
-          var prev = curr; // static count, show flat
-          renderMetric('m-arcs', 'sp-arcs', 'mc-arcs', curr, prev);
-          var sparkVals = sparkPromises.map(function(){ return curr; });
-          renderSparkline('sp-arcs', sparkVals);
-        });
-
-      // Network Touchpoints
-      Promise.all([
-        safeQuery(supabase.from('collaborators').select('id,last_contact'), {data:[]}),
-        safeQuery(supabase.from('referral_network').select('id,last_contact'), {data:[]}),
-        safeQuery(supabase.from('contacts_vip').select('id,last_contact'), {data:[]})
-      ]).then(function(results) {
-        var all = (results[0].data||[]).concat(results[1].data||[]).concat(results[2].data||[]);
-        var curr = countInRange(all, 'last_contact', range.start, range.end);
-        var prev = countInRange(all, 'last_contact', prevRange.start, prevRange.end);
-        renderMetric('m-network', 'sp-network', 'mc-network', curr, prev);
-        var sparkVals = sparkPromises.map(function(r){ return countInRange(all, 'last_contact', r.start, r.end); });
-        renderSparkline('sp-network', sparkVals);
-      });
-
-      // Engagements
-      safeQuery(supabase.from('speaking_engagements').select('id,event_date'), {data:[]})
-        .then(function(res) {
-          var rows = res.data || [];
-          var curr = countInRange(rows, 'event_date', range.start, range.end);
-          var prev = countInRange(rows, 'event_date', prevRange.start, prevRange.end);
-          renderMetric('m-engagements', 'sp-engagements', 'mc-engagements', curr, prev);
-          var sparkVals = sparkPromises.map(function(r){ return countInRange(rows, 'event_date', r.start, r.end); });
-          renderSparkline('sp-engagements', sparkVals);
-        });
-    }
-
-    // ── SECTION 2: Pipeline ──
-    var STAGE_COLORS = {
-      inquiry: '#D4A843', intake: '#6B9BD2', active: '#5B7553',
-      aftercare: '#9B7EC8', integration: '#C4836A', community: '#5B9E8A', alumni: '#A89E95'
-    };
-    var STAGE_ORDER = ['inquiry','intake','active','aftercare','integration','community','alumni'];
-
-    function loadPipeline() {
-      safeQuery(supabase.from('clients').select('id,pipeline_stage,is_archived').eq('is_archived', false), {data:[]})
-        .then(function(res) {
-          var rows = res.data || [];
-          var counts = {};
-          STAGE_ORDER.forEach(function(s){ counts[s] = 0; });
-          rows.forEach(function(r){ if (r.pipeline_stage && counts[r.pipeline_stage] !== undefined) counts[r.pipeline_stage]++; });
-          var total = rows.length || 1;
-
-          var barEl = document.getElementById('pipelineBar');
-          var legendEl = document.getElementById('pipelineLegend');
-          barEl.innerHTML = '';
-          legendEl.innerHTML = '';
-
-          STAGE_ORDER.forEach(function(stage) {
-            if (counts[stage] === 0) return;
-            var pct = ((counts[stage] / total) * 100).toFixed(1);
-            var seg = document.createElement('div');
-            seg.className = 'pipeline-bar-seg';
-            seg.style.width = pct + '%';
-            seg.style.background = STAGE_COLORS[stage];
-            seg.title = stage + ': ' + counts[stage];
-            barEl.appendChild(seg);
-
-            var item = document.createElement('div');
-            item.className = 'pipeline-legend-item';
-            item.innerHTML = '<div class="pipeline-legend-dot" style="background:' + STAGE_COLORS[stage] + '"></div>' +
-              '<span>' + stage.charAt(0).toUpperCase() + stage.slice(1) + ' (' + counts[stage] + ')</span>';
-            legendEl.appendChild(item);
-          });
-
-          if (rows.length === 0) {
-            barEl.innerHTML = '<span class="muted-text">No client data</span>';
-          }
-        });
-    }
-
-    // ── SECTION 3: Revenue & Invoicing ──
-    function getSubPeriods(range) {
-      var periods = [];
-      if (currentView === 'weekly') {
-        for (var d = 0; d < 7; d++) {
-          var s = new Date(range.start); s.setDate(s.getDate() + d); s.setHours(0,0,0,0);
-          var e = new Date(s); e.setHours(23,59,59,999);
-          var days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-          periods.push({ start: s, end: e, label: days[d] });
-        }
-      } else if (currentView === 'monthly') {
-        var ms = new Date(range.start.getFullYear(), range.start.getMonth(), 1);
-        for (var w = 0; w < 4; w++) {
-          var ws = new Date(ms); ws.setDate(ws.getDate() + (w * 7));
-          var we = new Date(ws); we.setDate(we.getDate() + 6); we.setHours(23,59,59,999);
-          if (we > range.end) we = new Date(range.end);
-          if (ws <= range.end) periods.push({ start: ws, end: we, label: 'Wk ' + (w+1) });
-        }
-      } else if (currentView === 'seasonal') {
-        var mAbbr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        var cur = new Date(range.start.getFullYear(), range.start.getMonth(), 1);
-        while (cur <= range.end) {
-          var mStart = new Date(cur.getFullYear(), cur.getMonth(), 1);
-          var mEnd = new Date(cur.getFullYear(), cur.getMonth() + 1, 0); mEnd.setHours(23,59,59,999);
-          periods.push({ start: mStart, end: mEnd, label: mAbbr[cur.getMonth()] });
-          cur.setMonth(cur.getMonth() + 1);
-        }
+        var month = now.getMonth() + offset*3;
+        var yr = now.getFullYear() + Math.floor(month/12);
+        month = ((month % 12) + 12) % 12;
+        var seasonStart = Math.floor(month/3)*3;
+        var seasons = ['Winter','Spring','Summer','Autumn'];
+        label = seasons[Math.floor(seasonStart/3)] + ' ' + yr;
+        start = new Date(yr, seasonStart, 1).toISOString().split('T')[0];
+        end = new Date(yr, seasonStart+3, 0).toISOString().split('T')[0];
       } else { // annual
-        var mNames2 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        for (var mo = 0; mo < 12; mo++) {
-          var yr = range.start.getFullYear();
-          var mS = new Date(yr, mo, 1); mS.setHours(0,0,0,0);
-          var mE = new Date(yr, mo + 1, 0); mE.setHours(23,59,59,999);
-          periods.push({ start: mS, end: mE, label: mNames2[mo] });
-        }
+        var yr2 = now.getFullYear() + offset;
+        start = yr2 + '-01-01'; end = yr2 + '-12-31'; label = 'Year ' + yr2;
       }
-      return periods;
+      return {start:start, end:end, label:label};
     }
 
-    function loadRevenue(range) {
-      safeQuery(supabase.from('payments').select('id,amount_cents,payment_date,status').eq('status','completed'), {data:[]})
-        .then(function(res) {
-          var rows = res.data || [];
-          var periods = getSubPeriods(range);
-          var values = periods.map(function(p){ return sumInRange(rows, 'amount_cents', 'payment_date', p.start, p.end); });
-          var maxVal = Math.max.apply(null, values) || 1;
-          var chartEl = document.getElementById('revenueBarChart');
-          chartEl.innerHTML = '';
-          periods.forEach(function(p, i) {
-            var h = Math.max(2, Math.round((values[i] / maxVal) * 160));
-            var wrap = document.createElement('div');
-            wrap.className = 'bar-chart-bar-wrap';
-            wrap.innerHTML = '<div class="bar-chart-bar" style="height:' + h + 'px" title="' + formatCurrency(values[i]) + '"></div>' +
-              '<div class="bar-chart-label">' + escHtml(p.label) + '</div>';
-            chartEl.appendChild(wrap);
-          });
+    requireAuth(function(user, supabase) {
+      var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+      document.getElementById('sidebarUserName').textContent = name;
+      document.getElementById('sidebarUserEmail').textContent = user.email;
+      document.getElementById('sidebarSignOut').addEventListener('click', function() {
+        supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+      });
+
+      var currentView = 'monthly';
+      var currentOffset = 0;
+      var currentGoals = [];
+      var currentReflections = [];
+
+      // ─── Helpers ────────────────────────────────────────────────
+      function escapeHtml(s) {
+        if (s == null) return '';
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+
+      function safeQuery(query, onSuccess, onError) {
+        query.then(function(res) {
+          if (res.error) { if (onError) onError(res.error); }
+          else { onSuccess(res.data, res.count); }
+        }).catch(function(e) { if (onError) onError(e); });
+      }
+
+      function safeQueryPromise(query) {
+        return query.then(function(res) {
+          return res.error ? [] : (res.data || []);
+        }).catch(function(){ return []; });
+      }
+
+      function buildSparkline(elId, values) {
+        var el = document.getElementById(elId);
+        if (!el) return;
+        el.innerHTML = '';
+        var max = Math.max.apply(null, values.concat([0])) || 1;
+        values.forEach(function(v) {
+          var bar = document.createElement('div');
+          bar.className = 'sparkline-bar';
+          bar.style.height = Math.max(2, Math.round((v / max) * 22)) + 'px';
+          el.appendChild(bar);
         });
+      }
 
-      // Invoices donut
-      safeQuery(supabase.from('invoices').select('id,status,due_date,is_archived'), {data:[]})
-        .then(function(res) {
-          var rows = (res.data || []).filter(function(r){ return !r.is_archived; });
-          var counts = { draft: 0, sent: 0, paid: 0, overdue: 0, cancelled: 0 };
-          rows.forEach(function(r){
-            var s = r.status;
-            if (counts[s] !== undefined) counts[s]++;
+      // ─── Tab & Nav event listeners ──────────────────────────────
+      document.querySelectorAll('.analytics-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          currentView = tab.getAttribute('data-view');
+          currentOffset = 0;
+          document.querySelectorAll('.analytics-tab').forEach(function(t){ t.classList.remove('active'); });
+          tab.classList.add('active');
+          render();
+        });
+      });
+
+      document.getElementById('navPrev').addEventListener('click', function() { currentOffset--; render(); });
+      document.getElementById('navNext').addEventListener('click', function() { currentOffset++; render(); });
+
+      // ─── Goal Modal wiring ──────────────────────────────────────
+      document.getElementById('addGoalBtn').addEventListener('click', function() { openGoalModal(null); });
+      document.getElementById('goalModalClose').addEventListener('click', closeGoalModal);
+      document.getElementById('goalCancelBtn').addEventListener('click', closeGoalModal);
+      document.getElementById('goalModal').addEventListener('click', function(e){ if(e.target===this) closeGoalModal(); });
+
+      document.getElementById('goalSaveBtn').addEventListener('click', function() {
+        var id = document.getElementById('goalId').value;
+        var payload = {
+          title: document.getElementById('goalTitle').value.trim(),
+          description: document.getElementById('goalDescription').value.trim() || null,
+          category: document.getElementById('goalCategory').value || null,
+          metric_type: document.getElementById('goalMetricType').value || null,
+          target_value: parseFloat(document.getElementById('goalTargetValue').value) || null,
+          current_value: parseFloat(document.getElementById('goalCurrentValue').value) || null,
+          timeframe: document.getElementById('goalTimeframe').value || null,
+          status: document.getElementById('goalStatus').value || 'active',
+          period_start: document.getElementById('goalPeriodStart').value || null,
+          period_end: document.getElementById('goalPeriodEnd').value || null,
+          notes: document.getElementById('goalNotes').value.trim() || null
+        };
+        if (!payload.title) { showToast('Title is required', 'error'); return; }
+        var q = id
+          ? supabase.from('practice_goals').update(payload).eq('id', id)
+          : supabase.from('practice_goals').insert([payload]);
+        q.then(function(res) {
+          if (res.error) { showToast('Error saving goal: ' + res.error.message, 'error'); return; }
+          showToast(id ? 'Goal updated' : 'Goal added', 'success');
+          closeGoalModal();
+          loadGoals(getDateRange(currentView, currentOffset));
+        });
+      });
+
+      document.getElementById('goalDeleteBtn').addEventListener('click', function() {
+        var id = document.getElementById('goalId').value;
+        if (!id || !confirm('Delete this goal?')) return;
+        supabase.from('practice_goals').update({is_archived:true}).eq('id', id).then(function(res) {
+          if (res.error) { showToast('Error deleting goal', 'error'); return; }
+          showToast('Goal removed', 'success');
+          closeGoalModal();
+          loadGoals(getDateRange(currentView, currentOffset));
+        });
+      });
+
+      function openGoalModal(goal) {
+        var range = getDateRange(currentView, currentOffset);
+        document.getElementById('goalId').value = goal ? goal.id : '';
+        document.getElementById('goalModalTitle').textContent = goal ? 'Edit Goal' : 'Add Goal';
+        document.getElementById('goalTitle').value = goal ? (goal.title || '') : '';
+        document.getElementById('goalDescription').value = goal ? (goal.description || '') : '';
+        document.getElementById('goalCategory').value = goal ? (goal.category || '') : '';
+        document.getElementById('goalMetricType').value = goal ? (goal.metric_type || 'number') : 'number';
+        document.getElementById('goalTargetValue').value = goal && goal.target_value != null ? goal.target_value : '';
+        document.getElementById('goalCurrentValue').value = goal && goal.current_value != null ? goal.current_value : '';
+        document.getElementById('goalTimeframe').value = goal ? (goal.timeframe || currentView) : currentView;
+        document.getElementById('goalStatus').value = goal ? (goal.status || 'active') : 'active';
+        document.getElementById('goalPeriodStart').value = goal ? (goal.period_start || range.start) : range.start;
+        document.getElementById('goalPeriodEnd').value = goal ? (goal.period_end || range.end) : range.end;
+        document.getElementById('goalNotes').value = goal ? (goal.notes || '') : '';
+        document.getElementById('goalDeleteBtn').style.display = goal ? 'inline-block' : 'none';
+        document.getElementById('goalModal').style.display = 'flex';
+      }
+
+      function closeGoalModal() { document.getElementById('goalModal').style.display = 'none'; }
+
+      // ─── Reflection Modal wiring ────────────────────────────────
+      document.getElementById('addReflectionBtn').addEventListener('click', function() { openReflectionModal(null); });
+      document.getElementById('reflectionModalClose').addEventListener('click', closeReflectionModal);
+      document.getElementById('reflectionCancelBtn').addEventListener('click', closeReflectionModal);
+      document.getElementById('reflectionModal').addEventListener('click', function(e){ if(e.target===this) closeReflectionModal(); });
+
+      document.getElementById('reflectionSaveBtn').addEventListener('click', function() {
+        var id = document.getElementById('reflectionId').value;
+        var tagsRaw = document.getElementById('reflectionTags').value;
+        var tags = tagsRaw ? tagsRaw.split(',').map(function(t){ return t.trim(); }).filter(Boolean) : null;
+        var payload = {
+          title: document.getElementById('reflectionTitle').value.trim(),
+          body: document.getElementById('reflectionBody').value.trim() || null,
+          reflection_type: document.getElementById('reflectionType').value || 'monthly',
+          mood: document.getElementById('reflectionMood').value.trim() || null,
+          period_start: document.getElementById('reflectionPeriodStart').value || null,
+          period_end: document.getElementById('reflectionPeriodEnd').value || null,
+          wins: document.getElementById('reflectionWins').value.trim() || null,
+          challenges: document.getElementById('reflectionChallenges').value.trim() || null,
+          insights: document.getElementById('reflectionInsights').value.trim() || null,
+          intentions: document.getElementById('reflectionIntentions').value.trim() || null,
+          gratitudes: document.getElementById('reflectionGratitudes').value.trim() || null,
+          tags: tags
+        };
+        if (!payload.title) { showToast('Title is required', 'error'); return; }
+        var q = id
+          ? supabase.from('practice_reflections').update(payload).eq('id', id)
+          : supabase.from('practice_reflections').insert([payload]);
+        q.then(function(res) {
+          if (res.error) { showToast('Error saving reflection: ' + res.error.message, 'error'); return; }
+          showToast(id ? 'Reflection updated' : 'Reflection added', 'success');
+          closeReflectionModal();
+          loadReflections(getDateRange(currentView, currentOffset));
+        });
+      });
+
+      document.getElementById('reflectionDeleteBtn').addEventListener('click', function() {
+        var id = document.getElementById('reflectionId').value;
+        if (!id || !confirm('Delete this reflection?')) return;
+        supabase.from('practice_reflections').update({is_archived:true}).eq('id', id).then(function(res) {
+          if (res.error) { showToast('Error deleting reflection', 'error'); return; }
+          showToast('Reflection removed', 'success');
+          closeReflectionModal();
+          loadReflections(getDateRange(currentView, currentOffset));
+        });
+      });
+
+      function openReflectionModal(r) {
+        var range = getDateRange(currentView, currentOffset);
+        document.getElementById('reflectionId').value = r ? r.id : '';
+        document.getElementById('reflectionModalTitle').textContent = r ? 'Edit Reflection' : 'Add Reflection';
+        document.getElementById('reflectionTitle').value = r ? (r.title || '') : '';
+        document.getElementById('reflectionType').value = r ? (r.reflection_type || currentView) : currentView;
+        document.getElementById('reflectionMood').value = r ? (r.mood || '') : '';
+        document.getElementById('reflectionPeriodStart').value = r ? (r.period_start || range.start) : range.start;
+        document.getElementById('reflectionPeriodEnd').value = r ? (r.period_end || range.end) : range.end;
+        document.getElementById('reflectionBody').value = r ? (r.body || '') : '';
+        document.getElementById('reflectionWins').value = r ? (r.wins || '') : '';
+        document.getElementById('reflectionChallenges').value = r ? (r.challenges || '') : '';
+        document.getElementById('reflectionInsights').value = r ? (r.insights || '') : '';
+        document.getElementById('reflectionIntentions').value = r ? (r.intentions || '') : '';
+        document.getElementById('reflectionGratitudes').value = r ? (r.gratitudes || '') : '';
+        document.getElementById('reflectionTags').value = r && r.tags ? r.tags.join(', ') : '';
+        document.getElementById('reflectionDeleteBtn').style.display = r ? 'inline-block' : 'none';
+        document.getElementById('reflectionModal').style.display = 'flex';
+      }
+
+      function closeReflectionModal() { document.getElementById('reflectionModal').style.display = 'none'; }
+
+      // ─── Reflection View Modal ───────────────────────────────────
+      document.getElementById('reflectionViewClose').addEventListener('click', closeReflectionViewModal);
+      document.getElementById('rvCloseBtn').addEventListener('click', closeReflectionViewModal);
+      document.getElementById('reflectionViewModal').addEventListener('click', function(e){ if(e.target===this) closeReflectionViewModal(); });
+
+      function openReflectionViewModal(r) {
+        document.getElementById('rvTitle').textContent = r.title || 'Reflection';
+        var meta = [];
+        if (r.reflection_type) meta.push(r.reflection_type.charAt(0).toUpperCase() + r.reflection_type.slice(1));
+        if (r.period_start) meta.push(r.period_start + (r.period_end ? ' – ' + r.period_end : ''));
+        if (r.mood) meta.push('Mood: ' + r.mood);
+        document.getElementById('rvMeta').textContent = meta.join(' · ');
+
+        function sec(label, val) {
+          if (!val) return '';
+          return '<div class="reflection-full-section"><div class="reflection-full-label">' + escapeHtml(label) + '</div><div class="reflection-full-content">' + escapeHtml(val) + '</div></div>';
+        }
+        var html = '';
+        html += sec('Reflection', r.body);
+        html += sec('Wins', r.wins);
+        html += sec('Challenges', r.challenges);
+        html += sec('Insights', r.insights);
+        html += sec('Intentions', r.intentions);
+        html += sec('Gratitudes', r.gratitudes);
+        if (r.tags && r.tags.length) {
+          html += '<div class="reflection-full-section"><div class="reflection-full-label">Tags</div><div>' + r.tags.map(function(tg){ return '<span class="mood-chip">'+escapeHtml(tg)+'</span>'; }).join(' ') + '</div></div>';
+        }
+        document.getElementById('rvBody').innerHTML = html || '<div style="color:var(--aap-text-dim);font-size:13px;">No content recorded.</div>';
+        document.getElementById('rvEditBtn').onclick = function() {
+          closeReflectionViewModal();
+          openReflectionModal(r);
+        };
+        document.getElementById('reflectionViewModal').style.display = 'flex';
+      }
+
+      function closeReflectionViewModal() { document.getElementById('reflectionViewModal').style.display = 'none'; }
+
+      // ─── Main render ─────────────────────────────────────────────
+      function render() {
+        var range = getDateRange(currentView, currentOffset);
+        document.getElementById('periodLabel').textContent = range.label;
+        var showSeasonal = currentView === 'seasonal' || currentView === 'annual';
+        document.getElementById('seasonalSection').style.display = showSeasonal ? 'block' : 'none';
+        loadMetrics(range);
+        loadPipeline(range);
+        loadRevenue(range);
+        loadSessions(range);
+        loadNetwork();
+        loadGoals(range);
+        loadReflections(range);
+        if (showSeasonal) loadSeasonalAwareness(range);
+      }
+
+      // ─── Section 1: Overview Metrics ─────────────────────────────
+      function loadMetrics(range) {
+        // Active clients (unique client_ids in appointments for period)
+        safeQuery(
+          supabase.from('appointments').select('client_id').gte('scheduled_at', range.start).lte('scheduled_at', range.end + 'T23:59:59'),
+          function(data) {
+            var unique = new Set((data||[]).map(function(r){ return r.client_id; }).filter(Boolean));
+            document.getElementById('metricClients').textContent = unique.size;
+          },
+          function(){ document.getElementById('metricClients').textContent = '—'; }
+        );
+
+        // Sessions completed
+        safeQuery(
+          supabase.from('appointments').select('id', {count:'exact'}).eq('status','completed').gte('scheduled_at', range.start).lte('scheduled_at', range.end + 'T23:59:59'),
+          function(data, count) {
+            document.getElementById('metricSessions').textContent = count != null ? count : (data||[]).length;
+          },
+          function(){ document.getElementById('metricSessions').textContent = '—'; }
+        );
+
+        // Revenue collected
+        safeQuery(
+          supabase.from('payments').select('amount').gte('payment_date', range.start).lte('payment_date', range.end),
+          function(data) {
+            var total = (data||[]).reduce(function(s,r){ return s+(parseFloat(r.amount)||0); }, 0);
+            document.getElementById('metricRevenue').textContent = '$' + total.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+          },
+          function(){ document.getElementById('metricRevenue').textContent = '—'; }
+        );
+
+        // New intakes
+        safeQuery(
+          supabase.from('clients').select('id', {count:'exact'}).eq('pipeline_stage','intake').gte('created_at', range.start).lte('created_at', range.end + 'T23:59:59'),
+          function(data, count) {
+            document.getElementById('metricIntakes').textContent = count != null ? count : (data||[]).length;
+          },
+          function(){ document.getElementById('metricIntakes').textContent = '—'; }
+        );
+
+        // Engagements
+        safeQuery(
+          supabase.from('speaking_engagements').select('id', {count:'exact'}).gte('event_date', range.start).lte('event_date', range.end),
+          function(data, count) {
+            document.getElementById('metricEngagements').textContent = count != null ? count : (data||[]).length;
+          },
+          function(){ document.getElementById('metricEngagements').textContent = '—'; }
+        );
+
+        // Travel days
+        safeQuery(
+          supabase.from('travel_itinerary').select('departure_date,return_date').gte('departure_date', range.start).lte('departure_date', range.end),
+          function(data) {
+            var days = (data||[]).reduce(function(s,r) {
+              if (r.departure_date && r.return_date) {
+                var diff = (new Date(r.return_date) - new Date(r.departure_date)) / 86400000;
+                return s + Math.max(0, Math.round(diff));
+              }
+              return s + 1;
+            }, 0);
+            document.getElementById('metricTravel').textContent = days;
+          },
+          function(){ document.getElementById('metricTravel').textContent = '—'; }
+        );
+
+        // Sparklines: build from last 6 periods of appointments + payments
+        var periods = [];
+        for (var i = -5; i <= 0; i++) periods.push(getDateRange(currentView, currentOffset + i));
+
+        Promise.all([
+          safeQueryPromise(supabase.from('appointments').select('scheduled_at,client_id,status')),
+          safeQueryPromise(supabase.from('payments').select('payment_date,amount')),
+          safeQueryPromise(supabase.from('clients').select('created_at,pipeline_stage')),
+          safeQueryPromise(supabase.from('speaking_engagements').select('event_date')),
+          safeQueryPromise(supabase.from('travel_itinerary').select('departure_date,return_date'))
+        ]).then(function(results) {
+          var appts = results[0];
+          var payments = results[1];
+          var clients = results[2];
+          var engagements = results[3];
+          var travels = results[4];
+
+          buildSparkline('sparkClients', periods.map(function(p) {
+            var s = new Set(appts.filter(function(r){ return r.scheduled_at && r.scheduled_at >= p.start && r.scheduled_at <= p.end+'T23:59:59' && r.client_id; }).map(function(r){ return r.client_id; }));
+            return s.size;
+          }));
+          buildSparkline('sparkSessions', periods.map(function(p) {
+            return appts.filter(function(r){ return r.status==='completed' && r.scheduled_at && r.scheduled_at >= p.start && r.scheduled_at <= p.end+'T23:59:59'; }).length;
+          }));
+          buildSparkline('sparkRevenue', periods.map(function(p) {
+            return payments.filter(function(r){ return r.payment_date && r.payment_date >= p.start && r.payment_date <= p.end; }).reduce(function(s,r){ return s+(parseFloat(r.amount)||0); },0);
+          }));
+          buildSparkline('sparkIntakes', periods.map(function(p) {
+            return clients.filter(function(r){ return r.pipeline_stage==='intake' && r.created_at && r.created_at >= p.start && r.created_at <= p.end+'T23:59:59'; }).length;
+          }));
+          buildSparkline('sparkEngagements', periods.map(function(p) {
+            return engagements.filter(function(r){ return r.event_date && r.event_date >= p.start && r.event_date <= p.end; }).length;
+          }));
+          buildSparkline('sparkTravel', periods.map(function(p) {
+            return travels.filter(function(r){ return r.departure_date && r.departure_date >= p.start && r.departure_date <= p.end; }).reduce(function(s,r) {
+              if (r.departure_date && r.return_date) return s + Math.max(0, Math.round((new Date(r.return_date)-new Date(r.departure_date))/86400000));
+              return s + 1;
+            }, 0);
+          }));
+        });
+      }
+
+      // ─── Section 2: Pipeline Flow ─────────────────────────────────
+      var PIPELINE_STAGES = [
+        {key:'inquiry',    label:'Inquiry',     color:'#D4A843'},
+        {key:'intake',     label:'Intake',      color:'#6B9BD2'},
+        {key:'active',     label:'Active',      color:'#5B7553'},
+        {key:'aftercare',  label:'Aftercare',   color:'#9B7EC8'},
+        {key:'integration',label:'Integration', color:'#C4836A'},
+        {key:'community',  label:'Community',   color:'#5B9E8A'},
+        {key:'alumni',     label:'Alumni',      color:'#A89E95'}
+      ];
+
+      function loadPipeline(range) {
+        safeQuery(
+          supabase.from('clients').select('pipeline_stage'),
+          function(data) {
+            var counts = {};
+            PIPELINE_STAGES.forEach(function(s){ counts[s.key] = 0; });
+            (data||[]).forEach(function(r){ if (r.pipeline_stage && counts[r.pipeline_stage] !== undefined) counts[r.pipeline_stage]++; });
+            var total = PIPELINE_STAGES.reduce(function(s,p){ return s+counts[p.key]; }, 0);
+            var bar = document.getElementById('pipelineBar');
+            var legend = document.getElementById('pipelineLegend');
+            if (total === 0) {
+              bar.innerHTML = '<div style="flex:1;background:var(--aap-border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--aap-text-dim);">No client data</div>';
+              legend.innerHTML = '';
+              return;
+            }
+            bar.innerHTML = '';
+            legend.innerHTML = '';
+            PIPELINE_STAGES.forEach(function(s) {
+              var c = counts[s.key];
+              if (c === 0) return;
+              var seg = document.createElement('div');
+              seg.className = 'pipeline-seg';
+              seg.style.flex = c;
+              seg.style.background = s.color;
+              seg.textContent = c > total*0.05 ? c : '';
+              seg.title = s.label + ': ' + c;
+              bar.appendChild(seg);
+              var li = document.createElement('div');
+              li.className = 'pipeline-leg-item';
+              li.innerHTML = '<div class="pipeline-leg-dot" style="background:'+s.color+'"></div>'+s.label+' ('+c+')';
+              legend.appendChild(li);
+            });
+          },
+          function() {
+            document.getElementById('pipelineBar').innerHTML = '<div style="flex:1;background:var(--aap-border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--aap-text-dim);">Pipeline data unavailable</div>';
+          }
+        );
+      }
+
+      // ─── Section 3: Revenue ───────────────────────────────────────
+      function loadRevenue(range) {
+        // Last 6 months from the base of the current period
+        var baseDate = new Date(range.start);
+        var months = [];
+        for (var i = -5; i <= 0; i++) {
+          var d = new Date(baseDate.getFullYear(), baseDate.getMonth() + i, 1);
+          months.push({
+            label: d.toLocaleDateString('en-US',{month:'short'}),
+            start: d.toISOString().split('T')[0],
+            end: new Date(d.getFullYear(), d.getMonth()+1, 0).toISOString().split('T')[0]
           });
-          var total = rows.length;
-          document.getElementById('donutTotal').textContent = total;
+        }
 
-          if (total === 0) {
-            document.getElementById('donutChart').style.background = 'var(--aap-border)';
-            document.getElementById('donutLegend').innerHTML = '<span class="muted-text">No invoices</span>';
+        safeQuery(
+          supabase.from('payments').select('payment_date,amount').gte('payment_date', months[0].start).lte('payment_date', months[5].end),
+          function(data) {
+            var totals = months.map(function(m) {
+              return (data||[]).filter(function(r){ return r.payment_date >= m.start && r.payment_date <= m.end; }).reduce(function(s,r){ return s+(parseFloat(r.amount)||0); }, 0);
+            });
+            var maxVal = Math.max.apply(null, totals.concat([1]));
+            var chartEl = document.getElementById('revenueBarChart');
+            chartEl.innerHTML = '';
+            months.forEach(function(m, i) {
+              var pct = Math.max(2, Math.round((totals[i]/maxVal)*100));
+              var item = document.createElement('div');
+              item.className = 'bar-chart-item';
+              item.innerHTML = '<div class="bar-chart-bar" style="height:'+pct+'%;"></div><div class="bar-chart-label">'+m.label+'<br>$'+(totals[i]>999?(totals[i]/1000).toFixed(1)+'k':totals[i].toFixed(0))+'</div>';
+              chartEl.appendChild(item);
+            });
+          },
+          function() {
+            document.getElementById('revenueBarChart').innerHTML = '<div style="color:var(--aap-text-dim);font-size:13px;align-self:center;width:100%;text-align:center;">Revenue data unavailable</div>';
+          }
+        );
+
+        // Invoice donut
+        var statusColors = {draft:'#d1d5db', sent:'#6B9BD2', paid:'#5B7553', overdue:'#ef4444', cancelled:'#e5e7eb'};
+        safeQuery(
+          supabase.from('invoices').select('status'),
+          function(data) {
+            var counts = {draft:0, sent:0, paid:0, overdue:0, cancelled:0};
+            (data||[]).forEach(function(r){ if (r.status && counts[r.status] !== undefined) counts[r.status]++; });
+            var total = Object.values(counts).reduce(function(a,b){ return a+b; }, 0);
+            if (total === 0) {
+              document.getElementById('invoiceDonut').style.background = 'conic-gradient(#d1d5db 0% 100%)';
+              document.getElementById('invoiceLegend').innerHTML = '<div style="color:var(--aap-text-dim);font-size:13px;">No invoices</div>';
+              return;
+            }
+            var parts = [];
+            var angle = 0;
+            Object.keys(counts).forEach(function(k) {
+              if (!counts[k]) return;
+              var pct = counts[k]/total*100;
+              parts.push(statusColors[k]+' '+angle.toFixed(1)+'% '+(angle+pct).toFixed(1)+'%');
+              angle += pct;
+            });
+            document.getElementById('invoiceDonut').style.background = 'conic-gradient('+parts.join(', ')+')';
+            var legHtml = '';
+            Object.keys(counts).forEach(function(k) {
+              if (!counts[k]) return;
+              legHtml += '<div class="donut-legend-item"><div class="donut-leg-dot" style="background:'+statusColors[k]+'"></div>'+k.charAt(0).toUpperCase()+k.slice(1)+' ('+counts[k]+')</div>';
+            });
+            document.getElementById('invoiceLegend').innerHTML = legHtml;
+          },
+          function() {
+            document.getElementById('invoiceLegend').innerHTML = '<div style="color:var(--aap-text-dim);font-size:13px;">Invoice data unavailable</div>';
+          }
+        );
+      }
+
+      // ─── Section 4: Sessions & Engagements ───────────────────────
+      function loadSessions(range) {
+        safeQuery(
+          supabase.from('appointments')
+            .select('scheduled_at,duration_minutes,clients(full_name),services(name)')
+            .eq('status','completed')
+            .gte('scheduled_at', range.start)
+            .lte('scheduled_at', range.end+'T23:59:59')
+            .order('scheduled_at', {ascending:true}),
+          function(data) {
+            var wrap = document.getElementById('sessionsTableWrap');
+            if (!data || data.length === 0) {
+              wrap.innerHTML = '<div class="empty-state">No completed sessions in this period.</div>';
+              return;
+            }
+            var html = '<table class="data-table"><thead><tr><th>Date</th><th>Client</th><th>Service</th><th>Duration</th></tr></thead><tbody>';
+            data.forEach(function(r) {
+              var d = r.scheduled_at ? new Date(r.scheduled_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—';
+              html += '<tr><td>'+escapeHtml(d)+'</td><td>'+escapeHtml((r.clients&&r.clients.full_name)||'—')+'</td><td>'+escapeHtml((r.services&&r.services.name)||'—')+'</td><td>'+escapeHtml(r.duration_minutes ? r.duration_minutes+' min' : '—')+'</td></tr>';
+            });
+            html += '</tbody></table>';
+            wrap.innerHTML = html;
+          },
+          function() {
+            document.getElementById('sessionsTableWrap').innerHTML = '<div class="empty-state">Session data unavailable.</div>';
+          }
+        );
+
+        // Speaking engagements + travel
+        safeQuery(
+          supabase.from('speaking_engagements').select('event_name,event_date,location,status').gte('event_date', range.start).lte('event_date', range.end).order('event_date', {ascending:true}),
+          function(engData) {
+            var html = '';
+            if (engData && engData.length) {
+              engData.forEach(function(r) {
+                html += '<div class="engagement-item"><strong>'+escapeHtml(r.event_name||'Engagement')+'</strong>';
+                if (r.location) html += ' <span style="color:var(--aap-text-dim);">@ '+escapeHtml(r.location)+'</span>';
+                html += '<div class="engagement-date">'+escapeHtml(r.event_date||'')+'</div></div>';
+              });
+            } else {
+              html = '<div style="color:var(--aap-text-dim);font-size:13px;padding:8px 0;">No speaking engagements in this period.</div>';
+            }
+            safeQuery(
+              supabase.from('travel_itinerary').select('destination,departure_date,return_date,purpose').gte('departure_date', range.start).lte('departure_date', range.end).order('departure_date', {ascending:true}),
+              function(tData) {
+                if (tData && tData.length) {
+                  html += '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--aap-border);font-size:11px;font-weight:700;color:var(--aap-text-dim);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px;">Travel</div>';
+                  tData.forEach(function(r) {
+                    html += '<div class="engagement-item"><strong>'+escapeHtml(r.destination||'Trip')+'</strong>';
+                    if (r.purpose) html += ' <span style="color:var(--aap-text-dim);">— '+escapeHtml(r.purpose)+'</span>';
+                    html += '<div class="engagement-date">'+(r.departure_date||'')+(r.return_date?' – '+r.return_date:'')+'</div></div>';
+                  });
+                }
+                document.getElementById('engagementsListWrap').innerHTML = html;
+              },
+              function() { document.getElementById('engagementsListWrap').innerHTML = html; }
+            );
+          },
+          function() {
+            document.getElementById('engagementsListWrap').innerHTML = '<div class="empty-state">Engagement data unavailable.</div>';
+          }
+        );
+      }
+
+      // ─── Section 5: Network Health ────────────────────────────────
+      function loadNetworkCard(table, valueId, subId) {
+        safeQuery(
+          supabase.from(table).select('id,last_contact_date').order('last_contact_date', {ascending:false}),
+          function(data) {
+            document.getElementById(valueId).textContent = (data||[]).length;
+            if (data && data.length && data[0].last_contact_date) {
+              var days = Math.floor((new Date() - new Date(data[0].last_contact_date)) / 86400000);
+              document.getElementById(subId).textContent = 'Last contact: ' + days + ' day'+(days===1?'':'s')+' ago';
+            } else {
+              document.getElementById(subId).textContent = 'No contact logged';
+            }
+          },
+          function() {
+            document.getElementById(valueId).textContent = '—';
+            document.getElementById(subId).textContent = 'Data unavailable';
+          }
+        );
+      }
+
+      function loadNetwork() {
+        loadNetworkCard('collaborators', 'netCollaborators', 'netCollaboratorsSub');
+        loadNetworkCard('referral_network', 'netReferrals', 'netReferralsSub');
+        loadNetworkCard('vip_contacts', 'netVIP', 'netVIPSub');
+      }
+
+      // ─── Section 6: Practice Goals ────────────────────────────────
+      function loadGoals(range) {
+        var content = document.getElementById('goalsContent');
+        content.innerHTML = '<div class="empty-state">Loading goals...</div>';
+        supabase.from('practice_goals').select('*').then(function(res) {
+          if (res.error) {
+            content.innerHTML = '<div class="empty-state">—<br><small>Run migration to enable goals tracking.</small></div>';
             return;
           }
-
-          var statusColors = { paid: '#D4A843', sent: '#5B7553', draft: '#9B7EC8', overdue: '#C4836A', cancelled: '#A89E95' };
-          var statusOrder = ['paid','sent','draft','overdue','cancelled'];
-          var pcts = [];
-          var cumulative = 0;
-          statusOrder.forEach(function(s){ pcts.push({ s: s, pct: (counts[s]/total)*100, color: statusColors[s] }); });
-
-          var gradParts = [];
-          pcts.forEach(function(p) {
-            if (p.pct === 0) return;
-            gradParts.push(p.color + ' ' + cumulative.toFixed(1) + '% ' + (cumulative + p.pct).toFixed(1) + '%');
-            cumulative += p.pct;
+          var goals = (res.data||[]).filter(function(g){ return !g.is_archived; });
+          var filtered = goals.filter(function(g){ return !g.timeframe || g.timeframe === currentView; });
+          currentGoals = goals;
+          if (filtered.length === 0) {
+            content.innerHTML = '<div class="empty-state">No goals for this timeframe. Add one above.</div>';
+            return;
+          }
+          var html = '<div class="goals-grid">';
+          filtered.forEach(function(g) {
+            var current = parseFloat(g.current_value) || 0;
+            var target = parseFloat(g.target_value) || 1;
+            var pct = Math.min(100, Math.round(current/target*100));
+            var statusClass = g.status==='completed'?'status-completed':g.status==='active'?'status-active':'status-pending';
+            html += '<div class="goal-row">';
+            html += '<div style="flex:1"><div class="goal-title">'+escapeHtml(g.title||'Untitled')+'</div>';
+            if (g.category) html += '<div class="goal-cat">'+escapeHtml(g.category)+'</div>';
+            html += '</div>';
+            html += '<div class="goal-progress-wrap"><div class="goal-progress-bar"><div class="goal-progress-fill" style="width:'+pct+'%"></div></div><div class="goal-progress-label">'+current+' / '+target+'</div></div>';
+            html += '<span class="status-badge '+statusClass+'">'+escapeHtml(g.status||'active')+'</span>';
+            html += '<button class="btn btn-secondary btn-sm" onclick="editGoal(\''+g.id+'\')">Edit</button>';
+            html += '</div>';
           });
-          if (gradParts.length === 0) gradParts.push('#e5e7eb 0% 100%');
-          document.getElementById('donutChart').style.background = 'conic-gradient(' + gradParts.join(', ') + ')';
-
-          var legendEl = document.getElementById('donutLegend');
-          legendEl.innerHTML = '';
-          pcts.forEach(function(p) {
-            if (counts[p.s] === 0) return;
-            var item = document.createElement('div');
-            item.className = 'donut-legend-item';
-            item.innerHTML = '<div class="donut-legend-dot" style="background:' + p.color + '"></div>' +
-              '<span>' + p.s.charAt(0).toUpperCase() + p.s.slice(1) + ' — ' + counts[p.s] + '</span>';
-            legendEl.appendChild(item);
-          });
+          html += '</div>';
+          content.innerHTML = html;
         });
-    }
-
-    // ── SECTION 4: Sessions & Engagements ──
-    function loadSessions(range) {
-      var s = fmtDate(range.start), e = fmtDate(range.end);
-
-      // Session activity
-      safeQuery(supabase.from('session_notes').select('id,session_date,session_themes,follow_up_date')
-        .gte('session_date', s).lte('session_date', e), {data:[]})
-        .then(function(res) {
-          var rows = res.data || [];
-          var themeCounts = {};
-          rows.forEach(function(r) {
-            if (Array.isArray(r.session_themes)) {
-              r.session_themes.forEach(function(t){ if (t) themeCounts[t] = (themeCounts[t]||0)+1; });
-            }
-          });
-          var followUps = rows.filter(function(r){ return r.follow_up_date && r.follow_up_date >= s && r.follow_up_date <= e; }).length;
-          var sorted = Object.keys(themeCounts).sort(function(a,b){ return themeCounts[b]-themeCounts[a]; }).slice(0,5);
-          var pillsHtml = sorted.length ? '<div class="theme-pills">' + sorted.map(function(t){
-            return '<span class="theme-pill">' + escHtml(t) + '<span class="theme-count">' + themeCounts[t] + '</span></span>';
-          }).join('') + '</div>' : '<span class="muted-text">No session themes recorded</span>';
-
-          document.getElementById('sessionActivity').innerHTML =
-            '<div style="margin-bottom:12px;"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--aap-text-dim);">Completed Sessions</span></div>' +
-            '<div style="font-family:Cormorant Garamond,serif;font-size:2rem;font-weight:500;margin-bottom:16px;">' + rows.length + '</div>' +
-            '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--aap-text-dim);margin-bottom:8px;">Top Themes</div>' +
-            pillsHtml +
-            '<div style="margin-top:16px;font-size:13px;color:var(--aap-text-dim);">Follow-ups due this period: <strong>' + followUps + '</strong></div>';
-        });
-
-      // Speaking & Travel
-      Promise.all([
-        safeQuery(supabase.from('speaking_engagements').select('id,title,event_name,status,event_date,compensation_amount_cents')
-          .gte('event_date', s).lte('event_date', e).order('event_date'), {data:[]}),
-        safeQuery(supabase.from('travel_itinerary').select('id,destination,start_date,end_date,purpose,status')
-          .gte('start_date', s).lte('start_date', e).order('start_date'), {data:[]})
-      ]).then(function(results) {
-        var engagements = results[0].data || [];
-        var travel = results[1].data || [];
-        var totalComp = engagements.reduce(function(a,r){ return a + (r.compensation_amount_cents||0); }, 0);
-
-        var html = '';
-
-        if (engagements.length) {
-          html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--aap-text-dim);margin-bottom:8px;">Speaking</div>';
-          engagements.forEach(function(e) {
-            var badgeClass = 'badge-' + (e.status||'pending');
-            html += '<div class="engagement-item"><div class="engagement-title">' + escHtml(e.title||e.event_name||'—') + '</div>' +
-              '<div class="engagement-sub">' + escHtml(e.event_name||'') + ' &nbsp; <span class="status-badge ' + badgeClass + '">' + escHtml(e.status||'—') + '</span></div></div>';
-          });
-          if (totalComp > 0) html += '<div style="font-size:12px;color:var(--aap-text-dim);margin-top:8px;">Total compensation: <strong>' + formatCurrency(totalComp) + '</strong></div>';
-        } else {
-          html += '<div style="margin-bottom:12px;"><span class="muted-text">No speaking engagements this period</span></div>';
-        }
-
-        if (travel.length) {
-          html += '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--aap-text-dim);margin-top:16px;margin-bottom:8px;">Travel</div>';
-          travel.forEach(function(t) {
-            var badgeClass = 'badge-' + (t.status||'planning');
-            html += '<div class="engagement-item"><div class="engagement-title">' + escHtml(t.destination||'—') + '</div>' +
-              '<div class="engagement-sub">' + escHtml(t.start_date||'') + (t.end_date ? ' – ' + escHtml(t.end_date) : '') +
-              ' &nbsp; <span class="status-badge ' + badgeClass + '">' + escHtml(t.purpose||t.status||'—') + '</span></div></div>';
-          });
-        } else {
-          html += '<div style="margin-top:8px;"><span class="muted-text">No travel this period</span></div>';
-        }
-
-        document.getElementById('speakingTravel').innerHTML = html;
-      });
-    }
-
-    // ── SECTION 5: Network Health ──
-    function loadNetwork(range) {
-      var s = fmtDate(range.start), e = fmtDate(range.end);
-      var now = new Date();
-
-      // Collaborators
-      safeQuery(supabase.from('collaborators').select('id,last_contact'), {data:[]})
-        .then(function(res) {
-          var rows = res.data || [];
-          var touched = rows.filter(function(r){ return r.last_contact && r.last_contact >= s && r.last_contact <= e; }).length;
-          var green = 0, yellow = 0, red = 0;
-          rows.forEach(function(r) {
-            if (!r.last_contact) { red++; return; }
-            var diff = (now - new Date(r.last_contact)) / (1000*60*60*24);
-            if (diff < 30) green++;
-            else if (diff < 90) yellow++;
-            else red++;
-          });
-          document.getElementById('networkCollaborators').innerHTML =
-            '<div class="network-card-title">Collaborators</div>' +
-            '<div class="network-stat"><span>Total</span><span class="network-stat-val">' + rows.length + '</span></div>' +
-            '<div class="network-stat"><span>Contacted this period</span><span class="network-stat-val">' + touched + '</span></div>' +
-            '<div style="margin-top:12px;font-size:12px;color:var(--aap-text-dim);">' +
-            '<span class="health-dot health-green"></span>' + green + ' recent &nbsp; ' +
-            '<span class="health-dot health-yellow"></span>' + yellow + ' warm &nbsp; ' +
-            '<span class="health-dot health-red"></span>' + red + ' cold</div>';
-        });
-
-      // Referral Network
-      safeQuery(supabase.from('referral_network').select('id,name,clients_referred,last_contact'), {data:[]})
-        .then(function(res) {
-          var rows = res.data || [];
-          var newReferred = rows.filter(function(r){ return r.last_contact && r.last_contact >= s && r.last_contact <= e; }).length;
-          var top3 = rows.slice().sort(function(a,b){ return (b.clients_referred||0)-(a.clients_referred||0); }).slice(0,3);
-          var top3Html = top3.map(function(r){ return '<div style="font-size:12px;color:var(--aap-text-dim);">' + escHtml(r.name||'—') + ' <strong>(' + (r.clients_referred||0) + ')</strong></div>'; }).join('');
-          document.getElementById('networkReferrals').innerHTML =
-            '<div class="network-card-title">Referral Network</div>' +
-            '<div class="network-stat"><span>Total Partners</span><span class="network-stat-val">' + rows.length + '</span></div>' +
-            '<div class="network-stat"><span>Active this period</span><span class="network-stat-val">' + newReferred + '</span></div>' +
-            '<div style="margin-top:10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--aap-text-dim);margin-bottom:6px;">Top Referrers</div>' +
-            (top3Html || '<span class="muted-text">—</span>');
-        });
-
-      // VIP Contacts
-      safeQuery(supabase.from('contacts_vip').select('id,last_contact,relationship_status'), {data:[]})
-        .then(function(res) {
-          var rows = res.data || [];
-          var touched = rows.filter(function(r){ return r.last_contact && r.last_contact >= s && r.last_contact <= e; }).length;
-          var statusCounts = {};
-          rows.forEach(function(r){ var rs = r.relationship_status||'unknown'; statusCounts[rs] = (statusCounts[rs]||0)+1; });
-          var statusHtml = Object.keys(statusCounts).map(function(k){
-            return '<span style="font-size:12px;color:var(--aap-text-dim);">' + escHtml(k) + ': <strong>' + statusCounts[k] + '</strong></span>';
-          }).join(' &nbsp; ');
-          document.getElementById('networkVIP').innerHTML =
-            '<div class="network-card-title">People of Import</div>' +
-            '<div class="network-stat"><span>Total</span><span class="network-stat-val">' + rows.length + '</span></div>' +
-            '<div class="network-stat"><span>Touched this period</span><span class="network-stat-val">' + touched + '</span></div>' +
-            '<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">' + (statusHtml||'<span class="muted-text">—</span>') + '</div>';
-        });
-    }
-
-    // ── SECTION 6: Goals ──
-    var goalsRangeRef = null;
-
-    function loadGoals(range) {
-      goalsRangeRef = range;
-      safeQuery(
-        supabase.from('practice_goals').select('*')
-          .eq('is_archived', false)
-          .eq('timeframe', currentView)
-          .lte('period_start', fmtDate(range.end))
-          .gte('period_end', fmtDate(range.start)),
-        {data:[]}
-      ).then(function(res) {
-        var rows = res.data || [];
-        var grid = document.getElementById('goalsGrid');
-        if (rows.length === 0) {
-          grid.innerHTML = '<div class="muted-text" style="grid-column:1/-1;">No goals set for this period. Add one to begin tracking your intentions.</div>';
-          return;
-        }
-        grid.innerHTML = rows.map(function(g) {
-          var progress = g.target_value ? Math.min(100, Math.round(((g.current_value||0)/g.target_value)*100)) : 0;
-          var statusClass = 'goal-status-' + (g.status||'active');
-          var displayTarget = g.metric_type === 'currency' ? formatCurrency(g.target_value) : (g.target_value||0);
-          var displayCurrent = g.metric_type === 'currency' ? formatCurrency(g.current_value) : (g.current_value||0);
-          return '<div class="goal-card">' +
-            '<div class="goal-header">' +
-            '<div><div class="goal-title">' + escHtml(g.title) + '</div><div class="goal-category">' + escHtml(g.category||'') + '</div></div>' +
-            '<span class="goal-status-badge ' + statusClass + '">' + escHtml(g.status||'active') + '</span>' +
-            '</div>' +
-            (g.description ? '<div style="font-size:13px;color:var(--aap-text-dim);margin-bottom:8px;">' + escHtml(g.description) + '</div>' : '') +
-            '<div class="goal-progress-bar"><div class="goal-progress-fill" style="width:' + progress + '%"></div></div>' +
-            '<div class="goal-values"><span>' + displayCurrent + ' / ' + displayTarget + '</span><span>' + progress + '%</span></div>' +
-            '<div class="goal-actions">' +
-            '<button class="goal-action-btn" onclick="openGoalModal(' + JSON.stringify(g) + ')">Edit</button>' +
-            '<button class="goal-action-btn achieved" onclick="updateGoalStatus(' + g.id + ',\'achieved\')">Achieved</button>' +
-            '<button class="goal-action-btn missed" onclick="updateGoalStatus(' + g.id + ',\'missed\')">Missed</button>' +
-            '</div></div>';
-        }).join('');
-      });
-    }
-
-    window.openGoalModal = function(g) {
-      document.getElementById('goalModalTitle').textContent = g ? 'Edit Goal' : 'Add Goal';
-      document.getElementById('goalId').value = g ? g.id : '';
-      document.getElementById('goalTitle').value = g ? (g.title||'') : '';
-      document.getElementById('goalDescription').value = g ? (g.description||'') : '';
-      document.getElementById('goalCategory').value = g ? (g.category||'clients') : 'clients';
-      document.getElementById('goalMetricType').value = g ? (g.metric_type||'count') : 'count';
-      document.getElementById('goalTarget').value = g ? (g.target_value||'') : '';
-      document.getElementById('goalCurrent').value = g ? (g.current_value||'') : '';
-      document.getElementById('goalStatus').value = g ? (g.status||'active') : 'active';
-      document.getElementById('goalNotes').value = g ? (g.notes||'') : '';
-      document.getElementById('goalTimeframe').value = currentView;
-      if (!g && goalsRangeRef) {
-        document.getElementById('goalPeriodStart').value = fmtDate(goalsRangeRef.start);
-        document.getElementById('goalPeriodEnd').value = fmtDate(goalsRangeRef.end);
-      } else if (g) {
-        document.getElementById('goalPeriodStart').value = g.period_start||'';
-        document.getElementById('goalPeriodEnd').value = g.period_end||'';
       }
-      document.getElementById('goalModal').style.display = 'flex';
-    };
 
-    window.updateGoalStatus = function(id, status) {
-      supabase.from('practice_goals').update({ status: status }).eq('id', id)
-        .then(function(res) {
-          if (res.error) { showToast('Failed to update goal', 'error'); return; }
-          showToast('Goal marked as ' + status, 'success');
-          loadGoals(goalsRangeRef || getDateRange(currentView, currentOffset));
+      window.editGoal = function(id) {
+        var g = currentGoals.find(function(x){ return x.id===id; });
+        if (g) openGoalModal(g);
+      };
+
+      // ─── Section 7: Practice Reflections ─────────────────────────
+      function loadReflections(range) {
+        var content = document.getElementById('reflectionsContent');
+        content.innerHTML = '<div class="empty-state">Loading reflections...</div>';
+        supabase.from('practice_reflections').select('*').order('created_at',{ascending:false}).then(function(res) {
+          if (res.error) {
+            content.innerHTML = '<div class="empty-state">—<br><small>Run migration to enable reflections tracking.</small></div>';
+            return;
+          }
+          var reflections = (res.data||[]).filter(function(r){ return !r.is_archived; });
+          var filtered = reflections.filter(function(r) {
+            if (r.reflection_type === currentView) return true;
+            var rStart = r.period_start || '0000-01-01';
+            var rEnd = r.period_end || '9999-12-31';
+            return rStart <= range.end && rEnd >= range.start;
+          });
+          currentReflections = reflections;
+          if (filtered.length === 0) {
+            content.innerHTML = '<div class="empty-state">No reflections for this period. Add one above.</div>';
+            return;
+          }
+          var html = '<div class="reflection-cards">';
+          filtered.forEach(function(r) {
+            var period = r.period_start ? r.period_start + (r.period_end?' – '+r.period_end:'') : '';
+            html += '<div class="reflection-card" onclick="viewReflection(\''+r.id+'\')">';
+            html += '<div class="reflection-type-badge">'+escapeHtml(r.reflection_type||'reflection')+'</div>';
+            html += '<div class="reflection-title">'+escapeHtml(r.title||'Untitled')+'</div>';
+            if (period) html += '<div class="reflection-period">'+escapeHtml(period)+'</div>';
+            if (r.body) html += '<div class="reflection-body-preview">'+escapeHtml(r.body)+'</div>';
+            if (r.mood) html += '<div class="mood-chip">'+escapeHtml(r.mood)+'</div>';
+            html += '</div>';
+          });
+          html += '</div>';
+          content.innerHTML = html;
         });
-    };
-
-    document.getElementById('addGoalBtn').addEventListener('click', function(){ openGoalModal(null); });
-    document.getElementById('goalModalClose').addEventListener('click', function(){ document.getElementById('goalModal').style.display = 'none'; });
-    document.getElementById('goalModalCancel').addEventListener('click', function(){ document.getElementById('goalModal').style.display = 'none'; });
-
-    document.getElementById('goalModalSave').addEventListener('click', function() {
-      var id = document.getElementById('goalId').value;
-      var payload = {
-        title: document.getElementById('goalTitle').value.trim(),
-        description: document.getElementById('goalDescription').value.trim(),
-        category: document.getElementById('goalCategory').value,
-        metric_type: document.getElementById('goalMetricType').value,
-        target_value: parseFloat(document.getElementById('goalTarget').value) || null,
-        current_value: parseFloat(document.getElementById('goalCurrent').value) || null,
-        timeframe: currentView,
-        period_start: document.getElementById('goalPeriodStart').value,
-        period_end: document.getElementById('goalPeriodEnd').value,
-        status: document.getElementById('goalStatus').value,
-        notes: document.getElementById('goalNotes').value.trim(),
-        is_archived: false
-      };
-      if (!payload.title) { showToast('Title is required', 'error'); return; }
-      var q = id ? supabase.from('practice_goals').update(payload).eq('id', id) : supabase.from('practice_goals').insert(payload);
-      q.then(function(res) {
-        if (res.error) { showToast('Failed to save goal: ' + res.error.message, 'error'); return; }
-        showToast('Goal saved', 'success');
-        document.getElementById('goalModal').style.display = 'none';
-        loadGoals(goalsRangeRef || getDateRange(currentView, currentOffset));
-      });
-    });
-
-    // ── SECTION 7: Reflection ──
-    var reflectionRangeRef = null;
-
-    var viewToReflectionType = {
-      weekly: 'weekly_review', monthly: 'monthly_review',
-      seasonal: 'seasonal_review', annual: 'annual_review'
-    };
-
-    function loadReflection(range) {
-      reflectionRangeRef = range;
-      var rType = viewToReflectionType[currentView];
-      safeQuery(
-        supabase.from('practice_reflections').select('*')
-          .eq('reflection_type', rType)
-          .eq('is_archived', false)
-          .gte('period_start', fmtDate(range.start))
-          .lte('period_end', fmtDate(range.end))
-          .order('created_at', { ascending: false })
-          .limit(1),
-        {data:[]}
-      ).then(function(res) {
-        var el = document.getElementById('reflectionSection');
-        var rows = res.data || [];
-        if (rows.length === 0) {
-          el.innerHTML = '<div class="reflection-empty">' +
-            '<div class="reflection-empty-text">This period awaits its reflection. What arose? What was learned? What deserves to be witnessed?</div>' +
-            '<button class="add-btn" id="beginReflectionBtn">Begin Reflection</button>' +
-            '</div>';
-          document.getElementById('beginReflectionBtn').addEventListener('click', function(){ openReflectionModal(null); });
-        } else {
-          var r = rows[0];
-          var sections = [
-            { key: 'wins', label: 'Wins' }, { key: 'challenges', label: 'Challenges' },
-            { key: 'insights', label: 'Insights' }, { key: 'intentions', label: 'Intentions' },
-            { key: 'gratitudes', label: 'Gratitudes' }
-          ];
-          var sectionsHtml = sections.filter(function(s){ return r[s.key]; }).map(function(s) {
-            return '<div style="margin-bottom:16px;"><div class="reflection-section-label">' + s.label + '</div>' +
-              '<div class="reflection-section-text">' + escHtml(r[s.key]) + '</div></div>';
-          }).join('');
-          el.innerHTML = '<div class="reflection-card">' +
-            '<div class="reflection-title">' + escHtml(r.title||'Reflection') + '</div>' +
-            '<div class="reflection-meta">' + escHtml(r.reflection_type||'') + (r.mood ? ' · ' + escHtml(r.mood) : '') + (r.period_start ? ' · ' + escHtml(r.period_start) : '') + '</div>' +
-            (r.body ? '<div class="reflection-body-text">' + escHtml(r.body) + '</div>' : '') +
-            sectionsHtml +
-            '<button class="reflection-edit-btn" id="editReflectionBtn">Edit Reflection</button>' +
-            '</div>';
-          document.getElementById('editReflectionBtn').addEventListener('click', function(){ openReflectionModal(r); });
-        }
-      });
-    }
-
-    window.openReflectionModal = function(r) {
-      selectedMood = r ? (r.mood||'') : '';
-      document.getElementById('reflectionModalTitle').textContent = r ? 'Edit Reflection' : 'Begin Reflection';
-      document.getElementById('reflectionId').value = r ? r.id : '';
-      document.getElementById('reflectionTitle').value = r ? (r.title||'') : '';
-      document.getElementById('reflectionBody').value = r ? (r.body||'') : '';
-      document.getElementById('reflectionWins').value = r ? (r.wins||'') : '';
-      document.getElementById('reflectionChallenges').value = r ? (r.challenges||'') : '';
-      document.getElementById('reflectionInsights').value = r ? (r.insights||'') : '';
-      document.getElementById('reflectionIntentions').value = r ? (r.intentions||'') : '';
-      document.getElementById('reflectionGratitudes').value = r ? (r.gratitudes||'') : '';
-      document.getElementById('reflectionTags').value = r && r.tags ? (Array.isArray(r.tags) ? r.tags.join(', ') : r.tags) : '';
-      document.getElementById('reflectionType').value = viewToReflectionType[currentView];
-      if (reflectionRangeRef) {
-        document.getElementById('reflectionPeriodStart').value = r ? (r.period_start||'') : fmtDate(reflectionRangeRef.start);
-        document.getElementById('reflectionPeriodEnd').value = r ? (r.period_end||'') : fmtDate(reflectionRangeRef.end);
       }
-      document.querySelectorAll('.mood-pill').forEach(function(btn) {
-        btn.classList.toggle('selected', btn.dataset.mood === selectedMood);
-      });
-      document.getElementById('reflectionModal').style.display = 'flex';
-    };
 
-    document.querySelectorAll('.mood-pill').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        selectedMood = btn.dataset.mood;
-        document.querySelectorAll('.mood-pill').forEach(function(b){ b.classList.remove('selected'); });
-        btn.classList.add('selected');
-      });
-    });
-
-    document.getElementById('reflectionModalClose').addEventListener('click', function(){ document.getElementById('reflectionModal').style.display = 'none'; });
-    document.getElementById('reflectionModalCancel').addEventListener('click', function(){ document.getElementById('reflectionModal').style.display = 'none'; });
-
-    document.getElementById('reflectionModalSave').addEventListener('click', function() {
-      var id = document.getElementById('reflectionId').value;
-      var tagsRaw = document.getElementById('reflectionTags').value.trim();
-      var tags = tagsRaw ? tagsRaw.split(',').map(function(t){ return t.trim(); }).filter(Boolean) : [];
-      var payload = {
-        title: document.getElementById('reflectionTitle').value.trim(),
-        body: document.getElementById('reflectionBody').value.trim(),
-        wins: document.getElementById('reflectionWins').value.trim(),
-        challenges: document.getElementById('reflectionChallenges').value.trim(),
-        insights: document.getElementById('reflectionInsights').value.trim(),
-        intentions: document.getElementById('reflectionIntentions').value.trim(),
-        gratitudes: document.getElementById('reflectionGratitudes').value.trim(),
-        mood: selectedMood,
-        tags: tags,
-        reflection_type: viewToReflectionType[currentView],
-        period_start: document.getElementById('reflectionPeriodStart').value,
-        period_end: document.getElementById('reflectionPeriodEnd').value,
-        is_archived: false
+      window.viewReflection = function(id) {
+        var r = currentReflections.find(function(x){ return x.id===id; });
+        if (r) openReflectionViewModal(r);
       };
-      var q = id ? supabase.from('practice_reflections').update(payload).eq('id', id) : supabase.from('practice_reflections').insert(payload);
-      q.then(function(res) {
-        if (res.error) { showToast('Failed to save reflection: ' + res.error.message, 'error'); return; }
-        showToast('Reflection saved', 'success');
-        document.getElementById('reflectionModal').style.display = 'none';
-        loadReflection(reflectionRangeRef || getDateRange(currentView, currentOffset));
-      });
+
+      // ─── Section 8: Seasonal Awareness ───────────────────────────
+      var SEASONS_DEF = [
+        {name:'Winter', icon:'❄️', startMonth:11, endMonth:1, label:'Dec–Feb', crossYear:true},
+        {name:'Spring', icon:'🌱', startMonth:2,  endMonth:4, label:'Mar–May', crossYear:false},
+        {name:'Summer', icon:'☀️', startMonth:5,  endMonth:7, label:'Jun–Aug', crossYear:false},
+        {name:'Autumn', icon:'🍂', startMonth:8,  endMonth:10, label:'Sep–Nov', crossYear:false}
+      ];
+
+      function loadSeasonalAwareness(range) {
+        var yr = new Date(range.start).getFullYear();
+        var grid = document.getElementById('seasonGrid');
+        grid.innerHTML = '';
+
+        SEASONS_DEF.forEach(function(season) {
+          var seasonStart, seasonEnd;
+          if (season.crossYear) {
+            seasonStart = (yr-1) + '-12-01';
+            seasonEnd = yr + '-02-28';
+          } else {
+            seasonStart = yr + '-' + String(season.startMonth+1).padStart(2,'0') + '-01';
+            seasonEnd = new Date(yr, season.endMonth+1, 0).toISOString().split('T')[0];
+          }
+
+          var card = document.createElement('div');
+          card.className = 'season-card';
+          var safeKey = season.name;
+          card.innerHTML = [
+            '<div class="season-icon">'+season.icon+'</div>',
+            '<div class="season-name">'+season.name+'</div>',
+            '<div class="season-stat">'+season.label+'</div>',
+            '<div class="season-stat" id="sAppts_'+safeKey+'">Sessions: —</div>',
+            '<div class="season-stat" id="sRev_'+safeKey+'">Revenue: —</div>',
+            '<div id="sThemes_'+safeKey+'" style="margin-top:8px;font-size:11px;color:var(--aap-text-dim);"></div>'
+          ].join('');
+          grid.appendChild(card);
+
+          safeQuery(
+            supabase.from('appointments').select('id').eq('status','completed').gte('scheduled_at',seasonStart).lte('scheduled_at',seasonEnd+'T23:59:59'),
+            function(data){ var el=document.getElementById('sAppts_'+safeKey); if(el) el.textContent='Sessions: '+(data||[]).length; },
+            function(){ var el=document.getElementById('sAppts_'+safeKey); if(el) el.textContent='Sessions: —'; }
+          );
+
+          safeQuery(
+            supabase.from('payments').select('amount').gte('payment_date',seasonStart).lte('payment_date',seasonEnd),
+            function(data){
+              var total=(data||[]).reduce(function(s,r){ return s+(parseFloat(r.amount)||0); },0);
+              var el=document.getElementById('sRev_'+safeKey);
+              if(el) el.textContent='Revenue: $'+total.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+            },
+            function(){ var el=document.getElementById('sRev_'+safeKey); if(el) el.textContent='Revenue: —'; }
+          );
+
+          safeQuery(
+            supabase.from('session_notes').select('session_themes').gte('session_date',seasonStart).lte('session_date',seasonEnd),
+            function(data){
+              var freq={};
+              (data||[]).forEach(function(r){ if(Array.isArray(r.session_themes)) r.session_themes.forEach(function(t){ if(t) freq[t]=(freq[t]||0)+1; }); });
+              var sorted=Object.keys(freq).sort(function(a,b){ return freq[b]-freq[a]; }).slice(0,5);
+              var el=document.getElementById('sThemes_'+safeKey);
+              if(!el) return;
+              if(sorted.length){
+                el.innerHTML='<span style="font-weight:600;text-transform:uppercase;letter-spacing:0.04em;font-size:10px;">Themes: </span>'+sorted.map(function(t){ return '<span class="mood-chip">'+escapeHtml(t)+'</span>'; }).join(' ');
+              } else {
+                el.textContent='No themes recorded';
+              }
+            },
+            function(){}
+          );
+        });
+      }
+
+      // ─── Initialize ───────────────────────────────────────────────
+      render();
     });
-
-    // ── SECTION 8: Seasonal Awareness ──
-    var SEASONS = [
-      { name: 'Spring', icon: '🌱', metaphor: 'Planting', months: [2,3,4], color: '#f0fdf4', borderColor: '#bbf7d0' },
-      { name: 'Summer', icon: '☀️', metaphor: 'Tending', months: [5,6,7], color: '#fffbeb', borderColor: '#fde68a' },
-      { name: 'Autumn', icon: '🍂', metaphor: 'Harvesting', months: [8,9,10], color: '#fff7ed', borderColor: '#fed7aa' },
-      { name: 'Winter', icon: '❄️', metaphor: 'Composting', months: [11,0,1], color: '#eff6ff', borderColor: '#bfdbfe' }
-    ];
-
-    function loadSeasonal() {
-      var yr = new Date().getFullYear() + (currentView === 'annual' ? currentOffset : 0);
-      var grid = document.getElementById('seasonalGrid');
-      grid.innerHTML = SEASONS.map(function(season) {
-        return '<div class="seasonal-card" style="background:' + season.color + ';border-color:' + season.borderColor + ';">' +
-          '<div class="seasonal-icon">' + season.icon + '</div>' +
-          '<div class="seasonal-name">' + season.name + '</div>' +
-          '<div class="seasonal-metaphor">' + season.metaphor + '</div>' +
-          '<div class="seasonal-stats" id="seasonal-stats-' + season.name + '">Loading…</div>' +
-          '</div>';
-      }).join('');
-
-      SEASONS.forEach(function(season) {
-        var months = season.months;
-        var startYear = yr, endYear = yr;
-        if (season.name === 'Winter') {
-          // Winter spans Dec of startYear to Feb of endYear+1
-          var decStart = new Date(yr, 11, 1); decStart.setHours(0,0,0,0);
-          var febEnd = new Date(yr+1, 2, 0); febEnd.setHours(23,59,59,999);
-          fetchSeasonStats(season.name, decStart, febEnd);
-        } else {
-          var sStart = new Date(yr, months[0], 1); sStart.setHours(0,0,0,0);
-          var sEnd = new Date(yr, months[2]+1, 0); sEnd.setHours(23,59,59,999);
-          fetchSeasonStats(season.name, sStart, sEnd);
-        }
-      });
-    }
-
-    function fetchSeasonStats(seasonName, start, end) {
-      var s = fmtDate(start), e = fmtDate(end);
-      Promise.all([
-        safeQuery(supabase.from('appointments').select('id,start_time').eq('status','completed')
-          .gte('start_time', s).lte('start_time', e), {data:[]}),
-        safeQuery(supabase.from('payments').select('id,amount_cents,payment_date').eq('status','completed')
-          .gte('payment_date', s).lte('payment_date', e), {data:[]})
-      ]).then(function(results) {
-        var sessions = (results[0].data||[]).length;
-        var revenue = (results[1].data||[]).reduce(function(a,r){ return a+(r.amount_cents||0); }, 0);
-        var el = document.getElementById('seasonal-stats-' + seasonName);
-        if (el) el.innerHTML = sessions + ' sessions<br>' + formatCurrency(revenue);
-      });
-    }
-
-    // ── Modal close on overlay click ──
-    document.getElementById('goalModal').addEventListener('click', function(e){ if (e.target === this) this.style.display = 'none'; });
-    document.getElementById('reflectionModal').addEventListener('click', function(e){ if (e.target === this) this.style.display = 'none'; });
-
-    // ── Initial load ──
-    loadAll();
-  });
   </script>
 </body>
 </html>

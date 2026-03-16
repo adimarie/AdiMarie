@@ -1,963 +1,977 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Strategy Map · Admin · The Animist Apothecary</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../shared/admin.css">
-  <link rel="stylesheet" href="../shared/admin-sidebar.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Strategy Map — The Animist Apothecary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/admin.css" />
   <style>
-    .strategy-toolbar { height: 56px; background: var(--aap-surface); border-bottom: 1px solid var(--aap-border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; gap: 16px; flex-shrink: 0; }
-    .strategy-toolbar-left { display: flex; align-items: center; gap: 8px; }
-    .strategy-toolbar-center { display: flex; gap: 8px; }
-    .strategy-toolbar-right { display: flex; gap: 8px; align-items: center; }
-    .strategy-select { padding: 6px 10px; border: 1.5px solid var(--aap-border); border-radius: 8px; font-family: inherit; font-size: 12px; background: var(--aap-bg); color: var(--aap-text-dim); cursor: pointer; }
-    .strategy-btn { padding: 7px 14px; border: 1.5px solid var(--aap-border); border-radius: 8px; background: none; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--aap-text-dim); cursor: pointer; transition: all 0.2s; }
-    .strategy-btn:hover { border-color: var(--aap-gold); color: var(--aap-text); background: rgba(212,168,67,0.06); }
-    .strategy-btn.active { background: var(--aap-accent); color: #fff; border-color: var(--aap-accent); }
-    .strategy-btn-primary { background: var(--aap-accent); color: #fff; border-color: var(--aap-accent); }
-    .strategy-btn-primary:hover { background: var(--aap-accent-deep); }
-    .strategy-canvas-wrap { flex: 1; overflow: hidden; background: #F9F7F4; position: relative; cursor: default; }
-    .strategy-node { position: absolute; width: 180px; background: var(--node-color, #EDE9FE); border: 2px solid var(--node-stroke, #8B5CF6); border-radius: 12px; padding: 12px 14px; cursor: grab; user-select: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: box-shadow 0.2s, transform 0.1s; z-index: 10; }
-    .strategy-node:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 20; }
-    .strategy-node.selected { z-index: 30; box-shadow: 0 0 0 3px var(--node-stroke, #8B5CF6), 0 4px 20px rgba(0,0,0,0.15); }
-    .strategy-node.dragging { cursor: grabbing; }
-    .strategy-node-header { display: flex; align-items: center; gap: 5px; margin-bottom: 6px; }
-    .strategy-node-icon { font-size: 14px; }
-    .strategy-node-type { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(0,0,0,0.4); flex: 1; }
-    .strategy-node-actions { display: flex; gap: 2px; opacity: 0; transition: opacity 0.2s; }
-    .strategy-node:hover .strategy-node-actions { opacity: 1; }
-    .strategy-node-actions button { background: none; border: none; cursor: pointer; font-size: 12px; padding: 2px 4px; border-radius: 4px; line-height: 1; }
-    .strategy-node-actions button:hover { background: rgba(0,0,0,0.1); }
-    .strategy-node-title { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: #1a1a1a; line-height: 1.3; margin-bottom: 8px; word-break: break-word; }
-    .strategy-node-status { display: flex; align-items: center; gap: 5px; font-size: 10px; color: rgba(0,0,0,0.5); }
-    .strategy-node-status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
-    .strategy-node-progress-bar-wrap { height: 3px; background: rgba(0,0,0,0.1); border-radius: 2px; margin-top: 6px; overflow: hidden; }
-    .strategy-node-progress-bar { height: 100%; background: rgba(0,0,0,0.3); border-radius: 2px; }
-    .strategy-panel { position: absolute; right: -340px; top: 0; bottom: 0; width: 320px; background: var(--aap-surface); border-left: 1px solid var(--aap-border); padding: 24px; overflow-y: auto; transition: right 0.3s ease; z-index: 50; box-shadow: -4px 0 20px rgba(0,0,0,0.08); }
-    .strategy-panel.open { right: 0; }
-    .strategy-panel-close { position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--aap-text-dim); line-height: 1; padding: 4px; }
-    .strategy-panel-close:hover { color: var(--aap-text); }
-    .strategy-panel-title { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 600; color: var(--aap-text); margin: 0 0 4px; line-height: 1.3; padding-right: 32px; }
-    .strategy-panel-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 99px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
-    .strategy-panel-section { margin-bottom: 16px; }
-    .strategy-panel-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--aap-text-dim); margin-bottom: 4px; }
-    .strategy-panel-value { font-size: 13px; color: var(--aap-text); }
-    .strategy-panel-desc { font-size: 13px; color: var(--aap-text-dim); line-height: 1.5; }
-    .strategy-panel-progress { height: 6px; background: var(--aap-border); border-radius: 3px; overflow: hidden; margin-top: 4px; }
-    .strategy-panel-progress-fill { height: 100%; background: var(--aap-accent); border-radius: 3px; }
-    .strategy-panel-tag { display: inline-block; padding: 2px 8px; background: var(--aap-bg); border: 1px solid var(--aap-border); border-radius: 99px; font-size: 11px; color: var(--aap-text-dim); margin: 2px; }
-    .strategy-panel-conn { font-size: 12px; color: var(--aap-text-dim); padding: 5px 0; border-bottom: 1px solid var(--aap-border); display: flex; align-items: center; gap: 6px; }
-    .strategy-panel-conn:last-child { border-bottom: none; }
-    .strategy-panel-edit-btn { width: 100%; padding: 9px; background: var(--aap-accent); color: #fff; border: none; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px; }
-    .strategy-panel-edit-btn:hover { background: var(--aap-accent-deep); }
-    /* Context menu */
-    .strategy-context-menu { position: absolute; background: var(--aap-surface); border: 1px solid var(--aap-border); border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); z-index: 9999; overflow: hidden; }
-    .strategy-context-menu button { display: block; width: 100%; padding: 9px 16px; background: none; border: none; font-family: inherit; font-size: 13px; color: var(--aap-text); text-align: left; cursor: pointer; }
-    .strategy-context-menu button:hover { background: var(--aap-bg); }
-    /* Modals */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; display: flex; align-items: center; justify-content: center; }
-    .modal-overlay.hidden { display: none; }
-    .modal-box { background: var(--aap-surface); border-radius: 16px; padding: 28px; width: 520px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 16px 64px rgba(0,0,0,0.2); }
-    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; margin: 0 0 20px; color: var(--aap-text); }
-    .form-row { margin-bottom: 14px; }
-    .form-row label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--aap-text-dim); margin-bottom: 5px; }
-    .form-row input, .form-row textarea, .form-row select { width: 100%; padding: 8px 12px; border: 1.5px solid var(--aap-border); border-radius: 8px; font-family: inherit; font-size: 13px; background: var(--aap-bg); color: var(--aap-text); box-sizing: border-box; }
-    .form-row input:focus, .form-row textarea:focus, .form-row select:focus { outline: none; border-color: var(--aap-accent); }
-    .form-row textarea { resize: vertical; }
-    .form-row-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .form-row input[type="range"] { padding: 4px 0; }
-    .form-row input[type="color"] { padding: 2px; height: 36px; cursor: pointer; }
-    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
-    .modal-btn { padding: 8px 20px; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-    .modal-btn-cancel { background: none; border: 1.5px solid var(--aap-border); color: var(--aap-text-dim); }
-    .modal-btn-cancel:hover { border-color: var(--aap-text-dim); color: var(--aap-text); }
-    .modal-btn-save { background: var(--aap-accent); border: none; color: #fff; }
-    .modal-btn-save:hover { background: var(--aap-accent-deep); }
-    .modal-btn-delete { background: #fef2f2; border: 1.5px solid #fecaca; color: #991b1b; margin-right: auto; }
-    .modal-btn-delete:hover { background: #fee2e2; }
-    .progress-display { font-size: 12px; color: var(--aap-text-dim); margin-left: 8px; }
-    #strategyCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-    #connectionsGroup line, #connectionsGroup text { pointer-events: auto; }
+    /* Strategy page specific layout */
+    body { overflow: hidden; }
+    .admin-main { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .strategy-toolbar { display:flex; align-items:center; gap:10px; padding:10px 16px; background:var(--aap-surface); border-bottom:1px solid var(--aap-border); flex-shrink:0; flex-wrap:wrap; }
+    .strategy-toolbar-title { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:700; color:var(--aap-accent-deep); margin-right:8px; }
+    .strategy-toolbar select { font-size:12px; padding:5px 10px; border:1px solid var(--aap-border); border-radius:6px; background:var(--aap-bg); color:var(--aap-text); font-family:inherit; }
+    .strategy-canvas-wrap { flex:1; display:flex; position:relative; overflow:hidden; }
+    .strategy-canvas { position:relative; flex:1; overflow:hidden; cursor:default; background: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0); background-size: 24px 24px; }
+    #connectionsSvg { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
+    #connectionsSvg line { pointer-events:stroke; cursor:pointer; }
+    #nodesLayer { position:absolute; top:0; left:0; width:100%; height:100%; }
+    .strategy-node { position:absolute; min-width:140px; max-width:200px; border-radius:10px; padding:10px 12px; cursor:pointer; user-select:none; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:box-shadow 0.15s; }
+    .strategy-node:hover { box-shadow:0 4px 16px rgba(0,0,0,0.15); }
+    .strategy-node.selected { outline:3px solid var(--aap-gold); outline-offset:2px; }
+    .strategy-node.connect-source { outline:3px solid #3B82F6; outline-offset:2px; }
+    .strategy-node.connect-mode { cursor:crosshair; }
+    .node-type-badge { font-size:9px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; opacity:0.6; margin-bottom:3px; }
+    .node-title { font-size:13px; font-weight:600; color:#1f2937; line-height:1.3; }
+    .node-status { font-size:10px; color:#6b7280; margin-top:4px; display:flex; align-items:center; gap:4px; }
+    .node-status-dot { width:6px; height:6px; border-radius:50%; display:inline-block; }
+    .strategy-panel { width:320px; flex-shrink:0; background:var(--aap-surface); border-left:1px solid var(--aap-border); display:flex; flex-direction:column; overflow-y:auto; transform:translateX(100%); transition:transform 0.2s; position:absolute; right:0; top:0; bottom:0; z-index:50; }
+    .strategy-panel.open { transform:translateX(0); }
+    .strategy-panel-header { padding:16px; border-bottom:1px solid var(--aap-border); display:flex; align-items:center; gap:10px; }
+    .strategy-panel-title { font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:600; color:var(--aap-accent-deep); flex:1; border:none; background:none; outline:none; width:100%; }
+    .strategy-panel-body { padding:16px; flex:1; display:flex; flex-direction:column; gap:12px; }
+    .panel-field { display:flex; flex-direction:column; gap:4px; }
+    .panel-field label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--aap-text-dim); }
+    .panel-field input, .panel-field select, .panel-field textarea { font-size:13px; padding:7px 10px; border:1px solid var(--aap-border); border-radius:6px; font-family:inherit; background:var(--aap-bg); color:var(--aap-text); }
+    .panel-field textarea { resize:vertical; min-height:80px; }
+    .progress-slider { width:100%; }
+    .panel-connections { background:var(--aap-bg); border-radius:8px; padding:10px; }
+    .panel-conn-item { font-size:12px; padding:4px 0; border-bottom:1px solid var(--aap-border); color:var(--aap-text); }
+    .panel-conn-item:last-child { border-bottom:none; }
+    .strategy-panel-footer { padding:12px 16px; border-top:1px solid var(--aap-border); display:flex; gap:8px; }
+    .context-menu { position:fixed; background:white; border:1px solid var(--aap-border); border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.12); z-index:9999; padding:4px; min-width:160px; }
+    .context-menu-item { padding:8px 14px; font-size:13px; cursor:pointer; border-radius:6px; color:var(--aap-text); }
+    .context-menu-item:hover { background:var(--aap-bg); }
+    .connect-mode-active { background:rgba(212,168,67,0.15) !important; color:var(--aap-gold) !important; border-color:var(--aap-gold) !important; }
+    .zoom-controls { display:flex; gap:2px; }
+    .zoom-btn { width:28px; height:28px; border:1px solid var(--aap-border); background:var(--aap-bg); border-radius:6px; cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; }
+    .empty-canvas-msg { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; color:var(--aap-text-dim); pointer-events:none; }
+    .empty-canvas-msg h3 { font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:600; color:var(--aap-accent-deep); margin:0 0 8px; }
+    .empty-canvas-msg p { font-size:14px; margin:0; }
+
+    /* Modal styles */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:10000; display:flex; align-items:center; justify-content:center; }
+    .modal-box { background:var(--aap-surface); border-radius:14px; padding:24px; width:480px; max-width:95vw; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+    .modal-title { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:700; color:var(--aap-accent-deep); margin:0 0 18px; }
+    .modal-field { display:flex; flex-direction:column; gap:5px; margin-bottom:14px; }
+    .modal-field label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--aap-text-dim); }
+    .modal-field input, .modal-field select, .modal-field textarea { font-size:13px; padding:8px 11px; border:1px solid var(--aap-border); border-radius:7px; font-family:inherit; background:var(--aap-bg); color:var(--aap-text); }
+    .modal-field textarea { resize:vertical; min-height:70px; }
+    .modal-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .modal-footer { display:flex; gap:8px; justify-content:flex-end; margin-top:18px; }
+    .btn { padding:8px 18px; border-radius:8px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; border:1px solid transparent; transition:all 0.15s; }
+    .btn-primary { background:var(--aap-gold); color:white; border-color:var(--aap-gold); }
+    .btn-primary:hover { opacity:0.88; }
+    .btn-secondary { background:var(--aap-bg); color:var(--aap-text); border-color:var(--aap-border); }
+    .btn-secondary:hover { background:var(--aap-border); }
+    .btn-danger { background:#fef2f2; color:#991b1b; border-color:#fecaca; }
+    .btn-danger:hover { background:#fee2e2; }
+    .btn-sm { padding:6px 12px; font-size:12px; }
   </style>
 </head>
-<body>
-<div class="admin-layout">
-  <aside class="admin-sidebar">
-    <div class="sidebar-brand">
-      <a href="index.html">The Animist <em>Apothecary</em></a>
-      <div class="sidebar-brand-sub">Command Center</div>
-    </div>
-    <nav class="sidebar-nav">
-      <a href="index.html">📊 Dashboard</a>
-      <div class="sidebar-section-label">Intelligence</div>
-      <a href="analytics.html">📈 Practice Analytics</a>
-      <a href="strategy.html" class="active">🗺️ Strategy Map</a>
-      <div class="sidebar-section-label">Client Dossier</div>
-      <a href="clients.html">👤 Clients</a>
-      <a href="pipeline.html">🔮 Pipeline</a>
-      <a href="intake-forms.html">📋 Intake Forms</a>
-      <a href="session-notes.html">📝 Session Notes</a>
-      <a href="integration.html">🌿 Aftercare &amp; Integration</a>
-      <a href="agreements.html">📜 Agreements</a>
-      <div class="sidebar-section-label">Practice</div>
-      <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
-      <a href="services.html">✨ Offerings</a>
-      <a href="mentorship.html">🌀 Mentorship Arcs</a>
-      <a href="payments.html">💳 Payments</a>
-      <a href="invoices.html">🧾 Invoices</a>
-      <div class="sidebar-section-label">Communications</div>
-      <a href="emails.html">✉️ Email Center</a>
-      <div class="sidebar-section-label">Network</div>
-      <a href="collaborators.html">🤝 Collaborators</a>
-      <a href="referrals.html">🔗 Referral Network</a>
-      <a href="vip-contacts.html">⭐ People of Import</a>
-      <a href="regional-hubs.html">🌍 Regional Hubs</a>
-      <div class="sidebar-section-label">Engagements</div>
-      <a href="speaking.html">🎤 Speaking Engagements</a>
-      <a href="venues.html">🏛️ Venues</a>
-      <a href="travel.html">✈️ Travel Itinerary</a>
-      <div class="sidebar-section-label">CRM</div>
-      <a href="../crm/">🔮 CRM Overview</a>
-      <div class="sidebar-divider"></div>
-      <a href="community-resources.html">📚 Community Resources</a>
-      <a href="../index.html">← Public Site</a>
-    </nav>
-    <div class="sidebar-user">
-      <div class="sidebar-user-name" id="sidebarUserName"></div>
-      <div class="sidebar-user-email" id="sidebarUserEmail"></div>
-      <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
-    </div>
-  </aside>
-
-  <main class="admin-main" style="display:flex;flex-direction:column;height:100vh;overflow:hidden;">
-    <!-- Toolbar -->
-    <div class="strategy-toolbar">
-      <div class="strategy-toolbar-left">
-        <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:500;color:var(--aap-text);">Strategy Map</span>
-        <span style="font-size:12px;color:var(--aap-text-dim);margin-left:8px;" id="nodeCount">0 nodes</span>
+<body class="admin-body">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-brand">
+        <a href="index.html">The Animist <em>Apothecary</em></a>
+        <div class="sidebar-brand-sub">Command Center</div>
       </div>
-      <div class="strategy-toolbar-center">
-        <select id="filterType" class="strategy-select">
+      <nav class="sidebar-nav">
+        <a href="index.html">📊 Dashboard</a>
+        <div class="sidebar-section-label">Intelligence</div>
+        <a href="analytics.html">📈 Practice Analytics</a>
+        <a href="strategy.html" class="active">🗺️ Strategy Map</a>
+        <div class="sidebar-section-label">Client Dossier</div>
+        <a href="clients.html">👤 Clients</a>
+        <a href="pipeline.html">🔮 Pipeline</a>
+        <a href="intake-forms.html">📋 Intake Forms</a>
+        <a href="session-notes.html">📝 Session Notes</a>
+        <a href="integration.html">🌿 Aftercare &amp; Integration</a>
+        <a href="agreements.html">📜 Agreements</a>
+        <div class="sidebar-section-label">Practice</div>
+        <a href="appointments.html">📅 Calendar &amp; Scheduling</a>
+        <a href="services.html">✨ Offerings</a>
+        <a href="mentorship.html">🌀 Mentorship Arcs</a>
+        <a href="payments.html">💳 Payments</a>
+        <a href="invoices.html">🧾 Invoices</a>
+        <div class="sidebar-section-label">Communications</div>
+        <a href="emails.html">✉️ Email Center</a>
+        <div class="sidebar-section-label">Network</div>
+        <a href="collaborators.html">🤝 Collaborators</a>
+        <a href="referrals.html">🔗 Referral Network</a>
+        <a href="vip-contacts.html">⭐ People of Import</a>
+        <a href="regional-hubs.html">🌍 Regional Hubs</a>
+        <div class="sidebar-section-label">Engagements</div>
+        <a href="speaking.html">🎤 Speaking Engagements</a>
+        <a href="venues.html">🏛️ Venues</a>
+        <a href="travel.html">✈️ Travel Itinerary</a>
+        <div class="sidebar-divider"></div>
+        <a href="community-resources.html">📚 Community Resources</a>
+        <a href="../index.html">← Public Site</a>
+      </nav>
+      <div class="sidebar-user">
+        <div class="sidebar-user-name" id="sidebarUserName"></div>
+        <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+        <button class="sidebar-signout" id="sidebarSignOut">Sign Out</button>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <!-- Toolbar -->
+      <div class="strategy-toolbar">
+        <span class="strategy-toolbar-title">Strategy Map</span>
+        <select id="filterType">
           <option value="">All Types</option>
-          <option value="idea">💡 Idea</option>
-          <option value="goal">🎯 Goal</option>
-          <option value="project">🔨 Project</option>
-          <option value="milestone">🏁 Milestone</option>
-          <option value="resource">💰 Resource</option>
-          <option value="partnership">🤝 Partnership</option>
-          <option value="offering">✨ Offering</option>
-          <option value="vision">🌟 Vision</option>
-          <option value="challenge">⚡ Challenge</option>
-          <option value="opportunity">🌱 Opportunity</option>
+          <option value="idea">idea</option>
+          <option value="goal">goal</option>
+          <option value="project">project</option>
+          <option value="initiative">initiative</option>
+          <option value="vision">vision</option>
+          <option value="obstacle">obstacle</option>
+          <option value="resource">resource</option>
         </select>
-        <select id="filterTimeframe" class="strategy-select">
+        <select id="filterStatus">
+          <option value="">All Statuses</option>
+          <option value="seed">seed</option>
+          <option value="growing">growing</option>
+          <option value="blooming">blooming</option>
+          <option value="dormant">dormant</option>
+          <option value="completed">completed</option>
+          <option value="archived_status">archived_status</option>
+        </select>
+        <select id="filterTimeframe">
           <option value="">All Timeframes</option>
-          <option value="this_week">This Week</option>
-          <option value="this_month">This Month</option>
-          <option value="this_quarter">This Quarter</option>
-          <option value="this_season">This Season</option>
-          <option value="this_year">This Year</option>
-          <option value="next_year">Next Year</option>
-          <option value="3_year">3 Years</option>
-          <option value="5_year">5 Years</option>
-          <option value="someday">Someday</option>
+          <option value="now">now</option>
+          <option value="soon">soon</option>
+          <option value="this_year">this_year</option>
+          <option value="long_term">long_term</option>
+          <option value="someday">someday</option>
         </select>
-      </div>
-      <div class="strategy-toolbar-right">
-        <button class="strategy-btn" id="connectModeBtn" title="Connect mode: click two nodes to connect them">🔗 Connect</button>
-        <button class="strategy-btn strategy-btn-primary" id="addNodeBtn">+ Add Node</button>
-      </div>
-    </div>
-
-    <!-- Canvas -->
-    <div class="strategy-canvas-wrap" id="canvasWrap">
-      <svg id="strategyCanvas">
-        <defs>
-          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#A89E95"/>
-          </marker>
-        </defs>
-        <g id="connectionsGroup"></g>
-        <g id="nodesGroup"></g>
-      </svg>
-
-      <!-- Empty state -->
-      <div id="canvasEmpty" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;display:none;">
-        <div style="font-size:64px;margin-bottom:16px;opacity:0.3;">🗺️</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:#A89E95;margin-bottom:8px;">Your strategy map is empty</div>
-        <div style="font-size:13px;color:#B0A090;">Click "+ Add Node" to begin mapping your vision</div>
+        <button class="btn btn-secondary btn-sm" id="connectModeBtn" onclick="toggleConnectMode()">🔗 Connect Mode</button>
+        <button class="btn btn-primary btn-sm" onclick="openAddModal(null, null)">+ Add Node</button>
+        <div class="zoom-controls">
+          <button class="zoom-btn" id="zoomOut" title="Zoom out">−</button>
+          <button class="zoom-btn" id="zoomFit" title="Fit">fit</button>
+          <button class="zoom-btn" id="zoomIn" title="Zoom in">+</button>
+        </div>
       </div>
 
-      <!-- Side Panel -->
-      <div class="strategy-panel" id="strategyPanel">
-        <button class="strategy-panel-close" id="panelClose">×</button>
-        <div id="panelContent"></div>
-      </div>
+      <!-- Canvas area -->
+      <div class="strategy-canvas-wrap">
+        <div class="strategy-canvas" id="strategyCanvas">
+          <svg id="connectionsSvg"></svg>
+          <div id="nodesLayer"></div>
+          <div class="empty-canvas-msg" id="emptyMsg" style="display:none;">
+            <h3>No nodes yet</h3>
+            <p>Click "+ Add Node" or right-click the canvas to begin mapping your strategy.</p>
+          </div>
+        </div>
 
-      <!-- Context Menu -->
-      <div class="strategy-context-menu" id="contextMenu" style="display:none;">
-        <button id="contextAddNode">+ Add Node Here</button>
+        <!-- Right side panel -->
+        <div class="strategy-panel" id="strategyPanel">
+          <div class="strategy-panel-header">
+            <input class="strategy-panel-title" id="panelTitle" type="text" placeholder="Node title…" />
+            <button onclick="closePanel()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--aap-text-dim);" title="Close">×</button>
+          </div>
+          <div class="strategy-panel-body">
+            <div class="panel-field">
+              <label>Type</label>
+              <select id="panelType">
+                <option value="idea">idea</option>
+                <option value="goal">goal</option>
+                <option value="project">project</option>
+                <option value="initiative">initiative</option>
+                <option value="vision">vision</option>
+                <option value="obstacle">obstacle</option>
+                <option value="resource">resource</option>
+              </select>
+            </div>
+            <div class="panel-field">
+              <label>Status</label>
+              <select id="panelStatus">
+                <option value="seed">seed</option>
+                <option value="growing">growing</option>
+                <option value="blooming">blooming</option>
+                <option value="dormant">dormant</option>
+                <option value="completed">completed</option>
+              </select>
+            </div>
+            <div class="panel-field">
+              <label>Priority</label>
+              <select id="panelPriority">
+                <option value="high">high</option>
+                <option value="medium">medium</option>
+                <option value="low">low</option>
+              </select>
+            </div>
+            <div class="panel-field">
+              <label>Description</label>
+              <textarea id="panelDescription" rows="3"></textarea>
+            </div>
+            <div class="panel-field">
+              <label>Progress (<span id="panelProgressVal">0</span>%)</label>
+              <input type="range" class="progress-slider" id="panelProgress" min="0" max="100" value="0" oninput="document.getElementById('panelProgressVal').textContent=this.value" />
+            </div>
+            <div class="panel-field">
+              <label>Target Date</label>
+              <input type="date" id="panelTargetDate" />
+            </div>
+            <div class="panel-field">
+              <label>Tags (comma-separated)</label>
+              <input type="text" id="panelTags" placeholder="tag1, tag2, tag3" />
+            </div>
+            <div class="panel-field">
+              <label>Notes</label>
+              <textarea id="panelNotes" rows="3"></textarea>
+            </div>
+            <div class="panel-field">
+              <label>Connections</label>
+              <div class="panel-connections" id="panelConnections">
+                <div style="font-size:12px;color:var(--aap-text-dim);">No connections yet.</div>
+              </div>
+            </div>
+          </div>
+          <div class="strategy-panel-footer">
+            <button class="btn btn-danger btn-sm" onclick="deleteSelectedNode()">Delete</button>
+            <button class="btn btn-secondary btn-sm" onclick="closePanel()">Cancel</button>
+            <button class="btn btn-primary btn-sm" onclick="savePanel()">Save</button>
+          </div>
+        </div>
       </div>
-    </div>
-  </main>
-</div>
+    </main>
+  </div>
 
-<!-- Node Modal -->
-<div class="modal-overlay hidden" id="nodeModal">
-  <div class="modal-box">
-    <div class="modal-title" id="nodeModalTitle">Add Node</div>
-    <div class="form-row">
-      <label>Title *</label>
-      <input type="text" id="nodeTitle" placeholder="Describe this strategic element..." />
-    </div>
-    <div class="form-row">
-      <label>Description</label>
-      <textarea id="nodeDesc" rows="2" placeholder="What does this mean for your practice?"></textarea>
-    </div>
-    <div class="form-row-grid">
-      <div class="form-row">
-        <label>Type</label>
-        <select id="nodeType">
-          <option value="idea">💡 Idea</option>
-          <option value="goal">🎯 Goal</option>
-          <option value="project">🔨 Project</option>
-          <option value="milestone">🏁 Milestone</option>
-          <option value="resource">💰 Resource</option>
-          <option value="partnership">🤝 Partnership</option>
-          <option value="offering">✨ Offering</option>
-          <option value="vision">🌟 Vision</option>
-          <option value="challenge">⚡ Challenge</option>
-          <option value="opportunity">🌱 Opportunity</option>
-        </select>
+  <!-- Context menu -->
+  <div class="context-menu" id="contextMenu" style="display:none;">
+    <div class="context-menu-item" onclick="contextAddNode()">+ Add node here</div>
+    <div class="context-menu-item" onclick="selectAllNodes()">Select all</div>
+    <div class="context-menu-item" onclick="hideContextMenu()">Dismiss</div>
+  </div>
+
+  <!-- Add Node Modal -->
+  <div class="modal-overlay" id="addNodeModal" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-title">Add Node</div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label>Title *</label>
+          <input type="text" id="addTitle" placeholder="Node title…" />
+        </div>
+        <div class="modal-field">
+          <label>Type</label>
+          <select id="addType" onchange="updateAddColor()">
+            <option value="idea">idea</option>
+            <option value="goal">goal</option>
+            <option value="project">project</option>
+            <option value="initiative">initiative</option>
+            <option value="vision">vision</option>
+            <option value="obstacle">obstacle</option>
+            <option value="resource">resource</option>
+          </select>
+        </div>
       </div>
-      <div class="form-row">
-        <label>Category</label>
-        <select id="nodeCategory">
-          <option value="practice">Practice</option>
-          <option value="network">Network</option>
-          <option value="revenue">Revenue</option>
-          <option value="community">Community</option>
-          <option value="personal_growth">Personal Growth</option>
-          <option value="offerings">Offerings</option>
-          <option value="geographic_expansion">Geographic Expansion</option>
-          <option value="content">Content</option>
-          <option value="partnerships">Partnerships</option>
-          <option value="education">Education</option>
-        </select>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label>Category</label>
+          <input type="text" id="addCategory" placeholder="e.g. Business, Personal…" />
+        </div>
+        <div class="modal-field">
+          <label>Status</label>
+          <select id="addStatus">
+            <option value="seed" selected>seed</option>
+            <option value="growing">growing</option>
+            <option value="blooming">blooming</option>
+            <option value="dormant">dormant</option>
+            <option value="completed">completed</option>
+          </select>
+        </div>
       </div>
-    </div>
-    <div class="form-row-grid">
-      <div class="form-row">
-        <label>Status</label>
-        <select id="nodeStatus">
-          <option value="seed">🌱 Seed</option>
-          <option value="sprouting">🌿 Sprouting</option>
-          <option value="growing">🌳 Growing</option>
-          <option value="blooming">🌸 Blooming</option>
-          <option value="harvested">✅ Harvested</option>
-          <option value="composted">♻️ Composted</option>
-          <option value="dormant">💤 Dormant</option>
-        </select>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label>Priority</label>
+          <select id="addPriority">
+            <option value="high">high</option>
+            <option value="medium" selected>medium</option>
+            <option value="low">low</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label>Timeframe</label>
+          <select id="addTimeframe">
+            <option value="">—</option>
+            <option value="now">now</option>
+            <option value="soon">soon</option>
+            <option value="this_year">this_year</option>
+            <option value="long_term">long_term</option>
+            <option value="someday">someday</option>
+          </select>
+        </div>
       </div>
-      <div class="form-row">
-        <label>Priority</label>
-        <select id="nodePriority">
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-          <option value="critical">Critical</option>
-        </select>
+      <div class="modal-field">
+        <label>Description</label>
+        <textarea id="addDescription" rows="2"></textarea>
       </div>
-    </div>
-    <div class="form-row-grid">
-      <div class="form-row">
-        <label>Timeframe</label>
-        <select id="nodeTimeframe">
-          <option value="">— none —</option>
-          <option value="this_week">This Week</option>
-          <option value="this_month">This Month</option>
-          <option value="this_quarter">This Quarter</option>
-          <option value="this_season">This Season</option>
-          <option value="this_year">This Year</option>
-          <option value="next_year">Next Year</option>
-          <option value="3_year">3 Years</option>
-          <option value="5_year">5 Years</option>
-          <option value="someday">Someday</option>
-        </select>
+      <div class="modal-row">
+        <div class="modal-field">
+          <label>Target Date</label>
+          <input type="date" id="addTargetDate" />
+        </div>
+        <div class="modal-field">
+          <label>Color</label>
+          <input type="color" id="addColor" value="#EDE9FE" style="height:36px;padding:2px 4px;" />
+        </div>
       </div>
-      <div class="form-row">
-        <label>Target Date</label>
-        <input type="date" id="nodeTargetDate" />
-      </div>
-    </div>
-    <div class="form-row">
-      <label>Progress: <span id="progressDisplay">0</span>%</label>
-      <input type="range" id="nodeProgress" min="0" max="100" value="0" style="width:100%;" oninput="document.getElementById('progressDisplay').textContent=this.value" />
-    </div>
-    <div class="form-row-grid">
-      <div class="form-row">
-        <label>Custom Color</label>
-        <input type="color" id="nodeColor" value="#EDE9FE" />
-      </div>
-      <div class="form-row">
+      <div class="modal-field">
         <label>Tags (comma-separated)</label>
-        <input type="text" id="nodeTags" placeholder="e.g. healing, revenue, 2025" />
+        <input type="text" id="addTags" placeholder="tag1, tag2…" />
+      </div>
+      <div class="modal-field">
+        <label>Notes</label>
+        <textarea id="addNotes" rows="2"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeAddModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveNewNode()">Add Node</button>
       </div>
     </div>
-    <div class="form-row">
-      <label>Notes</label>
-      <textarea id="nodeNotes" rows="3" placeholder="Any additional context, research, or musings..."></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-btn-delete" id="nodeDeleteBtn" style="display:none;">Delete Node</button>
-      <button class="modal-btn modal-btn-cancel" id="nodeModalCancel">Cancel</button>
-      <button class="modal-btn modal-btn-save" id="nodeModalSave">Save Node</button>
+  </div>
+
+  <!-- Connection Modal -->
+  <div class="modal-overlay" id="connectionModal" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-title">Create Connection</div>
+      <div class="modal-field">
+        <label>Relationship Type</label>
+        <select id="connRelType">
+          <option value="relates_to">relates_to</option>
+          <option value="enables">enables</option>
+          <option value="blocks">blocks</option>
+          <option value="supports">supports</option>
+          <option value="inspires">inspires</option>
+          <option value="depends_on">depends_on</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Label (optional)</label>
+        <input type="text" id="connLabel" placeholder="Short label…" />
+      </div>
+      <div class="modal-field">
+        <label>Strength (1–10)</label>
+        <input type="number" id="connStrength" min="1" max="10" value="5" />
+      </div>
+      <div class="modal-field">
+        <label>Notes</label>
+        <textarea id="connNotes" rows="2"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeConnectionModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveNewConnection()">Create Connection</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Connection Modal -->
-<div class="modal-overlay hidden" id="connModal">
-  <div class="modal-box" style="width:400px;">
-    <div class="modal-title" id="connModalTitle">Connect Nodes</div>
-    <div class="form-row">
-      <label>From</label>
-      <input type="text" id="connSourceLabel" readonly style="background:var(--aap-bg);color:var(--aap-text-dim);" />
-    </div>
-    <div class="form-row">
-      <label>To</label>
-      <input type="text" id="connTargetLabel" readonly style="background:var(--aap-bg);color:var(--aap-text-dim);" />
-    </div>
-    <div class="form-row">
-      <label>Relationship Type</label>
-      <select id="connType">
-        <option value="relates_to">↔ Relates to</option>
-        <option value="depends_on">⬅ Depends on</option>
-        <option value="enables">➡ Enables</option>
-        <option value="blocks">⛔ Blocks</option>
-        <option value="feeds_into">⤴ Feeds into</option>
-        <option value="child_of">↳ Child of</option>
-        <option value="evolves_from">🔄 Evolves from</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <label>Label (short)</label>
-      <input type="text" id="connLabel" placeholder="e.g. requires, supports..." />
-    </div>
-    <div class="form-row">
-      <label>Strength: <span id="strengthDisplay">5</span>/10</label>
-      <input type="range" id="connStrength" min="1" max="10" value="5" style="width:100%;" oninput="document.getElementById('strengthDisplay').textContent=this.value" />
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-btn-delete" id="connDeleteBtn" style="display:none;">Delete</button>
-      <button class="modal-btn modal-btn-cancel" id="connModalCancel">Cancel</button>
-      <button class="modal-btn modal-btn-save" id="connModalSave">Save Connection</button>
-    </div>
-  </div>
-</div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../shared/supabase.js"></script>
+  <script src="../shared/auth.js"></script>
+  <script>
+    function showToast(msg, type) {
+      var t = document.createElement('div');
+      t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
+      if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
+      else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
+      else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
+      t.textContent = msg;
+      document.body.appendChild(t);
+      requestAnimationFrame(function(){ t.style.opacity='1'; });
+      setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="../shared/supabase.js"></script>
-<script src="../shared/auth.js"></script>
-<script>
-function showToast(msg, type) {
-  var t = document.createElement('div');
-  t.style.cssText = 'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:99999;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;font-family:inherit;box-shadow:0 8px 32px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.3s;';
-  if (type==='success'){t.style.background='#f0fdf4';t.style.color='#166534';t.style.border='1px solid #bbf7d0';}
-  else if (type==='error'){t.style.background='#fef2f2';t.style.color='#991b1b';t.style.border='1px solid #fecaca';}
-  else{t.style.background='#fffbeb';t.style.color='#92400e';t.style.border='1px solid #fde68a';}
-  t.textContent = msg;
-  document.body.appendChild(t);
-  requestAnimationFrame(function(){ t.style.opacity='1'; });
-  setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },300); },3500);
-}
+    requireAuth(function(user, supabase) {
+      var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+      document.getElementById('sidebarUserName').textContent = name;
+      document.getElementById('sidebarUserEmail').textContent = user.email;
+      document.getElementById('sidebarSignOut').addEventListener('click', function() {
+        supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
+      });
 
-requireAuth(function(user, supabase) {
-  var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
-  document.getElementById('sidebarUserName').textContent = name;
-  document.getElementById('sidebarUserEmail').textContent = user.email;
-  document.getElementById('sidebarSignOut').addEventListener('click', function() {
-    supabase.auth.signOut().then(function(){ window.location.href = '../index.html'; });
-  });
+      // ── State ──────────────────────────────────────────────────────────
+      var nodes = [];
+      var connections = [];
+      var selectedNodeId = null;
+      var connectMode = false;
+      var connectSourceId = null;
+      var zoom = 1;
+      var dragNode = null;
+      var dragStartX, dragStartY, dragNodeStartX, dragNodeStartY;
+      var contextMenuPos = {x: 0, y: 0};
+      var nodePositionTimers = {};
+      var pendingConnFrom = null, pendingConnTo = null;
+      var isDragging = false;
 
-  // ── Data ──────────────────────────────────────────────────────────────────
-  var nodes = [];
-  var connections = [];
-  var nodesMap = {};
+      // ── Type config ────────────────────────────────────────────────────
+      var typeColors = {
+        idea:       {bg: '#EDE9FE', border: '#8B5CF6'},
+        goal:       {bg: '#DCFCE7', border: '#22C55E'},
+        project:    {bg: '#DBEAFE', border: '#3B82F6'},
+        initiative: {bg: '#FEF3C7', border: '#F59E0B'},
+        vision:     {bg: '#FCE7F3', border: '#EC4899'},
+        obstacle:   {bg: '#FEE2E2', border: '#EF4444'},
+        resource:   {bg: '#F3F4F6', border: '#6B7280'}
+      };
 
-  var typeColors = {
-    idea:'#EDE9FE', goal:'#DCFCE7', project:'#DBEAFE', milestone:'#FEF3C7',
-    resource:'#F5F3FF', partnership:'#CCFBF1', offering:'#FDF4FF',
-    vision:'#FFF7ED', challenge:'#FEF2F2', opportunity:'#F0FDF4'
-  };
-  var typeIcons = {
-    idea:'💡', goal:'🎯', project:'🔨', milestone:'🏁',
-    resource:'💰', partnership:'🤝', offering:'✨', vision:'🌟',
-    challenge:'⚡', opportunity:'🌱'
-  };
-  var typeStroke = {
-    idea:'#8B5CF6', goal:'#5B7553', project:'#3B82F6', milestone:'#D4A843',
-    resource:'#7C3AED', partnership:'#0F766E', offering:'#C026D3', vision:'#EA580C',
-    challenge:'#DC2626', opportunity:'#16A34A'
-  };
+      var statusDotColors = {
+        seed:      '#D4A843',
+        growing:   '#22C55E',
+        blooming:  '#F59E0B',
+        dormant:   '#9CA3AF',
+        completed: '#6B7280'
+      };
 
-  // ── State ─────────────────────────────────────────────────────────────────
-  var isDragging = false;
-  var dragNode = null;
-  var dragOffsetX = 0, dragOffsetY = 0;
-  var connectMode = false;
-  var connectFirstId = null;
-  var editingNodeId = null;
-  var editingConnId = null;
-  var pendingConnSource = null, pendingConnTarget = null;
-  var contextX = 0, contextY = 0;
+      // ── Data loading ───────────────────────────────────────────────────
+      function loadData() {
+        Promise.all([
+          supabase.from('strategic_nodes').select('*').eq('is_archived', false),
+          supabase.from('strategic_connections').select('*')
+        ]).then(function(results) {
+          var nodesRes = results[0];
+          var connsRes = results[1];
 
-  // ── Load ──────────────────────────────────────────────────────────────────
-  function loadData() {
-    Promise.all([
-      supabase.from('strategic_nodes').select('*').order('created_at'),
-      supabase.from('strategic_connections').select('*')
-    ]).then(function(results) {
-      var nodesRes = results[0];
-      var connRes = results[1];
-      if (nodesRes.error) { showToast('Could not load nodes — run SQL migration first', 'error'); return; }
-      nodes = (nodesRes.data || []).filter(function(n){ return !n.is_archived; });
-      connections = connRes.data || [];
-      nodesMap = {};
-      nodes.forEach(function(n){ nodesMap[n.id] = n; });
-      renderNodes();
-    }).catch(function() {
-      showToast('Could not load strategy map — run SQL migration first', 'error');
-    });
-  }
+          if (nodesRes.error) {
+            console.warn('strategic_nodes error:', nodesRes.error.message);
+            var msg = document.getElementById('emptyMsg');
+            msg.style.display = 'block';
+            msg.querySelector('h3').textContent = 'Strategy Map not set up';
+            msg.querySelector('p').textContent = 'Run the database migration to enable the Strategy Map.';
+            return;
+          }
 
-  // ── Render ────────────────────────────────────────────────────────────────
-  function renderNodes() {
-    var typeFilter = document.getElementById('filterType').value;
-    var tfFilter = document.getElementById('filterTimeframe').value;
-    var wrap = document.getElementById('canvasWrap');
-    wrap.querySelectorAll('.strategy-node').forEach(function(el){ el.remove(); });
-
-    var filtered = nodes.filter(function(n) {
-      if (n.is_archived) return false;
-      if (typeFilter && n.node_type !== typeFilter) return false;
-      if (tfFilter && n.timeframe !== tfFilter) return false;
-      return true;
-    });
-
-    filtered.forEach(function(n) { renderNode(n); });
-    updateConnections();
-    document.getElementById('nodeCount').textContent = filtered.length + ' node' + (filtered.length !== 1 ? 's' : '');
-    document.getElementById('canvasEmpty').style.display = filtered.length ? 'none' : 'block';
-  }
-
-  function renderNode(n) {
-    var el = document.createElement('div');
-    el.className = 'strategy-node';
-    el.setAttribute('data-id', n.id);
-
-    var color = n.color || typeColors[n.node_type] || '#EDE9FE';
-    var stroke = typeStroke[n.node_type] || '#8B5CF6';
-    el.style.setProperty('--node-color', color);
-    el.style.setProperty('--node-stroke', stroke);
-    el.style.left = (n.pos_x || 100) + 'px';
-    el.style.top = (n.pos_y || 100) + 'px';
-
-    var statusColors = { seed:'#9CA3AF', sprouting:'#6B7280', growing:'#5B7553', blooming:'#C026D3', harvested:'#16A34A', composted:'#78716C', dormant:'#6B7280' };
-    var statusColor = statusColors[n.status] || '#9CA3AF';
-
-    var progress = parseInt(n.progress) || 0;
-    var progressHTML = progress > 0
-      ? '<div class="strategy-node-progress-bar-wrap"><div class="strategy-node-progress-bar" style="width:' + progress + '%"></div></div>'
-      : '';
-
-    el.innerHTML =
-      '<div class="strategy-node-header">' +
-        '<span class="strategy-node-icon">' + (typeIcons[n.node_type] || '●') + '</span>' +
-        '<span class="strategy-node-type">' + (n.node_type || 'idea') + '</span>' +
-        '<div class="strategy-node-actions">' +
-          '<button class="strategy-node-edit" title="Edit" data-id="' + n.id + '">✏️</button>' +
-          '<button class="strategy-node-delete" title="Delete" data-id="' + n.id + '">×</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="strategy-node-title">' + escHtml(n.title || 'Untitled') + '</div>' +
-      '<div class="strategy-node-status">' +
-        '<span class="strategy-node-status-dot" style="background:' + statusColor + '"></span>' +
-        '<span>' + (n.status || 'seed') + '</span>' +
-      '</div>' +
-      progressHTML;
-
-    var wrap = document.getElementById('canvasWrap');
-    wrap.appendChild(el);
-
-    // Edit / Delete buttons
-    el.querySelector('.strategy-node-edit').addEventListener('click', function(e) {
-      e.stopPropagation();
-      openNodeModal(n.id);
-    });
-    el.querySelector('.strategy-node-delete').addEventListener('click', function(e) {
-      e.stopPropagation();
-      confirmDeleteNode(n.id);
-    });
-
-    // Click to open panel (not drag)
-    var didDrag = false;
-    el.addEventListener('mousedown', function(e) {
-      if (e.target.tagName === 'BUTTON') return;
-      didDrag = false;
-      if (connectMode) { handleConnectClick(n.id); return; }
-      isDragging = true;
-      dragNode = n;
-      var rect = el.getBoundingClientRect();
-      dragOffsetX = e.clientX - rect.left;
-      dragOffsetY = e.clientY - rect.top;
-      el.classList.add('dragging');
-      e.preventDefault();
-    });
-    el.addEventListener('mousemove', function() { didDrag = true; });
-    el.addEventListener('mouseup', function(e) {
-      if (e.target.tagName === 'BUTTON') return;
-      if (!didDrag && !connectMode) openPanel(n.id);
-    });
-  }
-
-  // ── Drag ──────────────────────────────────────────────────────────────────
-  document.addEventListener('mousemove', function(e) {
-    if (!isDragging || !dragNode) return;
-    var wrap = document.getElementById('canvasWrap');
-    var wrapRect = wrap.getBoundingClientRect();
-    var x = e.clientX - wrapRect.left - dragOffsetX;
-    var y = e.clientY - wrapRect.top - dragOffsetY;
-    x = Math.max(0, x); y = Math.max(0, y);
-    var nodeEl = document.querySelector('[data-id="' + dragNode.id + '"]');
-    if (nodeEl) { nodeEl.style.left = x + 'px'; nodeEl.style.top = y + 'px'; }
-    dragNode.pos_x = x; dragNode.pos_y = y;
-    nodesMap[dragNode.id] = dragNode;
-    updateConnections();
-  });
-
-  document.addEventListener('mouseup', function() {
-    if (!isDragging || !dragNode) return;
-    isDragging = false;
-    var nodeEl = document.querySelector('[data-id="' + dragNode.id + '"]');
-    if (nodeEl) nodeEl.classList.remove('dragging');
-    var savedNode = dragNode;
-    clearTimeout(savedNode._saveTimer);
-    savedNode._saveTimer = setTimeout(function() {
-      supabase.from('strategic_nodes')
-        .update({ pos_x: savedNode.pos_x, pos_y: savedNode.pos_y, updated_at: new Date().toISOString() })
-        .eq('id', savedNode.id)
-        .then(function(){});
-    }, 500);
-    dragNode = null;
-  });
-
-  // ── Connections ───────────────────────────────────────────────────────────
-  function updateConnections() {
-    var svg = document.getElementById('connectionsGroup');
-    svg.innerHTML = '';
-    var typeFilter = document.getElementById('filterType').value;
-    var tfFilter = document.getElementById('filterTimeframe').value;
-
-    connections.forEach(function(conn) {
-      var sourceNode = nodesMap[conn.source_node_id];
-      var targetNode = nodesMap[conn.target_node_id];
-      if (!sourceNode || !targetNode) return;
-      if (sourceNode.is_archived || targetNode.is_archived) return;
-      if (typeFilter && (sourceNode.node_type !== typeFilter && targetNode.node_type !== typeFilter)) return;
-      if (tfFilter && (sourceNode.timeframe !== tfFilter && targetNode.timeframe !== tfFilter)) return;
-
-      var sx = sourceNode.pos_x + 90;
-      var sy = sourceNode.pos_y + 40;
-      var tx = targetNode.pos_x + 90;
-      var ty = targetNode.pos_y + 40;
-
-      var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', sx); line.setAttribute('y1', sy);
-      line.setAttribute('x2', tx); line.setAttribute('y2', ty);
-      line.setAttribute('stroke', conn.relationship_type === 'blocks' ? '#DC2626' : '#A89E95');
-      line.setAttribute('stroke-width', Math.max(1, ((conn.strength || 5) / 3)));
-      line.setAttribute('stroke-dasharray', conn.relationship_type === 'blocks' ? '6,4' : 'none');
-      line.setAttribute('marker-end', 'url(#arrowhead)');
-      line.style.cursor = 'pointer';
-      line.style.pointerEvents = 'auto';
-      line.addEventListener('click', function() { openConnectionModal(conn); });
-      svg.appendChild(line);
-
-      if (conn.label) {
-        var mx = (sx + tx) / 2, my = (sy + ty) / 2;
-        var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', mx); text.setAttribute('y', my - 5);
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('font-size', '10');
-        text.setAttribute('fill', '#8A7668');
-        text.setAttribute('font-family', 'Inter, sans-serif');
-        text.setAttribute('pointer-events', 'none');
-        text.textContent = conn.label;
-        svg.appendChild(text);
+          nodes = nodesRes.data || [];
+          connections = connsRes.error ? [] : (connsRes.data || []);
+          renderAll();
+        });
       }
-    });
-  }
 
-  // ── Connect Mode ──────────────────────────────────────────────────────────
-  document.getElementById('connectModeBtn').addEventListener('click', function() {
-    connectMode = !connectMode;
-    connectFirstId = null;
-    document.querySelectorAll('.strategy-node.selected').forEach(function(el){ el.classList.remove('selected'); });
-    document.getElementById('connectModeBtn').classList.toggle('active', connectMode);
-    document.getElementById('canvasWrap').style.cursor = connectMode ? 'crosshair' : 'default';
-    if (connectMode) showToast('Click a source node, then a target node to connect them', 'info');
-  });
+      // ── Render ─────────────────────────────────────────────────────────
+      function renderAll() {
+        renderNodes();
+        renderConnections();
+        applyFilters();
+        document.getElementById('emptyMsg').style.display = (nodes.length === 0) ? 'block' : 'none';
+      }
 
-  function handleConnectClick(nodeId) {
-    if (!connectFirstId) {
-      connectFirstId = nodeId;
-      var el = document.querySelector('[data-id="' + nodeId + '"]');
-      if (el) el.classList.add('selected');
-      showToast('Now click the target node', 'info');
-    } else if (connectFirstId !== nodeId) {
-      openConnectionCreateModal(connectFirstId, nodeId);
-      var el = document.querySelector('[data-id="' + connectFirstId + '"]');
-      if (el) el.classList.remove('selected');
-      connectFirstId = null;
-      connectMode = false;
-      document.getElementById('connectModeBtn').classList.remove('active');
-      document.getElementById('canvasWrap').style.cursor = 'default';
-    }
-  }
+      function renderNodes() {
+        var layer = document.getElementById('nodesLayer');
+        layer.innerHTML = '';
 
-  // ── Node Modal ────────────────────────────────────────────────────────────
-  document.getElementById('addNodeBtn').addEventListener('click', function() {
-    openNodeModal(null);
-  });
+        nodes.forEach(function(node) {
+          var tc = typeColors[node.node_type] || typeColors.idea;
+          var bg = node.color || tc.bg;
+          var borderColor = tc.border;
+          var dotColor = statusDotColors[node.status] || '#9CA3AF';
 
-  function openNodeModal(nodeId, preX, preY) {
-    editingNodeId = nodeId;
-    var modal = document.getElementById('nodeModal');
-    var n = nodeId ? nodesMap[nodeId] : null;
+          var div = document.createElement('div');
+          div.className = 'strategy-node' + (connectMode ? ' connect-mode' : '');
+          div.setAttribute('data-id', node.id);
+          div.setAttribute('data-type', node.node_type || 'idea');
+          div.setAttribute('data-status', node.status || 'seed');
+          div.setAttribute('data-timeframe', node.timeframe || '');
+          div.style.cssText =
+            'left:' + (node.pos_x || 100) + 'px;' +
+            'top:' + (node.pos_y || 100) + 'px;' +
+            'background:' + bg + ';' +
+            'border:2px solid ' + borderColor + ';';
 
-    document.getElementById('nodeModalTitle').textContent = n ? 'Edit Node' : 'Add Node';
-    document.getElementById('nodeTitle').value = n ? (n.title || '') : '';
-    document.getElementById('nodeDesc').value = n ? (n.description || '') : '';
-    document.getElementById('nodeType').value = n ? (n.node_type || 'idea') : 'idea';
-    document.getElementById('nodeCategory').value = n ? (n.category || 'practice') : 'practice';
-    document.getElementById('nodeStatus').value = n ? (n.status || 'seed') : 'seed';
-    document.getElementById('nodePriority').value = n ? (n.priority || 'medium') : 'medium';
-    document.getElementById('nodeTimeframe').value = n ? (n.timeframe || '') : '';
-    document.getElementById('nodeTargetDate').value = n ? (n.target_date || '') : '';
-    document.getElementById('nodeProgress').value = n ? (n.progress || 0) : 0;
-    document.getElementById('progressDisplay').textContent = n ? (n.progress || 0) : 0;
-    document.getElementById('nodeColor').value = n ? (n.color || '#EDE9FE') : '#EDE9FE';
-    document.getElementById('nodeTags').value = n ? (Array.isArray(n.tags) ? n.tags.join(', ') : (n.tags || '')) : '';
-    document.getElementById('nodeNotes').value = n ? (n.notes || '') : '';
-    document.getElementById('nodeDeleteBtn').style.display = n ? 'block' : 'none';
+          div.innerHTML =
+            '<div class="node-type-badge">' + escHtml(node.node_type || 'idea') + '</div>' +
+            '<div class="node-title">' + escHtml(node.title || 'Untitled') + '</div>' +
+            '<div class="node-status">' +
+              '<span class="node-status-dot" style="background:' + dotColor + ';"></span>' +
+              escHtml(node.status || 'seed') +
+            '</div>';
 
-    // Set color based on type if creating new
-    if (!n) {
-      document.getElementById('nodeType').addEventListener('change', function() {
-        var t = this.value;
-        document.getElementById('nodeColor').value = typeColors[t] || '#EDE9FE';
-      }, { once: true });
-    }
+          if (node.id === selectedNodeId) {
+            div.classList.add('selected');
+          }
 
-    modal.classList.remove('hidden');
-    document.getElementById('nodeTitle').focus();
+          div.addEventListener('mousedown', function(e) { onNodeMouseDown(e, node.id); });
+          div.addEventListener('click', function(e) { onNodeClick(e, node.id); });
 
-    document.getElementById('nodeModalSave').onclick = function() { saveNode(preX, preY); };
-    document.getElementById('nodeDeleteBtn').onclick = function() { modal.classList.add('hidden'); confirmDeleteNode(nodeId); };
-    document.getElementById('nodeModalCancel').onclick = function() { modal.classList.add('hidden'); };
-  }
+          layer.appendChild(div);
+        });
 
-  function saveNode(preX, preY) {
-    var title = document.getElementById('nodeTitle').value.trim();
-    if (!title) { showToast('Title is required', 'error'); return; }
+        applyZoom();
+      }
 
-    var tagsRaw = document.getElementById('nodeTags').value.trim();
-    var tags = tagsRaw ? tagsRaw.split(',').map(function(t){ return t.trim(); }).filter(Boolean) : [];
+      function renderConnections() {
+        var svg = document.getElementById('connectionsSvg');
+        svg.innerHTML = '';
 
-    var data = {
-      title: title,
-      description: document.getElementById('nodeDesc').value.trim() || null,
-      node_type: document.getElementById('nodeType').value,
-      category: document.getElementById('nodeCategory').value || null,
-      status: document.getElementById('nodeStatus').value,
-      priority: document.getElementById('nodePriority').value,
-      timeframe: document.getElementById('nodeTimeframe').value || null,
-      target_date: document.getElementById('nodeTargetDate').value || null,
-      progress: parseInt(document.getElementById('nodeProgress').value) || 0,
-      color: document.getElementById('nodeColor').value,
-      tags: tags.length ? tags : null,
-      notes: document.getElementById('nodeNotes').value.trim() || null,
-      updated_at: new Date().toISOString()
-    };
+        connections.forEach(function(conn) {
+          var fromId = conn.from_node_id || conn.source_id;
+          var toId   = conn.to_node_id   || conn.target_id;
+          var fromCenter = getNodeCenter(fromId);
+          var toCenter   = getNodeCenter(toId);
+          if (!fromCenter || !toCenter) return;
 
-    var saveBtn = document.getElementById('nodeModalSave');
-    saveBtn.disabled = true;
+          var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', fromCenter.x);
+          line.setAttribute('y1', fromCenter.y);
+          line.setAttribute('x2', toCenter.x);
+          line.setAttribute('y2', toCenter.y);
+          line.setAttribute('stroke', 'rgba(107,114,128,0.5)');
+          line.setAttribute('stroke-width', '2');
 
-    if (editingNodeId) {
-      supabase.from('strategic_nodes').update(data).eq('id', editingNodeId).select().then(function(res) {
-        saveBtn.disabled = false;
-        if (res.error) { showToast('Error saving node', 'error'); return; }
-        var updated = res.data[0];
-        nodesMap[updated.id] = updated;
-        var idx = nodes.findIndex(function(n){ return n.id === updated.id; });
-        if (idx >= 0) nodes[idx] = updated;
-        var el = document.querySelector('[data-id="' + updated.id + '"]');
-        if (el) el.remove();
-        renderNode(updated);
-        updateConnections();
-        document.getElementById('nodeModal').classList.add('hidden');
-        showToast('Node updated', 'success');
-        if (document.getElementById('strategyPanel').classList.contains('open')) openPanel(updated.id);
+          line.addEventListener('mouseenter', function() {
+            line.setAttribute('stroke', 'rgba(107,114,128,0.9)');
+            line.setAttribute('stroke-width', '3');
+          });
+          line.addEventListener('mouseleave', function() {
+            line.setAttribute('stroke', 'rgba(107,114,128,0.5)');
+            line.setAttribute('stroke-width', '2');
+          });
+
+          svg.appendChild(line);
+
+          if (conn.label) {
+            var mx = (fromCenter.x + toCenter.x) / 2;
+            var my = (fromCenter.y + toCenter.y) / 2;
+            var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', mx);
+            text.setAttribute('y', my - 4);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('font-size', '10');
+            text.setAttribute('fill', '#6b7280');
+            text.textContent = conn.label;
+            svg.appendChild(text);
+          }
+        });
+      }
+
+      function getNodeCenter(nodeId) {
+        var el = document.querySelector('[data-id="' + nodeId + '"]');
+        if (!el) return null;
+        var x = (parseInt(el.style.left) || 0) + el.offsetWidth / 2;
+        var y = (parseInt(el.style.top)  || 0) + el.offsetHeight / 2;
+        return {x: x * zoom, y: y * zoom};
+      }
+
+      function applyZoom() {
+        var layer = document.getElementById('nodesLayer');
+        layer.style.transform = 'scale(' + zoom + ')';
+        layer.style.transformOrigin = '0 0';
+        renderConnections();
+      }
+
+      // ── Filters ────────────────────────────────────────────────────────
+      function applyFilters() {
+        var fType      = document.getElementById('filterType').value;
+        var fStatus    = document.getElementById('filterStatus').value;
+        var fTimeframe = document.getElementById('filterTimeframe').value;
+
+        document.querySelectorAll('.strategy-node').forEach(function(el) {
+          var show = true;
+          if (fType      && el.getAttribute('data-type')      !== fType)      show = false;
+          if (fStatus    && el.getAttribute('data-status')    !== fStatus)    show = false;
+          if (fTimeframe && el.getAttribute('data-timeframe') !== fTimeframe) show = false;
+          el.style.display = show ? '' : 'none';
+        });
+      }
+
+      document.getElementById('filterType').addEventListener('change', applyFilters);
+      document.getElementById('filterStatus').addEventListener('change', applyFilters);
+      document.getElementById('filterTimeframe').addEventListener('change', applyFilters);
+
+      // ── Drag ───────────────────────────────────────────────────────────
+      function onNodeMouseDown(e, nodeId) {
+        if (connectMode) return;
+        e.stopPropagation();
+        isDragging = false;
+        dragNode = nodeId;
+        var el = document.querySelector('[data-id="' + nodeId + '"]');
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        dragNodeStartX = parseInt(el.style.left) || 0;
+        dragNodeStartY = parseInt(el.style.top)  || 0;
+      }
+
+      var canvas = document.getElementById('strategyCanvas');
+
+      canvas.addEventListener('mousemove', function(e) {
+        if (!dragNode) return;
+        var dx = (e.clientX - dragStartX) / zoom;
+        var dy = (e.clientY - dragStartY) / zoom;
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) isDragging = true;
+        var el = document.querySelector('[data-id="' + dragNode + '"]');
+        if (!el) return;
+        var newX = dragNodeStartX + dx;
+        var newY = dragNodeStartY + dy;
+        el.style.left = newX + 'px';
+        el.style.top  = newY + 'px';
+        renderConnections();
       });
-    } else {
-      var wrap = document.getElementById('canvasWrap');
-      data.pos_x = preX != null ? Math.round(preX) : Math.round(80 + Math.random() * 700);
-      data.pos_y = preY != null ? Math.round(preY) : Math.round(80 + Math.random() * 350);
-      data.is_archived = false;
-      data.created_at = new Date().toISOString();
 
-      supabase.from('strategic_nodes').insert(data).select().then(function(res) {
-        saveBtn.disabled = false;
-        if (res.error) { showToast('Error creating node', 'error'); return; }
-        var created = res.data[0];
-        nodes.push(created);
-        nodesMap[created.id] = created;
-        renderNode(created);
-        updateConnections();
-        document.getElementById('nodeModal').classList.add('hidden');
-        document.getElementById('canvasEmpty').style.display = 'none';
-        var cnt = document.querySelectorAll('.strategy-node').length;
-        document.getElementById('nodeCount').textContent = cnt + ' node' + (cnt !== 1 ? 's' : '');
-        showToast('Node added', 'success');
+      canvas.addEventListener('mouseup', function() {
+        if (!dragNode) return;
+        var el = document.querySelector('[data-id="' + dragNode + '"]');
+        if (el && isDragging) {
+          var newX = parseInt(el.style.left) || 0;
+          var newY = parseInt(el.style.top)  || 0;
+          var saveId = dragNode;
+          clearTimeout(nodePositionTimers[saveId]);
+          nodePositionTimers[saveId] = setTimeout(function() {
+            supabase.from('strategic_nodes').update({pos_x: newX, pos_y: newY}).eq('id', saveId);
+            var n = nodes.find(function(n) { return n.id === saveId; });
+            if (n) { n.pos_x = newX; n.pos_y = newY; }
+          }, 500);
+        }
+        dragNode = null;
       });
-    }
-  }
 
-  function confirmDeleteNode(nodeId) {
-    var n = nodesMap[nodeId];
-    if (!n) return;
-    if (!window.confirm('Delete "' + n.title + '"? This will also remove all connections.')) return;
+      // ── Node click ─────────────────────────────────────────────────────
+      function onNodeClick(e, nodeId) {
+        e.stopPropagation();
+        if (isDragging) { isDragging = false; return; }
+        if (connectMode) { handleConnectClick(nodeId); return; }
+        document.querySelectorAll('.strategy-node').forEach(function(n) { n.classList.remove('selected'); });
+        var el = document.querySelector('[data-id="' + nodeId + '"]');
+        if (el) el.classList.add('selected');
+        selectedNodeId = nodeId;
+        openPanel(nodeId);
+      }
 
-    supabase.from('strategic_connections')
-      .delete()
-      .or('source_node_id.eq.' + nodeId + ',target_node_id.eq.' + nodeId)
-      .then(function() {
-        supabase.from('strategic_nodes').delete().eq('id', nodeId).then(function(res) {
-          if (res.error) { showToast('Error deleting node', 'error'); return; }
-          nodes = nodes.filter(function(n){ return n.id !== nodeId; });
-          connections = connections.filter(function(c){ return c.source_node_id !== nodeId && c.target_node_id !== nodeId; });
-          delete nodesMap[nodeId];
+      // Clicking bare canvas deselects
+      canvas.addEventListener('click', function(e) {
+        var target = e.target;
+        if (target === canvas ||
+            target === document.getElementById('nodesLayer') ||
+            target === document.getElementById('connectionsSvg')) {
+          document.querySelectorAll('.strategy-node').forEach(function(n) { n.classList.remove('selected'); });
+          selectedNodeId = null;
+          closePanel();
+        }
+      });
+
+      // ── Connect mode ───────────────────────────────────────────────────
+      window.toggleConnectMode = function() {
+        connectMode = !connectMode;
+        connectSourceId = null;
+        var btn = document.getElementById('connectModeBtn');
+        if (connectMode) {
+          btn.classList.add('connect-mode-active');
+          btn.textContent = '🔗 Connect Mode (ON)';
+        } else {
+          btn.classList.remove('connect-mode-active');
+          btn.textContent = '🔗 Connect Mode';
+        }
+        document.querySelectorAll('.strategy-node').forEach(function(n) {
+          n.classList.toggle('connect-mode', connectMode);
+          n.classList.remove('connect-source');
+        });
+      };
+
+      function handleConnectClick(nodeId) {
+        if (!connectSourceId) {
+          connectSourceId = nodeId;
           var el = document.querySelector('[data-id="' + nodeId + '"]');
-          if (el) el.remove();
-          updateConnections();
-          var panel = document.getElementById('strategyPanel');
-          if (panel.classList.contains('open')) panel.classList.remove('open');
-          document.getElementById('canvasEmpty').style.display = nodes.length ? 'none' : 'block';
-          var cnt = document.querySelectorAll('.strategy-node').length;
-          document.getElementById('nodeCount').textContent = cnt + ' node' + (cnt !== 1 ? 's' : '');
+          if (el) el.classList.add('connect-source');
+        } else if (connectSourceId !== nodeId) {
+          pendingConnFrom = connectSourceId;
+          pendingConnTo   = nodeId;
+          var srcEl = document.querySelector('[data-id="' + connectSourceId + '"]');
+          if (srcEl) srcEl.classList.remove('connect-source');
+          connectSourceId = null;
+          openConnectionModal(pendingConnFrom, pendingConnTo);
+        }
+      }
+
+      // ── Side panel ─────────────────────────────────────────────────────
+      function openPanel(nodeId) {
+        var node = nodes.find(function(n) { return n.id === nodeId; });
+        if (!node) return;
+        selectedNodeId = nodeId;
+
+        document.getElementById('panelTitle').value       = node.title       || '';
+        document.getElementById('panelType').value        = node.node_type   || 'idea';
+        document.getElementById('panelStatus').value      = node.status      || 'seed';
+        document.getElementById('panelPriority').value    = node.priority    || 'medium';
+        document.getElementById('panelDescription').value = node.description || '';
+        document.getElementById('panelProgress').value    = node.progress    || 0;
+        document.getElementById('panelProgressVal').textContent = node.progress || 0;
+        document.getElementById('panelTargetDate').value  = node.target_date || '';
+        document.getElementById('panelTags').value        = Array.isArray(node.tags)
+          ? node.tags.join(', ')
+          : (node.tags || '');
+        document.getElementById('panelNotes').value       = node.notes || '';
+
+        // Connections list
+        var connDiv   = document.getElementById('panelConnections');
+        var nodeConns = connections.filter(function(c) {
+          var fId = c.from_node_id || c.source_id;
+          var tId = c.to_node_id   || c.target_id;
+          return fId === nodeId || tId === nodeId;
+        });
+
+        if (nodeConns.length === 0) {
+          connDiv.innerHTML = '<div style="font-size:12px;color:var(--aap-text-dim);">No connections yet.</div>';
+        } else {
+          connDiv.innerHTML = nodeConns.map(function(c) {
+            var fId     = c.from_node_id || c.source_id;
+            var tId     = c.to_node_id   || c.target_id;
+            var otherId = (fId === nodeId) ? tId : fId;
+            var other   = nodes.find(function(n) { return n.id === otherId; });
+            var otherTitle = other ? other.title : otherId;
+            var relType    = c.relationship_type || 'relates_to';
+            var arrow      = (fId === nodeId) ? ' → ' : ' ← ';
+            return '<div class="panel-conn-item">' + escHtml(relType) + arrow + escHtml(otherTitle) + '</div>';
+          }).join('');
+        }
+
+        document.getElementById('strategyPanel').classList.add('open');
+      }
+
+      window.closePanel = function() {
+        document.getElementById('strategyPanel').classList.remove('open');
+        selectedNodeId = null;
+        document.querySelectorAll('.strategy-node').forEach(function(n) { n.classList.remove('selected'); });
+      };
+
+      window.savePanel = function() {
+        if (!selectedNodeId) return;
+        var tagsRaw = document.getElementById('panelTags').value.trim();
+        var tags    = tagsRaw ? tagsRaw.split(',').map(function(t) { return t.trim(); }).filter(Boolean) : [];
+        var updates = {
+          title:       document.getElementById('panelTitle').value.trim(),
+          node_type:   document.getElementById('panelType').value,
+          status:      document.getElementById('panelStatus').value,
+          priority:    document.getElementById('panelPriority').value,
+          description: document.getElementById('panelDescription').value.trim(),
+          progress:    parseInt(document.getElementById('panelProgress').value) || 0,
+          target_date: document.getElementById('panelTargetDate').value || null,
+          tags:        tags,
+          notes:       document.getElementById('panelNotes').value.trim(),
+          updated_at:  new Date().toISOString()
+        };
+
+        supabase.from('strategic_nodes').update(updates).eq('id', selectedNodeId).then(function(res) {
+          if (res.error) { showToast('Error saving: ' + res.error.message, 'error'); return; }
+          var n = nodes.find(function(n) { return n.id === selectedNodeId; });
+          if (n) Object.assign(n, updates);
+          renderAll();
+          showToast('Node saved', 'success');
+        });
+      };
+
+      window.deleteSelectedNode = function() {
+        if (!selectedNodeId) return;
+        if (!confirm('Delete this node? This cannot be undone.')) return;
+        var delId = selectedNodeId;
+
+        supabase.from('strategic_nodes').delete().eq('id', delId).then(function(res) {
+          if (res.error) { showToast('Error deleting: ' + res.error.message, 'error'); return; }
+          nodes = nodes.filter(function(n) { return n.id !== delId; });
+          connections = connections.filter(function(c) {
+            var fId = c.from_node_id || c.source_id;
+            var tId = c.to_node_id   || c.target_id;
+            return fId !== delId && tId !== delId;
+          });
+          closePanel();
+          renderAll();
           showToast('Node deleted', 'success');
         });
+      };
+
+      // ── Add node modal ─────────────────────────────────────────────────
+      var addPosX = null, addPosY = null;
+
+      window.openAddModal = function(x, y) {
+        addPosX = x;
+        addPosY = y;
+        document.getElementById('addTitle').value       = '';
+        document.getElementById('addType').value        = 'idea';
+        document.getElementById('addCategory').value    = '';
+        document.getElementById('addStatus').value      = 'seed';
+        document.getElementById('addPriority').value    = 'medium';
+        document.getElementById('addTimeframe').value   = '';
+        document.getElementById('addDescription').value = '';
+        document.getElementById('addTargetDate').value  = '';
+        document.getElementById('addTags').value        = '';
+        document.getElementById('addNotes').value       = '';
+        document.getElementById('addColor').value       = '#EDE9FE';
+        document.getElementById('addNodeModal').style.display = 'flex';
+        setTimeout(function() { document.getElementById('addTitle').focus(); }, 50);
+      };
+
+      window.closeAddModal = function() {
+        document.getElementById('addNodeModal').style.display = 'none';
+      };
+
+      window.updateAddColor = function() {
+        var type = document.getElementById('addType').value;
+        var tc   = typeColors[type];
+        if (tc) document.getElementById('addColor').value = tc.bg;
+      };
+
+      window.saveNewNode = function() {
+        var title = document.getElementById('addTitle').value.trim();
+        if (!title) { showToast('Title is required', 'error'); return; }
+
+        var canvasEl = document.getElementById('strategyCanvas');
+        var cx = (addPosX !== null) ? addPosX : Math.round(canvasEl.clientWidth  / 2 - 80 + Math.random() * 60);
+        var cy = (addPosY !== null) ? addPosY : Math.round(canvasEl.clientHeight / 2 - 40 + Math.random() * 60);
+
+        var tagsRaw = document.getElementById('addTags').value.trim();
+        var tags    = tagsRaw ? tagsRaw.split(',').map(function(t) { return t.trim(); }).filter(Boolean) : [];
+
+        var data = {
+          title:       title,
+          node_type:   document.getElementById('addType').value,
+          category:    document.getElementById('addCategory').value.trim() || null,
+          status:      document.getElementById('addStatus').value,
+          priority:    document.getElementById('addPriority').value,
+          timeframe:   document.getElementById('addTimeframe').value || null,
+          description: document.getElementById('addDescription').value.trim() || null,
+          target_date: document.getElementById('addTargetDate').value || null,
+          tags:        tags,
+          notes:       document.getElementById('addNotes').value.trim() || null,
+          color:       document.getElementById('addColor').value,
+          pos_x:       cx,
+          pos_y:       cy,
+          is_archived: false,
+          created_at:  new Date().toISOString(),
+          updated_at:  new Date().toISOString()
+        };
+
+        supabase.from('strategic_nodes').insert([data]).select().then(function(res) {
+          if (res.error) { showToast('Error creating node: ' + res.error.message, 'error'); return; }
+          var newNode = (res.data && res.data[0]) ? res.data[0] : data;
+          nodes.push(newNode);
+          closeAddModal();
+          renderAll();
+          showToast('Node created', 'success');
+        });
+      };
+
+      // ── Connection modal ───────────────────────────────────────────────
+      function openConnectionModal(fromId, toId) {
+        pendingConnFrom = fromId;
+        pendingConnTo   = toId;
+        document.getElementById('connRelType').value  = 'relates_to';
+        document.getElementById('connLabel').value    = '';
+        document.getElementById('connStrength').value = '5';
+        document.getElementById('connNotes').value    = '';
+        document.getElementById('connectionModal').style.display = 'flex';
+      }
+
+      window.closeConnectionModal = function() {
+        document.getElementById('connectionModal').style.display = 'none';
+        pendingConnFrom = null;
+        pendingConnTo   = null;
+      };
+
+      window.saveNewConnection = function() {
+        if (!pendingConnFrom || !pendingConnTo) return;
+        var data = {
+          from_node_id:      pendingConnFrom,
+          to_node_id:        pendingConnTo,
+          relationship_type: document.getElementById('connRelType').value,
+          label:             document.getElementById('connLabel').value.trim() || null,
+          strength:          parseInt(document.getElementById('connStrength').value) || 5,
+          notes:             document.getElementById('connNotes').value.trim() || null,
+          created_at:        new Date().toISOString()
+        };
+
+        supabase.from('strategic_connections').insert([data]).select().then(function(res) {
+          if (res.error) { showToast('Error creating connection: ' + res.error.message, 'error'); return; }
+          var newConn = (res.data && res.data[0]) ? res.data[0] : data;
+          connections.push(newConn);
+          closeConnectionModal();
+          renderConnections();
+          showToast('Connection created', 'success');
+        });
+      };
+
+      // ── Context menu ───────────────────────────────────────────────────
+      canvas.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        var rect = canvas.getBoundingClientRect();
+        contextMenuPos.x = Math.round((e.clientX - rect.left) / zoom);
+        contextMenuPos.y = Math.round((e.clientY - rect.top)  / zoom);
+        var menu = document.getElementById('contextMenu');
+        menu.style.left    = e.clientX + 'px';
+        menu.style.top     = e.clientY + 'px';
+        menu.style.display = 'block';
       });
-  }
 
-  // ── Connection Modals ─────────────────────────────────────────────────────
-  function openConnectionCreateModal(sourceId, targetId) {
-    editingConnId = null;
-    pendingConnSource = sourceId;
-    pendingConnTarget = targetId;
-    document.getElementById('connModalTitle').textContent = 'Connect Nodes';
-    document.getElementById('connSourceLabel').value = (nodesMap[sourceId] || {}).title || sourceId;
-    document.getElementById('connTargetLabel').value = (nodesMap[targetId] || {}).title || targetId;
-    document.getElementById('connType').value = 'relates_to';
-    document.getElementById('connLabel').value = '';
-    document.getElementById('connStrength').value = 5;
-    document.getElementById('strengthDisplay').textContent = '5';
-    document.getElementById('connDeleteBtn').style.display = 'none';
-    document.getElementById('connModal').classList.remove('hidden');
-  }
-
-  function openConnectionModal(conn) {
-    editingConnId = conn.id;
-    pendingConnSource = conn.source_node_id;
-    pendingConnTarget = conn.target_node_id;
-    document.getElementById('connModalTitle').textContent = 'Edit Connection';
-    document.getElementById('connSourceLabel').value = (nodesMap[conn.source_node_id] || {}).title || conn.source_node_id;
-    document.getElementById('connTargetLabel').value = (nodesMap[conn.target_node_id] || {}).title || conn.target_node_id;
-    document.getElementById('connType').value = conn.relationship_type || 'relates_to';
-    document.getElementById('connLabel').value = conn.label || '';
-    document.getElementById('connStrength').value = conn.strength || 5;
-    document.getElementById('strengthDisplay').textContent = conn.strength || 5;
-    document.getElementById('connDeleteBtn').style.display = 'block';
-    document.getElementById('connModal').classList.remove('hidden');
-  }
-
-  document.getElementById('connModalSave').addEventListener('click', function() {
-    var data = {
-      source_node_id: pendingConnSource,
-      target_node_id: pendingConnTarget,
-      relationship_type: document.getElementById('connType').value,
-      label: document.getElementById('connLabel').value.trim() || null,
-      strength: parseInt(document.getElementById('connStrength').value) || 5
-    };
-
-    var btn = document.getElementById('connModalSave');
-    btn.disabled = true;
-
-    if (editingConnId) {
-      supabase.from('strategic_connections').update(data).eq('id', editingConnId).select().then(function(res) {
-        btn.disabled = false;
-        if (res.error) { showToast('Error saving connection', 'error'); return; }
-        var updated = res.data[0];
-        var idx = connections.findIndex(function(c){ return c.id === editingConnId; });
-        if (idx >= 0) connections[idx] = updated;
-        updateConnections();
-        document.getElementById('connModal').classList.add('hidden');
-        showToast('Connection updated', 'success');
+      document.addEventListener('click', function(e) {
+        var menu = document.getElementById('contextMenu');
+        if (menu.style.display !== 'none' && !menu.contains(e.target)) {
+          menu.style.display = 'none';
+        }
       });
-    } else {
-      data.created_at = new Date().toISOString();
-      supabase.from('strategic_connections').insert(data).select().then(function(res) {
-        btn.disabled = false;
-        if (res.error) { showToast('Error creating connection', 'error'); return; }
-        connections.push(res.data[0]);
-        updateConnections();
-        document.getElementById('connModal').classList.add('hidden');
-        showToast('Connection created', 'success');
-      });
-    }
-  });
 
-  document.getElementById('connDeleteBtn').addEventListener('click', function() {
-    if (!editingConnId) return;
-    supabase.from('strategic_connections').delete().eq('id', editingConnId).then(function(res) {
-      if (res.error) { showToast('Error deleting connection', 'error'); return; }
-      connections = connections.filter(function(c){ return c.id !== editingConnId; });
-      updateConnections();
-      document.getElementById('connModal').classList.add('hidden');
-      showToast('Connection deleted', 'success');
+      window.hideContextMenu = function() {
+        document.getElementById('contextMenu').style.display = 'none';
+      };
+
+      window.contextAddNode = function() {
+        hideContextMenu();
+        openAddModal(contextMenuPos.x, contextMenuPos.y);
+      };
+
+      window.selectAllNodes = function() {
+        hideContextMenu();
+        document.querySelectorAll('.strategy-node').forEach(function(n) { n.classList.add('selected'); });
+      };
+
+      // ── Zoom controls ──────────────────────────────────────────────────
+      document.getElementById('zoomIn').addEventListener('click', function() {
+        zoom = Math.min(2, Math.round((zoom + 0.1) * 10) / 10);
+        applyZoom();
+      });
+      document.getElementById('zoomOut').addEventListener('click', function() {
+        zoom = Math.max(0.3, Math.round((zoom - 0.1) * 10) / 10);
+        applyZoom();
+      });
+      document.getElementById('zoomFit').addEventListener('click', function() {
+        zoom = 1;
+        applyZoom();
+      });
+
+      // ── Keyboard shortcuts ─────────────────────────────────────────────
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          if (connectMode) toggleConnectMode();
+          closePanel();
+          hideContextMenu();
+          document.getElementById('addNodeModal').style.display    = 'none';
+          document.getElementById('connectionModal').style.display = 'none';
+        }
+        if ((e.key === 'Delete' || e.key === 'Backspace') &&
+            selectedNodeId &&
+            document.activeElement.tagName !== 'INPUT' &&
+            document.activeElement.tagName !== 'TEXTAREA') {
+          deleteSelectedNode();
+        }
+      });
+
+      // ── Utility ────────────────────────────────────────────────────────
+      function escHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      // ── Init ───────────────────────────────────────────────────────────
+      loadData();
     });
-  });
-
-  document.getElementById('connModalCancel').addEventListener('click', function() {
-    document.getElementById('connModal').classList.add('hidden');
-  });
-
-  // Close modals on overlay click
-  document.getElementById('nodeModal').addEventListener('click', function(e) {
-    if (e.target === this) this.classList.add('hidden');
-  });
-  document.getElementById('connModal').addEventListener('click', function(e) {
-    if (e.target === this) this.classList.add('hidden');
-  });
-
-  // ── Side Panel ────────────────────────────────────────────────────────────
-  function openPanel(nodeId) {
-    var n = nodesMap[nodeId];
-    if (!n) return;
-    var panel = document.getElementById('strategyPanel');
-    var color = n.color || typeColors[n.node_type] || '#EDE9FE';
-    var stroke = typeStroke[n.node_type] || '#8B5CF6';
-    var progress = parseInt(n.progress) || 0;
-
-    var connectedHTML = '';
-    var related = connections.filter(function(c){ return c.source_node_id === nodeId || c.target_node_id === nodeId; });
-    if (related.length) {
-      connectedHTML = '<div class="strategy-panel-section"><div class="strategy-panel-label">Connections (' + related.length + ')</div>';
-      related.forEach(function(c) {
-        var otherId = c.source_node_id === nodeId ? c.target_node_id : c.source_node_id;
-        var dir = c.source_node_id === nodeId ? '→' : '←';
-        var other = nodesMap[otherId];
-        var otherTitle = other ? other.title : 'Unknown';
-        connectedHTML += '<div class="strategy-panel-conn">' + dir + ' <strong>' + escHtml(otherTitle) + '</strong> <span style="opacity:0.6">(' + (c.relationship_type || '') + ')</span></div>';
-      });
-      connectedHTML += '</div>';
-    }
-
-    var tagsHTML = '';
-    if (n.tags && n.tags.length) {
-      tagsHTML = '<div class="strategy-panel-section"><div class="strategy-panel-label">Tags</div>';
-      (Array.isArray(n.tags) ? n.tags : [n.tags]).forEach(function(tag) {
-        tagsHTML += '<span class="strategy-panel-tag">' + escHtml(tag) + '</span>';
-      });
-      tagsHTML += '</div>';
-    }
-
-    document.getElementById('panelContent').innerHTML =
-      '<span class="strategy-panel-badge" style="background:' + color + ';border:1px solid ' + stroke + ';color:' + stroke + ';">' +
-        (typeIcons[n.node_type] || '') + ' ' + (n.node_type || 'idea') +
-      '</span>' +
-      '<div class="strategy-panel-title">' + escHtml(n.title || 'Untitled') + '</div>' +
-      (n.description ? '<div class="strategy-panel-section"><div class="strategy-panel-desc">' + escHtml(n.description) + '</div></div>' : '') +
-      '<div class="strategy-panel-section" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
-        '<div><div class="strategy-panel-label">Status</div><div class="strategy-panel-value">' + (n.status || '—') + '</div></div>' +
-        '<div><div class="strategy-panel-label">Priority</div><div class="strategy-panel-value">' + (n.priority || '—') + '</div></div>' +
-        '<div><div class="strategy-panel-label">Timeframe</div><div class="strategy-panel-value">' + ((n.timeframe || '').replace(/_/g,' ') || '—') + '</div></div>' +
-        '<div><div class="strategy-panel-label">Category</div><div class="strategy-panel-value">' + ((n.category || '').replace(/_/g,' ') || '—') + '</div></div>' +
-      '</div>' +
-      (n.target_date ? '<div class="strategy-panel-section"><div class="strategy-panel-label">Target Date</div><div class="strategy-panel-value">' + n.target_date + '</div></div>' : '') +
-      (progress > 0 ?
-        '<div class="strategy-panel-section"><div class="strategy-panel-label">Progress — ' + progress + '%</div>' +
-        '<div class="strategy-panel-progress"><div class="strategy-panel-progress-fill" style="width:' + progress + '%;background:' + stroke + ';"></div></div></div>'
-        : '') +
-      tagsHTML +
-      (n.notes ? '<div class="strategy-panel-section"><div class="strategy-panel-label">Notes</div><div class="strategy-panel-desc">' + escHtml(n.notes) + '</div></div>' : '') +
-      connectedHTML +
-      '<button class="strategy-panel-edit-btn" id="panelEditBtn">✏️ Edit Node</button>';
-
-    document.getElementById('panelEditBtn').addEventListener('click', function() {
-      panel.classList.remove('open');
-      openNodeModal(nodeId);
-    });
-
-    panel.classList.add('open');
-  }
-
-  document.getElementById('panelClose').addEventListener('click', function() {
-    document.getElementById('strategyPanel').classList.remove('open');
-  });
-
-  // ── Context Menu ──────────────────────────────────────────────────────────
-  var ctxMenu = document.getElementById('contextMenu');
-
-  document.getElementById('canvasWrap').addEventListener('contextmenu', function(e) {
-    if (e.target.classList.contains('strategy-node') || e.target.closest('.strategy-node')) return;
-    e.preventDefault();
-    var wrapRect = e.currentTarget.getBoundingClientRect();
-    contextX = e.clientX - wrapRect.left;
-    contextY = e.clientY - wrapRect.top;
-    ctxMenu.style.left = contextX + 'px';
-    ctxMenu.style.top = contextY + 'px';
-    ctxMenu.style.display = 'block';
-  });
-
-  document.getElementById('contextAddNode').addEventListener('click', function() {
-    ctxMenu.style.display = 'none';
-    openNodeModal(null, contextX, contextY);
-  });
-
-  document.addEventListener('click', function(e) {
-    if (!ctxMenu.contains(e.target)) ctxMenu.style.display = 'none';
-  });
-
-  // ── Filters ───────────────────────────────────────────────────────────────
-  document.getElementById('filterType').addEventListener('change', renderNodes);
-  document.getElementById('filterTimeframe').addEventListener('change', renderNodes);
-
-  // ── Helpers ───────────────────────────────────────────────────────────────
-  function escHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  // ── Init ──────────────────────────────────────────────────────────────────
-  loadData();
-});
-</script>
+  </script>
 </body>
 </html>
