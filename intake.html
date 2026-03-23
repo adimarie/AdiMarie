@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Client intake form for The Animist Apothecary. Begin your journey with Adi Marie by sharing what brings you to this work.">
+  <title>Client Intake — The Animist Apothecary</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* ── Intake-specific styles ── */
+    .intake-hero {
+      background: linear-gradient(rgba(45,42,38,0.65), rgba(45,42,38,0.55)), url('images/hero-intake.jpg') center/cover no-repeat;
+      min-height: 340px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 24px 60px;
+    }
+    .intake-hero .section-label { color: rgba(255,255,255,0.7); letter-spacing: 0.18em; text-transform: uppercase; font-size: 0.85rem; margin-bottom: 12px; }
+    .intake-hero h1 { font-family: 'Cormorant Garamond', serif; color: #fff; font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 300; margin-bottom: 12px; }
+    .intake-hero .hero-sub { font-family: 'Cormorant Garamond', serif; color: rgba(255,255,255,0.85); font-style: italic; font-size: 1.15rem; }
+
+    .intake-container { max-width: 720px; margin: 0 auto; padding: 60px 24px 80px; }
+
+    /* Progress steps */
+    .progress-bar { display: flex; justify-content: center; gap: 6px; margin-bottom: 48px; flex-wrap: wrap; }
+    .progress-step { display: flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; transition: color 0.3s; }
+    .progress-step.active { color: var(--sage, #5B7553); font-weight: 600; }
+    .progress-step.completed { color: var(--gold, #9e8b6e); }
+    .progress-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid #ccc; transition: all 0.3s; }
+    .progress-step.active .progress-dot { border-color: var(--sage, #5B7553); background: var(--sage, #5B7553); }
+    .progress-step.completed .progress-dot { border-color: var(--gold, #9e8b6e); background: var(--gold, #9e8b6e); }
+    .progress-divider { width: 24px; height: 1px; background: #ddd; align-self: center; }
+
+    /* Form sections */
+    .form-step { display: none; animation: fadeUp 0.5s ease; }
+    .form-step.active { display: block; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+    .step-intro { margin-bottom: 36px; }
+    .step-intro h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 400; color: var(--earth, #2D2A26); margin-bottom: 12px; }
+    .step-intro p { font-family: 'Inter', sans-serif; font-size: 0.95rem; color: #666; line-height: 1.7; }
+
+    .form-group { margin-bottom: 28px; }
+    .form-group label { display: block; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--earth, #2D2A26); margin-bottom: 8px; }
+    .form-group label .required { color: var(--sage, #5B7553); margin-left: 2px; }
+    .form-group .helper { font-size: 0.82rem; color: #888; margin-bottom: 8px; font-style: italic; }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="tel"],
+    .form-group input[type="date"],
+    .form-group select,
+    .form-group textarea {
+      width: 100%; padding: 12px 16px; border: 1px solid #ddd; border-radius: 4px;
+      font-family: 'Inter', sans-serif; font-size: 0.95rem; color: var(--earth, #2D2A26);
+      background: #fff; transition: border-color 0.3s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none; border-color: var(--sage, #5B7553); box-shadow: 0 0 0 3px rgba(91,117,83,0.1);
+    }
+    .form-group textarea { min-height: 120px; resize: vertical; line-height: 1.6; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+    /* Checkboxes */
+    .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; padding: 16px 20px; background: #fff; border-radius: 6px; border: 1px solid #e8e5df; }
+    .checkbox-group input[type="checkbox"] { margin-top: 4px; accent-color: var(--sage, #5B7553); width: 18px; height: 18px; flex-shrink: 0; }
+    .checkbox-group label { font-size: 0.9rem; text-transform: none; letter-spacing: 0; font-weight: 400; color: #555; line-height: 1.6; }
+
+    /* Navigation buttons */
+    .form-nav { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 28px; border-top: 1px solid #e8e5df; }
+    .btn-prev, .btn-next, .btn-submit {
+      font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase; padding: 14px 32px;
+      border-radius: 4px; cursor: pointer; transition: all 0.3s; border: none;
+    }
+    .btn-prev { background: transparent; border: 1px solid #ccc; color: #888; }
+    .btn-prev:hover { border-color: var(--earth, #2D2A26); color: var(--earth, #2D2A26); }
+    .btn-next { background: var(--sage, #5B7553); color: #fff; margin-left: auto; }
+    .btn-next:hover { background: #4a6344; }
+    .btn-submit { background: var(--gold, #9e8b6e); color: #fff; margin-left: auto; }
+    .btn-submit:hover { background: #8a7a60; }
+    .btn-prev:disabled, .btn-next:disabled, .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Success state */
+    .intake-success { text-align: center; padding: 80px 24px; display: none; }
+    .intake-success.visible { display: block; }
+    .intake-success h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 300; color: var(--earth, #2D2A26); margin-bottom: 16px; }
+    .intake-success p { color: #666; line-height: 1.7; max-width: 520px; margin: 0 auto 20px; }
+    .intake-success .cta-link { display: inline-block; margin-top: 20px; padding: 14px 36px; background: var(--sage, #5B7553); color: #fff; text-decoration: none; border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+
+    /* Error state */
+    .field-error { border-color: #c0392b !important; }
+    .error-msg { color: #c0392b; font-size: 0.8rem; margin-top: 4px; }
+
+    /* Privacy note */
+    .privacy-note { margin-top: 48px; padding: 24px; background: rgba(91,117,83,0.06); border-radius: 6px; border-left: 3px solid var(--sage, #5B7553); }
+    .privacy-note p { font-size: 0.85rem; color: #777; line-height: 1.6; margin: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">The Animist <em class="logo-accent">Apothecary</em></a>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li class="nav-dropdown-parent">
+            <a href="#">Offerings <span class="nav-arrow">▾</span></a>
+            <div class="nav-dropdown">
+              <div class="nav-dropdown-inner">
+                <div class="nav-drop-col">
+                  <span class="nav-drop-label">Cornerstone</span>
+                  <a href="mythopoetic.html" class="nav-drop-featured">Mythopoetic Living<span>Developmental Arcs · 3–24 months</span></a>
+                </div>
+                <div class="nav-drop-col">
+                  <span class="nav-drop-label">Solo Offerings</span>
+                  <a href="shamanic-bodywork.html">Shamanic Bodywork</a>
+                  <a href="personal-immersions.html">Personal Immersions</a>
+                  <a href="platicas.html">Plát icas — Guidance &amp; Counsel</a>
+                  <a href="divinations.html">Ancestral &amp; Elemental Divinations</a>
+                </div>
+                <div class="nav-drop-col">
+                  <span class="nav-drop-label">Collective</span>
+                  <a href="ceremonial-groups.html">Ceremonial &amp; Ritual Groups</a>
+                  <a href="community.html">Community Hubs</a>
+                  <a href="community.html#training">Ceremonialist Training</a>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li><a href="community.html">Community</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="sacred-reciprocity.html">Sacred Reciprocity</a></li>
+          <li><a href="book.html" class="nav-cta">Begin Here</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── HERO ── -->
+  <section class="intake-hero">
+    <div>
+      <p class="section-label">Onboarding</p>
+      <h1>Client Intake</h1>
+      <p class="hero-sub">A gentle beginning — tell me what brings you here.</p>
+    </div>
+  </section>
+
+  <!-- ── MAIN FORM ── -->
+  <div class="intake-container">
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar">
+      <div class="progress-step active" data-step="0"><span class="progress-dot"></span> Consent</div>
+      <div class="progress-divider"></div>
+      <div class="progress-step" data-step="1"><span class="progress-dot"></span> Practicals</div>
+      <div class="progress-divider"></div>
+      <div class="progress-step" data-step="2"><span class="progress-dot"></span> Safety</div>
+      <div class="progress-divider"></div>
+      <div class="progress-step" data-step="3"><span class="progress-dot"></span> Body</div>
+      <div class="progress-divider"></div>
+      <div class="progress-step" data-step="4"><span class="progress-dot"></span> Mind</div>
+      <div class="progress-divider"></div>
+      <div class="progress-step" data-step="5"><span class="progress-dot"></span> Spirit</div>
+    </div>
+
+    <form id="intakeForm" novalidate>
+
+      <!-- ══════ STEP 0: Consent ══════ -->
+      <div class="form-step active" data-step="0">
+        <div class="step-intro">
+          <h2>Agreements &amp; Consent</h2>
+          <p>Thank you for taking the time to step toward this work, and for your willingness to enter into something both delicate and potent. The questions that follow are an invitation to pause, to breathe, and to reflect on the many layers of your life — body, heart, mind, spirit, and the web you live within.</p>
+          <p style="margin-top:12px;">There are no "perfect" answers here; only what feels true for you in this moment, in whatever language comes most naturally.</p>
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="consent_informed" name="consent_informed" required>
+          <label for="consent_informed">I understand that this work may involve significant physical, emotional, and spiritual processes, and I give my informed, voluntary consent. I understand this does not replace medical or psychological evaluation, and I am encouraged to consult licensed professionals about any concerns.</label>
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="consent_confidential" name="consent_confidential" required>
+          <label for="consent_confidential">I understand that all responses are confidential and will be held with care. My information will be used solely to support the safety, depth, and integrity of our work together.</label>
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="consent_honest" name="consent_honest" required>
+          <label for="consent_honest">I commit to answering as honestly and fully as feels right for me, understanding that my responses help shape a container that honours my safety, dignity, and depth.</label>
+        </div>
+
+        <div class="form-nav">
+          <div></div>
+          <button type="button" class="btn-next" onclick="nextStep()">Continue</button>
+        </div>
+      </div>
+
+      <!-- ══════ STEP 1: Practicals ══════ -->
+      <div class="form-step" data-step="1">
+        <div class="step-intro">
+          <h2>Practicals</h2>
+          <p>The basics — how to reach you, and a little context about where you are in your life right now.</p>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name <span class="required">*</span></label>
+            <input type="text" name="full_name" required placeholder="Your full name">
+          </div>
+          <div class="form-group">
+            <label>Email <span class="required">*</span></label>
+            <input type="email" name="email" required placeholder="your@email.com">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" name="phone" placeholder="(555) 123-4567">
+          </div>
+          <div class="form-group">
+            <label>Pronouns</label>
+            <input type="text" name="pronouns" placeholder="e.g. she/her, they/them">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date of Birth</label>
+            <input type="date" name="birth_date">
+          </div>
+          <div class="form-group">
+            <label>Location</label>
+            <input type="text" name="location" placeholder="City, State / Country">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Timezone</label>
+            <select name="timezone">
+              <option value="">Select timezone</option>
+              <option value="America/Los_Angeles">Pacific (Los Angeles)</option>
+              <option value="America/Denver">Mountain (Denver)</option>
+              <option value="America/Chicago">Central (Chicago)</option>
+              <option value="America/New_York">Eastern (New York)</option>
+              <option value="America/Anchorage">Alaska</option>
+              <option value="Pacific/Honolulu">Hawaii</option>
+              <option value="Europe/London">UK / GMT</option>
+              <option value="Europe/Berlin">Central Europe</option>
+              <option value="Asia/Tokyo">Japan</option>
+              <option value="Australia/Sydney">Australia Eastern</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>How did you find me?</label>
+            <select name="source">
+              <option value="">Select one</option>
+              <option value="referral">Personal Referral</option>
+              <option value="social_media">Social Media</option>
+              <option value="web_search">Web Search</option>
+              <option value="event">Event or Workshop</option>
+              <option value="community">Community Connection</option>
+              <option value="returning">Returning Client</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>If referred, by whom?</label>
+          <input type="text" name="referral_source" placeholder="Name of the person or organization">
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn-prev" onclick="prevStep()">Back</button>
+          <button type="button" class="btn-next" onclick="nextStep()">Continue</button>
+        </div>
+      </div>
+
+      <!-- ══════ STEP 2: Safety ══════ -->
+      <div class="form-step" data-step="2">
+        <div class="step-intro">
+          <h2>Emergency &amp; Safety</h2>
+          <p>This information helps me hold your care with the fullness it deserves. It stays confidential and is only referenced if needed for your safety.</p>
+        </div>
+
+        <div class="form-group">
+          <label>Emergency Contact</label>
+          <p class="helper">Name and phone number of someone I can reach in case of emergency.</p>
+          <input type="text" name="emergency_contact" placeholder="Name — (555) 123-4567">
+        </div>
+
+        <div class="form-group">
+          <label>Known Allergies</label>
+          <p class="helper">Include plant, food, environmental, and medication allergies.</p>
+          <textarea name="allergies" rows="3" placeholder="List any known allergies..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Current Medications or Supplements</label>
+          <textarea name="medications" rows="3" placeholder="Include prescription medications, supplements, herbs, or any substances you use regularly..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Medical Conditions</label>
+          <p class="helper">Anything current or historical that would be important for me to know — surgeries, diagnoses, chronic conditions.</p>
+          <textarea name="medical_conditions" rows="3" placeholder="Share what feels relevant..."></textarea>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn-prev" onclick="prevStep()">Back</button>
+          <button type="button" class="btn-next" onclick="nextStep()">Continue</button>
+        </div>
+      </div>
+
+      <!-- ══════ STEP 3: Body ══════ -->
+      <div class="form-step" data-step="3">
+        <div class="step-intro">
+          <h2>Body &amp; Physical Health</h2>
+          <p>Your body carries the story of your life. This section helps me understand where you are physically — not to diagnose, but to listen.</p>
+        </div>
+
+        <div class="form-group">
+          <label>Current Physical State</label>
+          <p class="helper">How does your body feel day to day? Any areas of tension, chronic pain, fatigue, or vitality?</p>
+          <textarea name="physical_state" rows="4" placeholder="Describe your current relationship with your body..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Injuries or Surgeries</label>
+          <textarea name="injuries" rows="3" placeholder="Any past or present injuries, surgeries, or structural concerns..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Areas of the Body You Would Like Attention</label>
+          <textarea name="body_focus_areas" rows="3" placeholder="Particular areas that hold tension, pain, numbness, or that you feel disconnected from..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Physical Sensitivities</label>
+          <p class="helper">Touch sensitivities, temperature preferences, claustrophobia, scent sensitivities, etc.</p>
+          <textarea name="physical_sensitivities" rows="3" placeholder="Anything I should be mindful of in physical space..."></textarea>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn-prev" onclick="prevStep()">Back</button>
+          <button type="button" class="btn-next" onclick="nextStep()">Continue</button>
+        </div>
+      </div>
+
+      <!-- ══════ STEP 4: Mind ══════ -->
+      <div class="form-step" data-step="4">
+        <div class="step-intro">
+          <h2>Mind &amp; Emotional Landscape</h2>
+          <p>This section is about your inner weather — the emotional and psychological terrain you are navigating right now. There is no wrong answer. Speak as gently or directly as you need.</p>
+        </div>
+
+        <div class="form-group">
+          <label>Current Emotional Landscape</label>
+          <p class="helper">What is alive in you emotionally right now? What are you carrying?</p>
+          <textarea name="emotional_landscape" rows="4" placeholder="Share what feels present for you..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Mental Health History</label>
+          <p class="helper">Any diagnoses, therapeutic relationships, hospitalizations, or significant mental health experiences — past or present.</p>
+          <textarea name="mental_health_history" rows="4" placeholder="Share what feels relevant and safe to share..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Triggers &amp; Sensitivities</label>
+          <p class="helper">Anything I should be aware of that could be activating — sounds, topics, touch, imagery, etc.</p>
+          <textarea name="triggers" rows="3" placeholder="Help me understand what I should approach with extra care..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Current Support Systems</label>
+          <p class="helper">Therapist, community, spiritual director, support group, trusted friends — who holds you?</p>
+          <textarea name="support_systems" rows="3" placeholder="Who or what supports you right now..."></textarea>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn-prev" onclick="prevStep()">Back</button>
+          <button type="button" class="btn-next" onclick="nextStep()">Continue</button>
+        </div>
+      </div>
+
+      <!-- ══════ STEP 5: Spirit ══════ -->
+      <div class="form-step" data-step="5">
+        <div class="step-intro">
+          <h2>Spirit &amp; Intention</h2>
+          <p>This is the heart of why you are here. Speak freely — in poetry, in fragments, in full sentences. Whatever comes.</p>
+        </div>
+
+        <div class="form-group">
+          <label>Spiritual Background</label>
+          <p class="helper">What traditions, practices, or spiritual landscapes have shaped you? What is your relationship to spirit, nature, or the sacred?</p>
+          <textarea name="spiritual_background" rows="4" placeholder="Share your path, however winding..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Previous Experience</label>
+          <p class="helper">Any experience with bodywork, shamanic or ceremonial work, somatic therapy, plant medicine, meditation, or other healing modalities?</p>
+          <textarea name="previous_experience" rows="4" placeholder="Describe any past experiences with healing work..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Intention for This Work</label>
+          <p class="helper">What brings you here? What are you hoping to explore, heal, remember, or release?</p>
+          <textarea name="intention" rows="4" placeholder="What is calling you to this work..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Anything Else</label>
+          <p class="helper">Anything I haven't asked that you want me to know — about you, your life, your hopes, your fears, or your needs.</p>
+          <textarea name="anything_else" rows="4" placeholder="Speak freely..."></textarea>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="btn-prev" onclick="prevStep()">Back</button>
+          <button type="submit" class="btn-submit" id="submitBtn">Submit Intake</button>
+        </div>
+      </div>
+
+    </form>
+
+    <!-- Success Message -->
+    <div class="intake-success" id="successMessage">
+      <h2>Thank you for sharing yourself so fully.</h2>
+      <p>Your intake has been received. I will review everything you've shared with the care and attention it deserves. You'll hear from me soon to discuss next steps and schedule our first session together.</p>
+      <p>In the meantime, take a breath. The hardest part — the stepping forward — is already done.</p>
+      <a href="book.html" class="cta-link">Book an Introductory Call</a>
+    </div>
+
+    <!-- Privacy Note -->
+    <div class="privacy-note" id="privacyNote">
+      <p><strong>A note on privacy:</strong> Everything you share here is held in strict confidence. Your responses are stored securely and are only accessible to Adi Marie. This information is never shared with third parties and is used solely to support the safety, depth, and integrity of our work together.</p>
+    </div>
+
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">The Animist <em class="logo-accent">Apothecary</em></a>
+        <p class="footer-tagline">Shamanic healing, somatic ceremony, and botanical medicine.<br>Based in Topanga Canyon, Los Angeles, California. Available worldwide.</p>
+      </div>
+      <nav class="footer-nav">
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#offerings">Offerings</a></li>
+            <li><a href="community.html">Community</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="sacred-reciprocity.html">Sacred Reciprocity</a></li>
+            <li><a href="book.html">Begin Here</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Offerings</h4>
+          <ul>
+            <li><a href="mythopoetic.html">Developmental Arcs</a></li>
+            <li><a href="shamanic-bodywork.html">Shamanic Bodywork</a></li>
+            <li><a href="personal-immersions.html">Personal Immersions</a></li>
+            <li><a href="ceremonial-groups.html">Ceremonial Groups</a></li>
+            <li><a href="platicas.html">Plát icas</a></li>
+            <li><a href="divinations.html">Divinations</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Collective</h4>
+          <ul>
+            <li><a href="community.html">Community Hubs</a></li>
+            <li><a href="community.html#training">Ceremonialist Training</a></li>
+            <li><a href="community.html">Events &amp; Gatherings</a></li>
+            <li><a href="community.html">Newsletter</a></li>
+            <li><a href="book.html">Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 The Animist Apothecary. All rights reserved.</p>
+      <p class="footer-credit">Adi Marie · Topanga Canyon, Los Angeles, California</p>
+    </div>
+  </footer>
+
+  <!-- ── SUPABASE + FORM LOGIC ── -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://wdecjlrfulsdklqeetqb.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkZWNqbHJmdWxzZGtscWVldHFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMwODQwMTQsImV4cCI6MjA4ODY2MDAxNH0.mIBgkpU24IgxnzS8kR06FOL6_1Z9NmaEDe9z36CxtHs';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentStep = 0;
+    const totalSteps = 6;
+
+    function updateProgress() {
+      document.querySelectorAll('.progress-step').forEach((el, i) => {
+        el.classList.remove('active', 'completed');
+        if (i === currentStep) el.classList.add('active');
+        else if (i < currentStep) el.classList.add('completed');
+      });
+    }
+
+    function showStep(step) {
+      document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
+      const target = document.querySelector(`.form-step[data-step="${step}"]`);
+      if (target) target.classList.add('active');
+      currentStep = step;
+      updateProgress();
+      window.scrollTo({ top: document.querySelector('.intake-container').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    function validateCurrentStep() {
+      const step = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+      // Clear previous errors
+      step.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+      step.querySelectorAll('.error-msg').forEach(el => el.remove());
+
+      let valid = true;
+
+      // Check required fields
+      if (currentStep === 0) {
+        const checkboxes = step.querySelectorAll('input[type="checkbox"][required]');
+        checkboxes.forEach(cb => {
+          if (!cb.checked) {
+            valid = false;
+            cb.closest('.checkbox-group').style.borderColor = '#c0392b';
+          } else {
+            cb.closest('.checkbox-group').style.borderColor = '#e8e5df';
+          }
+        });
+      }
+
+      if (currentStep === 1) {
+        const name = step.querySelector('input[name="full_name"]');
+        const email = step.querySelector('input[name="email"]');
+        if (!name.value.trim()) { name.classList.add('field-error'); valid = false; }
+        if (!email.value.trim() || !email.value.includes('@')) { email.classList.add('field-error'); valid = false; }
+      }
+
+      return valid;
+    }
+
+    function nextStep() {
+      if (!validateCurrentStep()) return;
+      if (currentStep < totalSteps - 1) showStep(currentStep + 1);
+    }
+
+    function prevStep() {
+      if (currentStep > 0) showStep(currentStep - 1);
+    }
+
+    // Form submission
+    document.getElementById('intakeForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      if (!validateCurrentStep()) return;
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      const form = new FormData(this);
+
+      // Build client data
+      const clientData = {
+        full_name: form.get('full_name'),
+        email: form.get('email'),
+        phone: form.get('phone') || null,
+        pronouns: form.get('pronouns') || null,
+        birth_date: form.get('birth_date') || null,
+        location: form.get('location') || null,
+        timezone: form.get('timezone') || null,
+        source: form.get('source') || null,
+        referral_source: form.get('referral_source') || null,
+        emergency_contact: form.get('emergency_contact') || null,
+        pipeline_stage: 'intake'
+      };
+
+      // Build intake responses (JSONB)
+      const responses = {
+        consent: {
+          informed_consent: form.get('consent_informed') === 'on',
+          confidentiality: form.get('consent_confidential') === 'on',
+          honesty_commitment: form.get('consent_honest') === 'on'
+        },
+        safety: {
+          allergies: form.get('allergies') || '',
+          medications: form.get('medications') || '',
+          medical_conditions: form.get('medical_conditions') || ''
+        },
+        body: {
+          physical_state: form.get('physical_state') || '',
+          injuries: form.get('injuries') || '',
+          body_focus_areas: form.get('body_focus_areas') || '',
+          physical_sensitivities: form.get('physical_sensitivities') || ''
+        },
+        mind: {
+          emotional_landscape: form.get('emotional_landscape') || '',
+          mental_health_history: form.get('mental_health_history') || '',
+          triggers: form.get('triggers') || '',
+          support_systems: form.get('support_systems') || ''
+        },
+        spirit: {
+          spiritual_background: form.get('spiritual_background') || '',
+          previous_experience: form.get('previous_experience') || '',
+          intention: form.get('intention') || '',
+          anything_else: form.get('anything_else') || ''
+        }
+      };
+
+      try {
+        // 1. Create client record
+        const { data: client, error: clientError } = await supabase
+          .from('clients')
+          .insert(clientData)
+          .select('id')
+          .single();
+
+        if (clientError) throw clientError;
+
+        // 2. Create intake form record linked to client
+        const { error: intakeError } = await supabase
+          .from('intake_forms')
+          .insert({
+            client_id: client.id,
+            form_type: 'initial_intake',
+            responses: responses,
+            submitted_at: new Date().toISOString()
+          });
+
+        if (intakeError) throw intakeError;
+
+        // Success
+        document.getElementById('intakeForm').style.display = 'none';
+        document.querySelector('.progress-bar').style.display = 'none';
+        document.getElementById('privacyNote').style.display = 'none';
+        document.getElementById('successMessage').classList.add('visible');
+
+      } catch (err) {
+        console.error('Intake submission error:', err);
+        btn.disabled = false;
+        btn.textContent = 'Submit Intake';
+        alert('Something went wrong submitting your intake. Please try again, or reach out directly if the issue persists.');
+      }
+    });
+  </script>
+  <script src="js/main.js"></script>
+</body>
+</html>
