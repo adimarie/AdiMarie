@@ -1,9 +1,9 @@
 {
-  "version": "v260323.06 10:22pm",
-  "release": 6,
-  "sha": "53d47e7",
-  "fullSha": "53d47e7cd2f2ec23024ac087ec2007d75b45c05d",
+  "version": "v260323.07 10:26pm",
+  "release": 7,
+  "sha": "cf316ec",
+  "fullSha": "cf316ece4c32882eebcf638110876e9e9c403e06",
   "actor": "adimarie",
-  "pushedAt": "2026-03-23T03:22:24Z",
-  "commits": [{"sha": "53d47e7", "message": "Fix: rename supabase client var to sb in intake.html to avoid redeclaration error", "author": "Adi"}]
+  "pushedAt": "2026-03-23T03:26:09Z",
+  "commits": [{"sha": "cf316ec", "message": "Fix supabase client init to use window.supabase in intake.html and admin.html", "author": "Adi"}]
 }
