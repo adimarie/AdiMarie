@@ -1,9 +1,9 @@
 {
-  "version": "v260323.03 9:52pm",
-  "release": 3,
-  "sha": "b1dc060",
-  "fullSha": "b1dc060c5ff3db0470cb70650a7a69828c93e889",
+  "version": "v260323.04 10:02pm",
+  "release": 4,
+  "sha": "bfe4180",
+  "fullSha": "bfe4180ea59cae670827ad2cb8143d67a9db6f2e",
   "actor": "adimarie",
-  "pushedAt": "2026-03-23T02:52:29Z",
-  "commits": [{"sha": "b1dc060", "message": "Add client intake form with 6-step multi-page flow and Supabase submission", "author": "Adi"}]
+  "pushedAt": "2026-03-23T03:02:28Z",
+  "commits": [{"sha": "bfe4180", "message": "Add standalone admin console with auth, clients, intake, and session notes", "author": "Adi"}]
 }
