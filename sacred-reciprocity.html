@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sacred Reciprocity · The Animist Apothecary</title>
+  <meta name="description" content="My sliding scale exists to honor diverse economic realities, disrupt patterns of exclusion, and offer multiple access points to healing. Sacred reciprocity in action.">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* ===== Sacred Reciprocity — Page-Specific Styles ===== */
+
+    .reciprocity-intro {
+      padding: 7rem 3rem;
+      background: var(--cream);
+    }
+    .reciprocity-intro-inner {
+      max-width: 820px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .reciprocity-intro-inner p {
+      color: var(--earth-light);
+      font-size: 0.95rem;
+      line-height: 1.85;
+      margin-bottom: 1.2rem;
+    }
+    .reciprocity-values {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .reciprocity-value {
+      text-align: center;
+      max-width: 240px;
+    }
+    .reciprocity-value-icon {
+      font-size: 1.4rem;
+      color: rgba(158,139,110,0.45);
+      display: block;
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.3em;
+    }
+    .reciprocity-value h4 {
+      font-size: 1.15rem;
+      color: var(--earth);
+      margin-bottom: 0.5rem;
+    }
+    .reciprocity-value p {
+      font-size: 0.85rem !important;
+      color: var(--earth-faint) !important;
+      line-height: 1.75 !important;
+    }
+
+    /* Tiers Section */
+    .section-tiers {
+      padding: 7rem 3rem;
+      background: var(--cream-dark);
+    }
+    .tiers-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .tiers-header {
+      text-align: center;
+      max-width: 650px;
+      margin: 0 auto 4rem;
+    }
+    .tiers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .tier-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 2.8rem 2.2rem;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border);
+      transition: all 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+      display: flex;
+      flex-direction: column;
+    }
+    .tier-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-mid);
+    }
+    .tier-card.tier-featured {
+      border-color: var(--sage);
+      border-width: 2px;
+    }
+    .tier-eyebrow {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      margin-bottom: 0.8rem;
+    }
+    .tier-card h3 {
+      font-size: 1.65rem;
+      color: var(--earth);
+      margin-bottom: 0.4rem;
+    }
+    .tier-card h3 em {
+      color: var(--sage);
+    }
+    .tier-subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--sage);
+      margin-bottom: 1.5rem;
+    }
+    .tier-divider {
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      margin-bottom: 1.5rem;
+    }
+    .tier-description {
+      font-size: 0.9rem;
+      color: var(--earth-light);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+    .tier-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      margin-bottom: 0.8rem;
+    }
+    .tier-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+    .tier-list li {
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+      font-size: 0.88rem;
+      color: var(--earth-light);
+      line-height: 1.7;
+    }
+    .tier-list li span {
+      color: var(--gold);
+      flex-shrink: 0;
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+    .tier-note {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--sage);
+      margin-top: auto;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--border);
+      line-height: 1.65;
+    }
+
+    /* Spirit Section */
+    .section-spirit {
+      position: relative;
+      padding: 8rem 3rem;
+      background: linear-gradient(rgba(18,24,14,0.88), rgba(18,24,14,0.93)),
+                  url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1400&h=700&fit=crop&q=80') center/cover no-repeat;
+      text-align: center;
+    }
+    .spirit-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .spirit-inner h2 {
+      font-size: 2.8rem;
+      color: #fff;
+      margin-bottom: 1rem;
+      line-height: 1.15;
+    }
+    .spirit-inner h2 em {
+      color: var(--sage-pale);
+    }
+    .spirit-divider {
+      width: 50px;
+      height: 1px;
+      background: rgba(158,139,110,0.4);
+      margin: 1.5rem auto 2rem;
+    }
+    .spirit-body {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      color: rgba(255,255,255,0.72);
+      font-style: italic;
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+    }
+    .spirit-body strong {
+      color: #fff;
+      font-weight: 500;
+    }
+    .spirit-questions {
+      margin-top: 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+    .spirit-question {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.65;
+    }
+    .spirit-closing {
+      margin-top: 3rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      color: var(--sage-pale);
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .tiers-grid {
+        grid-template-columns: 1fr;
+      }
+      .reciprocity-values {
+        flex-direction: column;
+        align-items: center;
+      }
+      .reciprocity-intro,
+      .section-tiers,
+      .section-spirit {
+        padding: 5rem 1.5rem;
+      }
+      .spirit-inner h2 {
+        font-size: 2.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════ HEADER ═══════ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">The Animist <em class="logo-accent">Apothecary</em></a>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li class="nav-dropdown-parent">
+            <a href="#">Offerings <span class="nav-arrow">▾</span></a>
+            <div class="nav-dropdown">
+              <div class="nav-dropdown-inner">
+                <div class="nav-drop-col">
+                  <span class="nav-drop-label">Cornerstone</span>
+                  <a href="mythopoetic.html" class="nav-drop-featured">Mythopoetic Living<span>Developmental Arcs · 3–24 months</span></a>
+                </div>
+                <div class="nav-drop-col">
+                  <span class="nav-drop-label">Solo Offerings</span>
+                  <a href="shamanic-bodywork.html">Shamanic Bodywork</a>
+                  <a href="personal-immersions.html">Personal Immersions</a>
+                  <a href="platicas.html">Plát icas — Guidance &amp; Counsel</a>
+                  <a href="divinations.html">Ancestral &amp; Elemental Divinations</a>
+                </div>
+                <div class="nav-drop-col">
+                  <span class="nav-drop-label">Collective</span>
+                  <a href="ceremonial-groups.html">Ceremonial &amp; Ritual Groups</a>
+                  <a href="community.html">Community Hubs</a>
+                  <a href="community.html#training">Ceremonialist Training</a>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li><a href="community.html">Community</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="sacred-reciprocity.html">Sacred Reciprocity</a></li>
+          <li><a href="book.html" class="nav-cta">Begin Here</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ═══════ PAGE HERO ═══════ -->
+  <section class="page-hero fade-in" style="background: linear-gradient(rgba(18,24,14,0.55), rgba(18,24,14,0.80)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&h=900&fit=crop&q=80') center/cover no-repeat;">
+    <div class="hero-overlay"></div>
+    <div class="hero-inner" style="position:relative; z-index:2; max-width:800px; padding:5rem 2rem 4rem; text-align:center;">
+      <p class="hero-eyebrow">Sliding Scale</p>
+      <h1 class="page-hero-title">Sacred Reciprocity</h1>
+      <p class="page-hero-subtitle">Where the personal becomes communal, and healing becomes a circle.</p>
+    </div>
+  </section>
+
+  <!-- ═══════ INTRO ═══════ -->
+  <section class="reciprocity-intro fade-in">
+    <div class="reciprocity-intro-inner">
+      <p class="section-label">The Practice of Fair Exchange</p>
+      <h2 class="section-title">Healing belongs to <em>the whole community</em></h2>
+      <div class="story-divider" style="margin: 1.5rem auto 2rem;"></div>
+      <p>In traditional ways, healers were supported by the community because the health of one is the health of all. That truth still guides my work.</p>
+      <p>My offerings require a deep investment of energy, time, and training, and I am committed to promoting economic justice. We do not all walk the same path of resources.</p>
+      <p>I believe that healing and spiritual counsel should be accessible — while honoring the real costs of sustaining this work.</p>
+
+      <div class="reciprocity-values">
+        <div class="reciprocity-value">
+          <span class="reciprocity-value-icon">◈</span>
+          <h4>Acknowledge</h4>
+          <p>Diverse economic realities</p>
+        </div>
+        <div class="reciprocity-value">
+          <span class="reciprocity-value-icon">◈ ◈</span>
+          <h4>Disrupt</h4>
+          <p>Patterns of economic exclusion</p>
+        </div>
+        <div class="reciprocity-value">
+          <span class="reciprocity-value-icon">◈ ◈ ◈</span>
+          <h4>Offer</h4>
+          <p>Multiple access points for engagement</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ QUOTE ═══════ -->
+  <section class="section-testimonial fade-in">
+    <div class="testimonial-container">
+      <div class="testimonial-quote-mark">❝</div>
+      <p class="testimonial-text">The sliding scale is a tool of accountability and trust. It thrives on honesty, respect for complexity, and the understanding that financial resources are not the only measure of value.</p>
+      <div class="testimonial-line"></div>
+      <p class="testimonial-author"><span>Alexis J. Cunningfolk</span></p>
+    </div>
+  </section>
+
+  <!-- ═══════ TIERS ═══════ -->
+  <section class="section-tiers fade-in">
+    <div class="tiers-inner">
+      <div class="tiers-header">
+        <p class="section-label">Choose Your Tier</p>
+        <h2 class="section-title">Three pathways of <em>reciprocity</em></h2>
+        <p class="section-body">I do not require income verification. I trust you to choose honestly.</p>
+      </div>
+
+      <div class="tiers-grid">
+
+        <!-- Abundance -->
+        <div class="tier-card">
+          <p class="tier-eyebrow">Sponsorship / Pay-It-Forward</p>
+          <h3>Abundance <em>Rate</em></h3>
+          <div class="tier-divider"></div>
+          <p class="tier-description">Reflects the actual value of my work and helps fund lower-cost sessions for those in hardship.</p>
+          <p class="tier-label">This tier is for you if you:</p>
+          <ul class="tier-list">
+            <li><span>◈</span> Easily meet basic needs</li>
+            <li><span>◈</span> Own property, have savings, or expendable income</li>
+            <li><span>◈</span> Can afford wants, travel, and investments</li>
+            <li><span>◈</span> Wish to support community healing</li>
+          </ul>
+          <p class="tier-note">Choosing this tier is a gift to the community. Thank you.</p>
+        </div>
+
+        <!-- Standard -->
+        <div class="tier-card tier-featured">
+          <p class="tier-eyebrow">Stewardship</p>
+          <h3>Standard <em>Rate</em></h3>
+          <div class="tier-divider"></div>
+          <p class="tier-description">Reflects fair, sustainable compensation for the work.</p>
+          <p class="tier-label">This tier is for you if you:</p>
+          <ul class="tier-list">
+            <li><span>◈</span> Meet basic needs with some ease</li>
+            <li><span>◈</span> Occasionally stretch your budget, but avoid hardship</li>
+            <li><span>◈</span> Have a steady income and some expendable funds</li>
+          </ul>
+          <p class="tier-note">This covers my operating costs, expenses, materials, and a fair living wage.</p>
+        </div>
+
+        <!-- Accessibility -->
+        <div class="tier-card">
+          <p class="tier-eyebrow">Scholarship</p>
+          <h3>Accessibility <em>Rate</em></h3>
+          <div class="tier-divider"></div>
+          <p class="tier-description">Acknowledges financial hardship and systemic barriers.</p>
+          <p class="tier-label">This tier is for you if you:</p>
+          <ul class="tier-list">
+            <li><span>◈</span> Often worry about basic needs</li>
+            <li><span>◈</span> Have little expendable income</li>
+            <li><span>◈</span> Qualify for assistance or live paycheck-to-paycheck</li>
+            <li><span>◈</span> Would face hardship paying the full cost</li>
+          </ul>
+          <p class="tier-note">If this rate is still out of reach, please email me to discuss alternative options, including payment plans.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ SPIRIT OF EQUANIMITY ═══════ -->
+  <section class="section-spirit fade-in">
+    <div class="spirit-inner">
+      <p class="hero-eyebrow">Reflection</p>
+      <h2>The Spirit of <em>Economic Equanimity</em></h2>
+      <div class="spirit-divider"></div>
+      <p class="spirit-body">This work is not just a transaction. It is a <strong>sacred exchange.</strong></p>
+      <p class="spirit-body">Please reflect honestly:</p>
+
+      <div class="spirit-questions">
+        <p class="spirit-question">Does paying the full rate feel like a sacrifice — or genuine hardship?</p>
+        <p class="spirit-question">Could you pay more to support someone else's healing?</p>
+        <p class="spirit-question">Would paying less help you access this work without sacrificing essentials?</p>
+      </div>
+
+      <p class="spirit-closing">Whatever tier you choose, you are welcome here.<br>Together, we keep the circle strong.</p>
+    </div>
+  </section>
+
+  <!-- ═══════ CTA ═══════ -->
+  <section class="section-cta fade-in">
+    <div class="cta-container">
+      <h2>Ready to <em>begin?</em></h2>
+      <p>Book an introductory call and we'll find the right path — and the right tier — for you.</p>
+      <a href="book.html" class="btn-primary">Begin Here</a>
+    </div>
+  </section>
+
+  <!-- ═══════ FOOTER ═══════ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">The Animist <em class="logo-accent">Apothecary</em></a>
+        <p class="footer-tagline">Shamanic healing, somatic ceremony, and botanical medicine.<br>Based in Topanga Canyon, Los Angeles, California. Available worldwide.</p>
+      </div>
+      <nav class="footer-nav">
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#offerings">Offerings</a></li>
+            <li><a href="community.html">Community</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="sacred-reciprocity.html">Sacred Reciprocity</a></li>
+            <li><a href="book.html">Begin Here</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Offerings</h4>
+          <ul>
+            <li><a href="mythopoetic.html">Developmental Arcs</a></li>
+            <li><a href="shamanic-bodywork.html">Shamanic Bodywork</a></li>
+            <li><a href="personal-immersions.html">Personal Immersions</a></li>
+            <li><a href="ceremonial-groups.html">Ceremonial Groups</a></li>
+            <li><a href="platicas.html">Plát icas</a></li>
+            <li><a href="divinations.html">Divinations</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Collective</h4>
+          <ul>
+            <li><a href="community.html">Community Hubs</a></li>
+            <li><a href="community.html#training">Ceremonialist Training</a></li>
+            <li><a href="community.html">Events &amp; Gatherings</a></li>
+            <li><a href="community.html">Newsletter</a></li>
+            <li><a href="book.html">Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 The Animist Apothecary. All rights reserved.</p>
+      <p class="footer-credit">Adi Marie · Topanga Canyon, Los Angeles, California</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
