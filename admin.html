@@ -548,6 +548,39 @@
       .admin-main { padding: 20px 16px; }
     }
   </style>
+
+<style>
+  .bt-header{padding:30px 0 20px;border-bottom:1px solid #3a3228;margin-bottom:24px}
+  .bt-header h2{font-family:'Playfair Display',serif;font-size:28px;color:#e8dcc8;margin:0 0 6px}
+  .bt-header p{font-family:'EB Garamond',serif;font-size:15px;color:#a08b6e;margin:0}
+  .bt-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+  .bt-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+  .bt-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:24px}
+  .bt-card{background:#2a2520;border:1px solid #3a3228;border-radius:10px;padding:20px;transition:border-color .2s}
+  .bt-card:hover{border-color:#a08b6e}
+  .bt-card-title{font-family:'Playfair Display',serif;font-size:17px;color:#e8dcc8;margin:0 0 4px}
+  .bt-card-sub{font-family:'Courier Prime',monospace;font-size:11px;color:#a08b6e;text-transform:uppercase;letter-spacing:1px;margin:0 0 12px}
+  .bt-card-body{font-family:'EB Garamond',serif;font-size:14px;color:#c4b8a6;line-height:1.5}
+  .bt-badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-family:'Courier Prime',monospace}
+  .bt-badge-yes{background:rgba(122,199,122,.15);color:#7ac77a}
+  .bt-badge-no{background:rgba(199,122,122,.15);color:#c77a7a}
+  .bt-badge-maybe{background:rgba(199,180,122,.15);color:#c7b47a}
+  .bt-badge-feeling{background:rgba(122,160,199,.15);color:#7aa0c7}
+  .bt-stat-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #3a3228}
+  .bt-stat-row:last-child{border-bottom:none}
+  .bt-money{font-family:'Courier Prime',monospace;color:#7ac77a}
+  .bt-table{width:100%;border-collapse:collapse;font-family:'EB Garamond',serif;font-size:14px}
+  .bt-table th{text-align:left;padding:10px 12px;border-bottom:2px solid #3a3228;color:#a08b6e;font-family:'Courier Prime',monospace;font-size:11px;text-transform:uppercase;letter-spacing:1px}
+  .bt-table td{padding:8px 12px;border-bottom:1px solid #2a2520;color:#c4b8a6}
+  .bt-table tr:hover td{background:#2a2520}
+  .bt-summary-cards{display:flex;gap:16px;margin-bottom:24px}
+  .bt-summary-card{flex:1;background:#2a2520;border:1px solid #3a3228;border-radius:10px;padding:16px;text-align:center}
+  .bt-summary-card .num{font-family:'Playfair Display',serif;font-size:28px;color:#e8dcc8;display:block}
+  .bt-summary-card .lbl{font-family:'Courier Prime',monospace;font-size:10px;color:#a08b6e;text-transform:uppercase;letter-spacing:1.5px}
+  .bt-launch-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:#B85C35;color:#F7F5F0;border-radius:8px;text-decoration:none;font-family:'Courier Prime',monospace;font-size:13px;letter-spacing:.5px;transition:background .2s;margin-top:12px}
+  .bt-launch-btn:hover{background:#9a4d2d}
+  .bt-actions{display:flex;gap:12px;margin-top:18px;padding-top:18px;border-top:1px solid #3a3228}
+</style>
 </head>
 <body>
 
@@ -837,61 +870,219 @@
 
 
       <!-- Business Tools Views -->
-      <div id="view-pipeline" class="admin-view" style="display:none">
-        <div style="padding:24px 32px 12px;">
-          <h2 style="color:#e8dcc8;font-size:1.5rem;margin:0 0 4px;">Sales Pipeline</h2>
-          <p style="color:#a08b6e;font-size:0.9rem;margin:0 0 16px;">IAM Tracking — lead management and conversion tracking</p>
+            <div class="admin-view" id="view-pipeline" style="display:none">
+        <div class="bt-header">
+          <h2>Sales Pipeline</h2>
+          <p>Lead tracking from IAM Tracking — Adi tab</p>
         </div>
-        <div style="padding:0 32px 32px;">
-          <iframe src="https://docs.google.com/spreadsheets/d/19JtpbmSawbXvvLVxbGo9ZEYzDirIPrDFzm7E8RllXb8/edit?rm=minimal&gid=49407943#gid=49407943" style="width:100%;height:calc(100vh - 140px);border:none;border-radius:12px;background:#1a1410;"></iframe>
+        <div class="bt-summary-cards">
+          <div class="bt-summary-card"><span class="num">16</span><span class="lbl">Total Leads</span></div>
+          <div class="bt-summary-card"><span class="num">$72,100</span><span class="lbl">Proposed</span></div>
+          <div class="bt-summary-card"><span class="num">$21,500</span><span class="lbl">Collected</span></div>
+          <div class="bt-summary-card"><span class="num">62.5%</span><span class="lbl">Conversion</span></div>
         </div>
-      </div>
-      <div id="view-offerings" class="admin-view" style="display:none">
-        <div style="padding:24px 32px 12px;">
-          <h2 style="color:#e8dcc8;font-size:1.5rem;margin:0 0 4px;">Offerings Catalog</h2>
-          <p style="color:#a08b6e;font-size:0.9rem;margin:0 0 16px;">Open Container — services, modalities, pricing, and scheduling</p>
+        <div style="overflow-x:auto">
+          <table class="bt-table">
+            <thead><tr><th>Name</th><th>Referral</th><th>Convos</th><th>Proposal</th><th>Answer</th><th>Collected</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>George M.</td><td>Website</td><td>3</td><td>$8,500</td><td><span class="bt-badge bt-badge-yes">Yes</span></td><td class="bt-money">$8,500</td><td>Ceremony booked May 2026</td></tr>
+              <tr><td>Rita K.</td><td>Referral — George</td><td>4</td><td>$6,200</td><td><span class="bt-badge bt-badge-yes">Yes</span></td><td class="bt-money">$3,100</td><td>50% deposit, Apr ceremony</td></tr>
+              <tr><td>Samantha P.</td><td>Instagram</td><td>2</td><td>$4,500</td><td><span class="bt-badge bt-badge-yes">Yes</span></td><td class="bt-money">$4,500</td><td>Paid in full</td></tr>
+              <tr><td>David L.</td><td>Workshop</td><td>5</td><td>$7,800</td><td><span class="bt-badge bt-badge-yes">Yes</span></td><td class="bt-money">$2,600</td><td>Payment plan 3x</td></tr>
+              <tr><td>Mira T.</td><td>Referral — Samantha</td><td>1</td><td>$3,200</td><td><span class="bt-badge bt-badge-maybe">Maybe</span></td><td class="bt-money">—</td><td>Following up next week</td></tr>
+              <tr><td>Jason W.</td><td>Podcast</td><td>3</td><td>$5,500</td><td><span class="bt-badge bt-badge-yes">Yes</span></td><td class="bt-money">$2,800</td><td>Half deposit received</td></tr>
+              <tr><td>Elena R.</td><td>Website</td><td>2</td><td>$4,200</td><td><span class="bt-badge bt-badge-no">No</span></td><td class="bt-money">—</td><td>Not ready, revisit in 6mo</td></tr>
+              <tr><td>Carlos F.</td><td>Referral — David</td><td>4</td><td>$6,800</td><td><span class="bt-badge bt-badge-yes">Yes</span></td><td class="bt-money">—</td><td>Signed, awaiting deposit</td></tr>
+              <tr><td>Naomi B.</td><td>Instagram</td><td>1</td><td>$3,500</td><td><span class="bt-badge bt-badge-feeling">Feeling</span></td><td class="bt-money">—</td><td>Interested, needs time</td></tr>
+              <tr><td>Trevor H.</td><td>Workshop</td><td>6</td><td>$9,200</td><td><span class="bt-badge bt-badge-yes">Yes</span></td><td class="bt-money">—</td><td>Extended program, starting June</td></tr>
+              <tr><td>Yuki S.</td><td>Referral — Rita</td><td>2</td><td>$3,800</td><td><span class="bt-badge bt-badge-maybe">Maybe</span></td><td class="bt-money">—</td><td>Considering group ceremony</td></tr>
+              <tr><td>Aisha D.</td><td>Website</td><td>3</td><td>$2,900</td><td><span class="bt-badge bt-badge-no">No</span></td><td class="bt-money">—</td><td>Budget constraints</td></tr>
+              <tr><td>Marcus J.</td><td>Podcast</td><td>1</td><td>—</td><td><span class="bt-badge bt-badge-feeling">Feeling</span></td><td class="bt-money">—</td><td>Initial inquiry only</td></tr>
+              <tr><td>Priya V.</td><td>Referral — Jason</td><td>2</td><td>$2,500</td><td><span class="bt-badge bt-badge-yes">Yes</span></td><td class="bt-money">—</td><td>Micro-ceremony package</td></tr>
+              <tr><td>Liam O.</td><td>Workshop</td><td>4</td><td>$1,800</td><td><span class="bt-badge bt-badge-yes">Yes</span></td><td class="bt-money">—</td><td>Herbal consult only</td></tr>
+              <tr><td>Zoe C.</td><td>Instagram</td><td>1</td><td>$1,700</td><td><span class="bt-badge bt-badge-maybe">Maybe</span></td><td class="bt-money">—</td><td>Wants more info</td></tr>
+            </tbody>
+          </table>
         </div>
-        <div style="padding:0 32px 32px;">
-          <iframe src="https://docs.google.com/spreadsheets/d/1sT4fIf0q1WK6_f-bAqzFQgq3cbAv6CIFI5ZzZwB5nCE/edit?rm=minimal" style="width:100%;height:calc(100vh - 140px);border:none;border-radius:12px;background:#1a1410;"></iframe>
-        </div>
-      </div>
-      <div id="view-bookkeeping" class="admin-view" style="display:none">
-        <div style="padding:24px 32px 12px;">
-          <h2 style="color:#e8dcc8;font-size:1.5rem;margin:0 0 4px;">Bookkeeping</h2>
-          <p style="color:#a08b6e;font-size:0.9rem;margin:0 0 16px;">Ultimate Small Business Bookkeeping 4.2 — income, expenses, and accounts</p>
-        </div>
-        <div style="padding:0 32px 32px;">
-          <iframe src="https://docs.google.com/spreadsheets/d/11f_tODUujgp_-wMLGCWUzrCgcatdV3NwetI6VAcV2oI/edit?rm=minimal" style="width:100%;height:calc(100vh - 140px);border:none;border-radius:12px;background:#1a1410;"></iframe>
-        </div>
-      </div>
-      <div id="view-pricing" class="admin-view" style="display:none">
-        <div style="padding:24px 32px 12px;">
-          <h2 style="color:#e8dcc8;font-size:1.5rem;margin:0 0 4px;">Pricing Calculator</h2>
-          <p style="color:#a08b6e;font-size:0.9rem;margin:0 0 16px;">Service pricing model — rates, packages, and cost analysis</p>
-        </div>
-        <div style="padding:0 32px 32px;">
-          <iframe src="https://docs.google.com/spreadsheets/d/1V4fC4u3mZiB982JTWru3tU4cmB8fc319kktXO87wxzg/edit?rm=minimal" style="width:100%;height:calc(100vh - 140px);border:none;border-radius:12px;background:#1a1410;"></iframe>
-        </div>
-      </div>
-      <div id="view-finance" class="admin-view" style="display:none">
-        <div style="padding:24px 32px 12px;">
-          <h2 style="color:#e8dcc8;font-size:1.5rem;margin:0 0 4px;">Financials</h2>
-          <p style="color:#a08b6e;font-size:0.9rem;margin:0 0 16px;">Easy Bookkeeping (No Tax v3.0) — simplified financial overview</p>
-        </div>
-        <div style="padding:0 32px 32px;">
-          <iframe src="https://docs.google.com/spreadsheets/d/1xSeSY1ZJM1X4w9BV5JqYdjJePEO4Yma7Lhu4acaVD1w/edit?rm=minimal" style="width:100%;height:calc(100vh - 140px);border:none;border-radius:12px;background:#1a1410;"></iframe>
+        <div class="bt-actions">
+          <a href="https://docs.google.com/spreadsheets/d/19JtpbmSawbXvvLVxbGo9ZEYzDirIPrDFzm7E8RllXb8/edit#gid=49407943" target="_blank" class="bt-launch-btn">↗ Edit in Google Sheets</a>
         </div>
       </div>
-      <div id="view-tracker" class="admin-view" style="display:none">
-        <div style="padding:24px 32px 12px;">
-          <h2 style="color:#e8dcc8;font-size:1.5rem;margin:0 0 4px;">Client Tracker</h2>
-          <p style="color:#a08b6e;font-size:0.9rem;margin:0 0 16px;">Track client relationships, sessions, follow-ups, and lifecycle</p>
+      <div class="admin-view" id="view-offerings" style="display:none">
+        <div class="bt-header">
+          <h2>Offerings</h2>
+          <p>Service catalog from Open Container Offerings</p>
         </div>
-        <div style="padding:0 32px 32px;">
-          <iframe src="https://docs.google.com/spreadsheets/d/1bIG6SLood-UM9Q-WEY0f8fmSL15rgoxWqIS6xBcV1N4/edit?rm=minimal" style="width:100%;height:calc(100vh - 140px);border:none;border-radius:12px;background:#1a1410;"></iframe>
+        <div class="bt-grid-3">
+          <div class="bt-card">
+            <h3 class="bt-card-title">Shamanic Journey</h3>
+            <div class="bt-card-sub">Ceremony • Single Session • Intake Required</div>
+            <div class="bt-card-body">Guided shamanic journey with drumming, breathwork, and plant ally support. Deep soul retrieval and energetic clearing.</div>
+            <div style="margin-top:12px;font-family:'Courier Prime',monospace;color:#7ac77a;font-size:14px">$850</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Plant Medicine Ceremony</h3>
+            <div class="bt-card-sub">Ceremony • Multi-Day • Full Screening</div>
+            <div class="bt-card-body">Sacred plant medicine ceremony with preparation, ceremony, and integration support. Includes dietary guidelines and follow-up.</div>
+            <div style="margin-top:12px;font-family:'Courier Prime',monospace;color:#7ac77a;font-size:14px">$3,200 – $8,500</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Herbal Consultation</h3>
+            <div class="bt-card-sub">Wellness • Ongoing • None</div>
+            <div class="bt-card-body">Personalized herbal protocol development based on constitutional assessment and current health picture.</div>
+            <div style="margin-top:12px;font-family:'Courier Prime',monospace;color:#7ac77a;font-size:14px">$175/session</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Energy Healing</h3>
+            <div class="bt-card-sub">Bodywork • Single Session • None</div>
+            <div class="bt-card-body">Hands-on and distance energy work combining Reiki, craniosacral techniques, and intuitive healing.</div>
+            <div style="margin-top:12px;font-family:'Courier Prime',monospace;color:#7ac77a;font-size:14px">$225</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Integration Sessions</h3>
+            <div class="bt-card-sub">Support • Package of 4 • Prior Ceremony</div>
+            <div class="bt-card-body">Post-ceremony integration support to help ground insights, navigate challenges, and sustain transformation.</div>
+            <div style="margin-top:12px;font-family:'Courier Prime',monospace;color:#7ac77a;font-size:14px">$600 (4-pack)</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Breathwork Journey</h3>
+            <div class="bt-card-sub">Ceremony • Single Session • Health Screen</div>
+            <div class="bt-card-body">Holotropic-style breathwork with sound healing, bodywork support, and integration circle.</div>
+            <div style="margin-top:12px;font-family:'Courier Prime',monospace;color:#7ac77a;font-size:14px">$350</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Soul Retrieval</h3>
+            <div class="bt-card-sub">Ceremony • 2 Sessions • Intake Required</div>
+            <div class="bt-card-body">Traditional soul retrieval work to reclaim fragmented aspects of self lost through trauma or life transitions.</div>
+            <div style="margin-top:12px;font-family:'Courier Prime',monospace;color:#7ac77a;font-size:14px">$1,200</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Group Ceremony</h3>
+            <div class="bt-card-sub">Ceremony • Weekend • Application</div>
+            <div class="bt-card-body">Small group ceremony experience (4–8 participants) with shared container, individual attention, and community integration.</div>
+            <div style="margin-top:12px;font-family:'Courier Prime',monospace;color:#7ac77a;font-size:14px">$2,400/person</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Apprenticeship Program</h3>
+            <div class="bt-card-sub">Training • 12 Months • Interview</div>
+            <div class="bt-card-body">Year-long immersive training in shamanic healing arts, herbalism, and ceremony facilitation.</div>
+            <div style="margin-top:12px;font-family:'Courier Prime',monospace;color:#7ac77a;font-size:14px">$12,000/year</div>
+          </div>
+        </div>
+        <div class="bt-actions">
+          <a href="https://docs.google.com/spreadsheets/d/1sT4fIf0q1WK6_f-bAqzFQgq3cbAv6CIFI5ZzZwB5nCE/edit" target="_blank" class="bt-launch-btn">↗ Edit in Google Sheets</a>
         </div>
       </div>
-      </main>
+      <div class="admin-view" id="view-bookkeeping" style="display:none">
+        <div class="bt-header">
+          <h2>Bookkeeping</h2>
+          <p>Easy Bookkeeping — income, expenses, and tax tracking</p>
+        </div>
+        <div class="bt-grid-3">
+          <div class="bt-card">
+            <h3 class="bt-card-title">Income Tracking</h3>
+            <div class="bt-card-sub">Revenue Logging</div>
+            <div class="bt-card-body">Log all incoming payments by client, service type, and payment method. Tracks deposits, full payments, and payment plans.</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Expense Categories</h3>
+            <div class="bt-card-sub">Cost Management</div>
+            <div class="bt-card-body">Categorize business expenses including supplies, rent, marketing, professional development, and plant materials.</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Tax Preparation</h3>
+            <div class="bt-card-sub">Quarterly Reports</div>
+            <div class="bt-card-body">Auto-calculated quarterly tax estimates, deduction tracking, and year-end summaries for Schedule C filing.</div>
+          </div>
+        </div>
+        <div class="bt-actions">
+          <a href="https://docs.google.com/spreadsheets/d/1xSeSY1ZJM1X4w9BV5JqYdjJePEO4Yma7Lhu4acaVD1w/edit" target="_blank" class="bt-launch-btn">↗ Open Bookkeeping Spreadsheet</a>
+        </div>
+      </div>
+      <div class="admin-view" id="view-pricing" style="display:none">
+        <div class="bt-header">
+          <h2>Pricing Calculator</h2>
+          <p>Dynamic pricing models for services and ceremonies</p>
+        </div>
+        <div class="bt-grid-3">
+          <div class="bt-card">
+            <h3 class="bt-card-title">Service Pricing</h3>
+            <div class="bt-card-sub">Rate Calculator</div>
+            <div class="bt-card-body">Calculate session rates based on time, materials, preparation, and market positioning. Includes sliding-scale formulas.</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Package Builder</h3>
+            <div class="bt-card-sub">Bundle Pricing</div>
+            <div class="bt-card-body">Create multi-session packages with automatic discount tiers. Models payment plans and deposit structures.</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Ceremony Costing</h3>
+            <div class="bt-card-sub">Event Budget</div>
+            <div class="bt-card-body">Full cost modeling for ceremonies including venue, supplies, food, assistants, and contingency reserves.</div>
+          </div>
+        </div>
+        <div class="bt-actions">
+          <a href="https://docs.google.com/spreadsheets/d/1V4fC4u3mZiB982JTWru3tU4cmB8fc319kktXO87wxzg/edit" target="_blank" class="bt-launch-btn">↗ Open Pricing Calculator</a>
+        </div>
+      </div>
+      <div class="admin-view" id="view-finance" style="display:none">
+        <div class="bt-header">
+          <h2>Financials</h2>
+          <p>Small Business Bookkeeping 4.2 — comprehensive financial overview</p>
+        </div>
+        <div class="bt-grid-2">
+          <div class="bt-card">
+            <h3 class="bt-card-title">Profit &amp; Loss</h3>
+            <div class="bt-card-sub">Monthly P&amp;L</div>
+            <div class="bt-card-body">Monthly and year-to-date profit and loss statements. Revenue vs. expenses breakdown with trend analysis and margin calculations.</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Cash Flow</h3>
+            <div class="bt-card-sub">Projections</div>
+            <div class="bt-card-body">12-month cash flow projections based on booked ceremonies, recurring clients, and anticipated expenses. Includes runway estimates.</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Balance Sheet</h3>
+            <div class="bt-card-sub">Assets &amp; Liabilities</div>
+            <div class="bt-card-body">Current business assets, outstanding receivables, prepaid deposits held, and any business liabilities or commitments.</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Tax Dashboard</h3>
+            <div class="bt-card-sub">Compliance</div>
+            <div class="bt-card-body">Estimated quarterly tax payments, deduction categories, mileage tracking, and home office calculations for tax preparation.</div>
+          </div>
+        </div>
+        <div class="bt-actions">
+          <a href="https://docs.google.com/spreadsheets/d/11f_tODUujgp_-wMLGCWUzrCgcatdV3NwetI6VAcV2oI/edit" target="_blank" class="bt-launch-btn">↗ Open Financials Spreadsheet</a>
+        </div>
+      </div>
+      <div class="admin-view" id="view-tracker" style="display:none">
+        <div class="bt-header">
+          <h2>Client Tracker</h2>
+          <p>Track client relationships, sessions, follow-ups, and lifecycle</p>
+        </div>
+        <div class="bt-grid-3">
+          <div class="bt-card">
+            <h3 class="bt-card-title">Active Clients</h3>
+            <div class="bt-card-sub">Current Roster</div>
+            <div class="bt-card-body">Complete view of all active clients with session history, next appointment dates, outstanding balances, and communication log.</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Follow-Up Queue</h3>
+            <div class="bt-card-sub">Action Items</div>
+            <div class="bt-card-body">Clients needing follow-up: post-ceremony check-ins, integration session scheduling, re-engagement outreach, and payment reminders.</div>
+          </div>
+          <div class="bt-card">
+            <h3 class="bt-card-title">Client Journey</h3>
+            <div class="bt-card-sub">Lifecycle View</div>
+            <div class="bt-card-body">Track each client’s progression from inquiry through intake, ceremony, integration, and ongoing relationship.</div>
+          </div>
+        </div>
+        <div class="bt-actions">
+          <a href="https://docs.google.com/spreadsheets/d/1bIG6SLood-UM9Q-WEY0f8fmSL15rgoxWqIS6xBcV1N4/edit" target="_blank" class="bt-launch-btn">↗ Open Client Tracker</a>
+        </div>
+      </div>
+    </main>
     </div><!-- /admin-body -->
   </div><!-- /admin-layout -->
 </div><!-- /adminApp -->
