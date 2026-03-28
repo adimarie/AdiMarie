@@ -1,9 +1,9 @@
 {
-  "version": "v260328.06 2:11pm",
-  "release": 6,
-  "sha": "617f9a0",
-  "fullSha": "617f9a01be8ca69ff1849a8bf6b502ff4f9f4828",
+  "version": "v260328.07 2:26pm",
+  "release": 7,
+  "sha": "f286c5d",
+  "fullSha": "f286c5dea5ac7c5c2e925cf4875b96ce2e81be17",
   "actor": "adimarie",
-  "pushedAt": "2026-03-28T19:11:22Z",
-  "commits": [{"sha": "617f9a0", "message": "Redesign portal to match luxury eco ceremonial site aesthetic", "author": "adimarie"}]
+  "pushedAt": "2026-03-28T19:26:28Z",
+  "commits": [{"sha": "f286c5d", "message": "Redesign hearth.html with soft sage green luxury eco aesthetic", "author": "adimarie"}]
 }
