@@ -1,9 +1,9 @@
 {
-  "version": "v260328.02 1:07am",
-  "release": 2,
-  "sha": "dfd58ea",
-  "fullSha": "dfd58ea55b13c8516200bbc0228312753c14e757",
+  "version": "v260328.03 9:53am",
+  "release": 3,
+  "sha": "b23cbcd",
+  "fullSha": "b23cbcd136d4cc538283dd82493e7da4138791b1",
   "actor": "adimarie",
-  "pushedAt": "2026-03-28T06:07:01Z",
-  "commits": [{"sha": "dfd58ea", "message": "Fix UTF-8 encoding and integrate 6 Google Sheets business views", "author": "adimarie"}]
+  "pushedAt": "2026-03-28T14:53:24Z",
+  "commits": [{"sha": "b23cbcd", "message": "Rebuild business views as custom interface panels", "author": "adimarie"}]
 }
