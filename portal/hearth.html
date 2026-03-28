@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Community Hearth | The Animist Apothecary</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=EB+Garamond:wght@400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: #1e1a14;
+            color: #e8dcc8;
+            font-family: 'EB Garamond', serif;
+            font-size: 16px;
+            line-height: 1.7;
+            letter-spacing: 0.3px;
+        }            border-radius: 8px;
+        }
+
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #B85C35, #D4A574);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #F7F5F0;
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #e8dcc8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-stage {
+            font-family: 'Courier Prime', monospace;
+            font-size: 11px;
+            color: #a08b6e;
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ============================================
+           MOBILE SIDEBAR TOGGLE
+           ============================================ */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #B85C35, #d46f47);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 11;
+            box-shadow: 0 8px 24px rgba(184, 92, 53, 0.4);
+        }
+
+        .sidebar-toggle svg {
+            width: 24px;
+            height: 24px;
+            stroke: #F7F5F0;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* ============================================
+           HEADER
+           ============================================ */
+        .header {
+            padding: 24px 32px;
+            background: linear-gradient(90deg, rgba(42, 37, 32, 0.6) 0%, rgba(42, 37, 32, 0.3) 100%);
+            border-bottom: 1px solid rgba(58, 50, 40, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .header-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: #e8dcc8;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .header-subtitle {
+            font-size: 13px;
+            color: #a08b6e;
+            letter-spacing: 1px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .logout-button {
+            padding: 10px 16px;
+            background: rgba(184, 92, 53, 0.2);
+            border: 1px solid rgba(184, 92, 53, 0.4);
+            color: #e8dcc8;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: 'Courier Prime', monospace;
+            transition: all 0.3s ease;
+        }
+
+        .logout-button:hover {
+            background: rgba(184, 92, 53, 0.3);
+            border-color: rgba(184, 92, 53, 0.6);
+        }
+
+        /* ============================================
+           CONTENT AREA
+           ============================================ */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: rgba(184, 92, 53, 0.3);
+            border-radius: 4px;
+        }
+
+        .content::-webkit-scrollbar-thumb:hover {
+            background: rgba(184, 92, 53, 0.5);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ============================================
+           SECTIONS (Hidden by default)
+           ============================================ */
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* ============================================
+           WELCOME HOME SECTION
+           ============================================ */
+        .greeting {
+            margin-bottom: 40px;
+        }
+
+        .greeting-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 600;
+            color: #D4A574;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .moon-phase {
+            font-size: 14px;
+            color: #a08b6e;
+            font-style: italic;
+        }
+
+        /* ============================================
+           CHARACTER MAP (PERSONAL JOURNEY WHEEL)
+           ============================================ */
+        .character-map-container {
+            background: rgba(42, 37, 32, 0.5);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 40px;
+            text-align: center;
+            box-shadow: inset 0 0 40px rgba(184, 92, 53, 0.05);
+        }
+
+        .character-map-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 600;
+            color: #e8dcc8;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .character-map-subtitle {
+            font-size: 13px;
+            color: #a08b6e;
+            margin-bottom: 32px;
+        }
+
+        .character-map-svg {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 32px;
+            display: block;
+            filter: drop-shadow(0 0 30px rgba(184, 92, 53, 0.2));
+        }
+
+        /* ============================================
+           CARDS & SECTIONS
+           ============================================ */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: rgba(42, 37, 32, 0.6);
+            border: 1px solid rgba(58, 50, 40, 0.7);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.05) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .card:hover {
+            border-color: rgba(184, 92, 53, 0.4);
+            box-shadow: 0 0 40px rgba(184, 92, 53, 0.15), inset 0 0 40px rgba(212, 165, 116, 0.05);
+            transform: translateY(-4px);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #e8dcc8;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: #a08b6e;
+            margin-bottom: 16px;
+        }
+
+        .card-content {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #c4b8a6;
+        }
+
+        .card-footer {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(58, 50, 40, 0.5);
+        }
+
+        /* ============================================
+           APPOINTMENT ITEM
+           ============================================ */
+        .appointment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 16px;
+            background: rgba(30, 26, 20, 0.5);
+            border-left: 3px solid #B85C35;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 12px;
+        }
+
+        .appointment-time {
+            font-family: 'Courier Prime', monospace;
+            font-size: 12px;
+            color: #D4A574;
+            font-weight: 600;
+        }
+
+        .appointment-title {
+            font-size: 14px;
+            color: #e8dcc8;
+            margin-bottom: 4px;
+        }
+
+        .appointment-notes {
+            font-size: 13px;
+            color: #a08b6e;
+        }
+
+        /* ============================================
+           JOURNEY TIMELINE
+           ============================================ */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #B85C35, #7A9E7E);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(58, 50, 40, 0.3);
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -34px;
+            top: 0;
+            width: 14px;
+            height: 14px;
+            background: #B85C35;
+            border-radius: 50%;
+            border: 3px solid rgba(42, 37, 32, 0.8);
+            box-shadow: 0 0 20px rgba(184, 92, 53, 0.3);
+        }
+
+        .timeline-date {
+            font-family: 'Courier Prime', monospace;
+            font-size: 12px;
+            color: #D4A574;
+            margin-bottom: 6px;
+        }
+
+        .timeline-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: #e8dcc8;
+            margin-bottom: 6px;
+        }
+
+        .timeline-content {
+            font-size: 14px;
+            color: #c4b8a6;
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           JOURNAL ENTRY
+           ============================================ */
+        .journal-entry {
+            background: rgba(42, 37, 32, 0.5);
+            border: 1px solid rgba(58, 50, 40, 0.7);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .journal-entry:hover {
+            border-color: rgba(184, 92, 53, 0.4);
+            box-shadow: 0 0 30px rgba(184, 92, 53, 0.1);
+        }
+
+        .journal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .journal-date {
+            font-family: 'Courier Prime', monospace;
+            font-size: 12px;
+            color: #a08b6e;
+        }
+
+        .mood-indicator {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .mood-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #B85C35;
+        }
+
+        .mood-dot.sage {
+            background: #7A9E7E;
+        }
+
+        .mood-dot.gold {
+            background: #D4A574;
+        }
+
+        .journal-text {
+            font-size: 14px;
+            color: #c4b8a6;
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        /* ============================================
+           MESSAGE THREAD
+           ============================================ */
+        .message-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.from-practitioner .message-avatar {
+            background: linear-gradient(135deg, #7A9E7E, #a08b6e);
+        }
+
+        .message.from-client .message-avatar {
+            background: linear-gradient(135deg, #B85C35, #D4A574);
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #F7F5F0;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .message-bubble {
+            flex: 1;
+        }
+
+        .message-sender {
+            font-family: 'Playfair Display', serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: #e8dcc8;
+            margin-bottom: 4px;
+        }
+
+        .message-content {
+            background: rgba(30, 26, 20, 0.5);
+            border: 1px solid rgba(58, 50, 40, 0.5);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #c4b8a6;
+            line-height: 1.6;
+        }
+
+        .message-time {
+            font-family: 'Courier Prime', monospace;
+            font-size: 11px;
+            color: #a08b6e;
+            margin-top: 6px;
+        }
+
+        /* ============================================
+           MESSAGE FORM
+           ============================================ */
+        .message-input-area {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(58, 50, 40, 0.5);
+            display: flex;
+            gap: 12px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(30, 26, 20, 0.5);
+            border: 1px solid rgba(58, 50, 40, 0.5);
+            border-radius: 6px;
+            color: #e8dcc8;
+            font-family: 'EB Garamond', serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            resize: none;
+            min-height: 40px;
+            max-height: 120px;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: rgba(184, 92, 53, 0.4);
+            background: rgba(30, 26, 20, 0.7);
+            box-shadow: 0 0 20px rgba(184, 92, 53, 0.1);
+        }
+
+        .send-button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #B85C35, #d46f47);
+            border: none;
+            border-radius: 6px;
+            color: #F7F5F0;
+            cursor: pointer;
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(184, 92, 53, 0.3);
+        }
+
+        .send-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(184, 92, 53, 0.4);
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ============================================
+           EMPTY STATE
+           ============================================ */
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+            background: rgba(42, 37, 32, 0.3);
+            border: 1px dashed rgba(58, 50, 40, 0.5);
+            border-radius: 12px;
+            margin: 32px 0;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .empty-state-text {
+            font-size: 16px;
+            color: #a08b6e;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+
+        .empty-state-hint {
+            font-size: 13px;
+            color: #7a6e5f;
+        }
+
+        /* ============================================
+           SKELETON LOADING
+           ============================================ */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(58, 50, 40, 0.3) 0%, rgba(58, 50, 40, 0.6) 50%, rgba(58, 50, 40, 0.3) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 6px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-line {
+            height: 12px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-block {
+            height: 100px;
+            margin-bottom: 12px;
+        }
+
+        /* ============================================
+           FORM ELEMENTS
+           ============================================ */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-family: 'Courier Prime', monospace;
+            font-size: 12px;
+            color: #a08b6e;
+            margin-bottom: 8px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(30, 26, 20, 0.5);
+            border: 1px solid rgba(58, 50, 40, 0.5);
+            border-radius: 6px;
+            color: #e8dcc8;
+            font-family: 'EB Garamond', serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: rgba(184, 92, 53, 0.4);
+            background: rgba(30, 26, 20, 0.7);
+            box-shadow: 0 0 20px rgba(184, 92, 53, 0.1);
+        }
+
+        .form-button {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #B85C35, #d46f47);
+            border: none;
+            border-radius: 6px;
+            color: #F7F5F0;
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(184, 92, 53, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .form-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(184, 92, 53, 0.4);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                transform: translateX(-100%);
+                z-index: 20;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .character-map-container {
+                padding: 20px;
+            }
+
+            .message-input-area {
+                flex-direction: column;
+            }
+
+            .auth-card {
+                margin: 20px;
+                max-width: none;
+            }
+        }
+
+        /* ============================================
+           DIVIDER
+           ============================================ */
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #D4A574, transparent);
+            margin: 32px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Firefly Canvas -->
+    <canvas id="fireflyCanvas"></canvas>
+
+    <!-- Auth Screen -->
+    <div id="authScreen" class="auth-container">
+        <div class="auth-card">
+            <div class="auth-icon">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Hearth Flame Icon -->
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#D4A574" stroke-width="1.5" opacity="0.5"/>
+                    <path d="M 50 20 Q 40 35 40 50 Q 40 70 50 80 Q 60 70 60 50 Q 60 35 50 20" fill="none" stroke="#B85C35" stroke-width="2.5" stroke-linecap="round"/>
+                    <path d="M 50 35 Q 45 42 45 50 Q 45 60 50 68 Q 55 60 55 50 Q 55 42 50 35" fill="none" stroke="#D4A574" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h1 class="auth-heading">The Community Hearth</h1>
+            <p class="auth-subheading">Sacred Portal</p>
+
+            <div class="auth-input-group">
+                <label class="auth-label">Email</label>
+                <input type="email" id="authEmail" class="auth-input" placeholder="your@email.com" autocomplete="email">
+            </div>
+
+            <button id="authSubmit" class="auth-button">Send Magic Link</button>
+
+            <div id="authMessage" class="auth-message"></div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appContainer" class="app-container" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-text">✦ HEARTH ✦</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-item active" data-section="welcome-home">
+                        <div class="nav-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+                            </svg>
+                        </div>
+                        <span class="nav-label">Welcome Home</span>
+                    </div>
+                    <div class="nav-item" data-section="journey">
+                        <div class="nav-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 2h12v2H6V2zm0 4h12v2H6V6zm0 4h12v2H6v-2zm0 4h8v2H6v-2z"/>
+                            </svg>
+                        </div>
+                        <span class="nav-label">Your Journey</span>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Portal</div>
+                    <div class="nav-item" data-section="inquiry">
+                        <div class="nav-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-14c-3.32 0-6 2.68-6 6s2.68 6 6 6 6-2.68 6-6-2.68-6-6-6z"/>
+                            </svg>
+                        </div>
+                        <span class="nav-label">Sacred Inquiry</span>
+                    </div>
+                    <div class="nav-item" data-section="preparation">
+                        <div class="nav-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                        </div>
+                        <span class="nav-label">Ceremony Prep</span>
+                    </div>
+                    <div class="nav-item" data-section="integration">
+                        <div class="nav-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                        </div>
+                        <span class="nav-label">Integration</span>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Community</div>
+                    <div class="nav-item" data-section="library">
+                        <div class="nav-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>
+                            </svg>
+                        </div>
+                        <span class="nav-label">The Library</span>
+                    </div>
+                    <div class="nav-item" data-section="messages">
+                        <div class="nav-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                            </svg>
+                        </div>
+                        <span class="nav-label">Messages</span>
+                        <span id="messagesBadge" class="nav-badge" style="display: none;">0</span>
+                    </div>
+                    <div class="nav-item" data-section="journal">
+                        <div class="nav-icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18H5V4h14v16zm-4.5-6h-3V5h3v9zm-4.5-6h3v9h-3V8z"/>
+                            </svg>
+                        </div>
+                        <span class="nav-label">Your Journal</span>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="sidebar-user">
+                <div class="user-card">
+                    <div id="userAvatar" class="user-avatar">A</div>
+                    <div class="user-info">
+                        <div id="userName" class="user-name">Loading...</div>
+                        <div id="userStage" class="user-stage">Pipeline Stage</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-content">
+                    <h1 class="header-title" id="headerTitle">Welcome Home</h1>
+                    <p class="header-subtitle" id="headerSubtitle">The Animist Apothecary</p>
+                </div>
+                <div class="header-actions">
+                    <button id="logoutBtn" class="logout-button">Sign Out</button>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content">
+                <!-- Welcome Home Section -->
+                <div id="welcomeSection" class="section active">
+                    <div class="greeting">
+                        <div class="greeting-text" id="greetingText">Welcome back</div>
+                        <p class="moon-phase" id="moonPhase">Loading lunar wisdom...</p>
+                    </div>
+
+                    <div class="character-map-container">
+                        <h2 class="character-map-title">Your Personal Journey Wheel</h2>
+                        <p class="character-map-subtitle">A reflection of your healing path</p>
+                        <svg id="characterMap" class="character-map-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Will be populated by JavaScript -->
+                        </svg>
+                        <div id="journeyGlance" style="text-align: left; font-size: 14px; color: #c4b8a6; line-height: 1.8;">
+                            <!-- Summary will be populated -->
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <div class="card-grid">
+                        <div class="card">
+                            <h3 class="card-title">Upcoming Appointments</h3>
+                            <div id="upcomingAppointments">
+                                <div class="skeleton skeleton-block"></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3 class="card-title">Current Focus</h3>
+                            <div id="currentFocus" class="card-content">
+                                <div class="skeleton skeleton-line"></div>
+                                <div class="skeleton skeleton-line"></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3 class="card-title">Recent Milestones</h3>
+                            <div id="recentMilestones">
+                                <div class="skeleton skeleton-line"></div>
+                                <div class="skeleton skeleton-line"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Your Journey Section -->
+                <div id="journeySection" class="section">
+                    <div class="timeline" id="journeyTimeline">
+                        <div class="skeleton skeleton-block"></div>
+                    </div>
+                </div>
+
+                <!-- Sacred Inquiry Section -->
+                <div id="inquirySection" class="section">
+                    <div id="intakeForms">
+                        <div class="skeleton skeleton-block"></div>
+                    </div>
+                </div>
+
+                <!-- Ceremony Preparation Section -->
+                <div id="preparationSection" class="section">
+                    <div id="preparationContent">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">✦</div>
+                            <div class="empty-state-text">Ceremony Preparation</div>
+                            <div class="empty-state-hint">Will appear when you enter the preparation stage</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aftercare & Integration Section -->
+                <div id="integrationSection" class="section">
+                    <div id="integrationContent">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">✧</div>
+                            <div class="empty-state-text">Integration & Aftercare</div>
+                            <div class="empty-state-hint">Your integration journey will be shared here</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Library Section -->
+                <div id="librarySection" class="section">
+                    <div id="libraryContent">
+                        <div class="card-grid" id="libraryGrid">
+                            <div class="skeleton skeleton-block"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages Section -->
+                <div id="messagesSection" class="section">
+                    <div id="messageThread" class="message-list">
+                        <div class="skeleton skeleton-block"></div>
+                    </div>
+                    <div class="message-input-area">
+                        <textarea id="messageInput" class="message-input" placeholder="Share your thoughts..."></textarea>
+                        <button id="sendButton" class="send-button">Send</button>
+                    </div>
+                </div>
+
+                <!-- Journal Section -->
+                <div id="journalSection" class="section">
+                    <div style="margin-bottom: 32px;">
+                        <h3 style="font-family: 'Playfair Display', serif; font-size: 22px; color: #e8dcc8; margin-bottom: 12px;">Add a Reflection</h3>
+                        <div class="form-group">
+                            <label class="form-label">Today's Mood</label>
+                            <select id="journalMood" class="form-select">
+                                <option value="">Select a mood...</option>
+                                <option value="peaceful">Peaceful</option>
+                                <option value="energized">Energized</option>
+                                <option value="contemplative">Contemplative</option>
+                                <option value="grateful">Grateful</option>
+                                <option value="vulnerable">Vulnerable</option>
+                                <option value="transforming">Transforming</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Your Reflection</label>
+                            <textarea id="journalText" class="form-textarea" placeholder="Write freely. This is your sacred space."></textarea>
+                        </div>
+                        <button id="saveJournalBtn" class="form-button">Save Reflection</button>
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <h3 style="font-family: 'Playfair Display', serif; font-size: 22px; color: #e8dcc8; margin: 32px 0 20px;">Your Reflections</h3>
+                    <div id="journalEntries">
+                        <div class="skeleton skeleton-block"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+        </svg>
+    </button>
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // ============================================
+        // SUPABASE CONFIG
+        // ============================================
+        const SUPABASE_URL = 'https://wdecjlrfulsdklqeetqb.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkZWNqbHJmdWxzZGtscWVldHFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI3NzI1NjcsImV4cCI6MjA1ODM0ODU2N30.gZ4JpLLFfNFKwWdadSNJiRaPCMpOvy36WZKLglxFsEE';
+
+        let supabase;
+        let currentUser = null;
+        let currentClient = null;
+
+        // Initialize Supabase
+        async function initSupabase() {
+            const { createClient } = window.supabase;
+            supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+
+        // ============================================
+        // FIREFLY ANIMATION
+        // ============================================
+        function initFireflies() {
+            const canvas = document.getElementById('fireflyCanvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const fireflies = [];
+            const fireflyCount = 15;
+
+            class Firefly {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.brightness = Math.random() * 0.5 + 0.5;
+                    this.fadingIn = Math.random() > 0.5;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    if (this.x < 0) this.x = canvas.width;
+                    if (this.x > canvas.width) this.x = 0;
+                    if (this.y < 0) this.y = canvas.height;
+                    if (this.y > canvas.height) this.y = 0;
+
+                    if (this.fadingIn) {
+                        this.brightness += 0.01;
+                        if (this.brightness >= 1) this.fadingIn = false;
+                    } else {
+                        this.brightness -= 0.01;
+                        if (this.brightness <= 0.3) this.fadingIn = true;
+                    }
+                }
+
+                draw() {
+                    ctx.fillStyle = `rgba(212, 165, 116, ${this.brightness * 0.6})`;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.strokeStyle = `rgba(184, 92, 53, ${this.brightness * 0.3})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            }
+
+            for (let i = 0; i < fireflyCount; i++) {
+                fireflies.push(new Firefly());
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                fireflies.forEach(ff => {
+                    ff.update();
+                    ff.draw();
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // ============================================
+        // MOON PHASE
+        // ============================================
+        function getMoonPhase() {
+            const phases = [
+                'New Moon — A time of new beginnings',
+                'Waxing Crescent — Energy is building',
+                'First Quarter — Facing challenges with clarity',
+                'Waxing Gibbous — Nearly full potential',
+                'Full Moon — Your power is illuminated',
+                'Waning Gibbous — Gratitude and release',
+                'Last Quarter — Reflecting on lessons learned',
+                'Waning Crescent — Preparing for renewal'
+            ];
+
+            const today = new Date();
+            const lunarCycle = 29.53;
+            const newMoonDate = new Date(2026, 0, 29);
+            const daysSinceNewMoon = (today - newMoonDate) / (1000 * 60 * 60 * 24);
+            const dayInCycle = daysSinceNewMoon % lunarCycle;
+            const phaseIndex = Math.floor((dayInCycle / lunarCycle) * phases.length);
+
+            return phases[phaseIndex];
+        }
+
+        // ============================================
+        // CHARACTER MAP SVG
+        // ============================================
+        function renderCharacterMap(milestones) {
+            const segments = [
+                { name: 'Spirit Connection', angle: 0 },
+                { name: 'Emotional Balance', angle: 45 },
+                { name: 'Physical Vitality', angle: 90 },
+                { name: 'Mental Clarity', angle: 135 },
+                { name: 'Ancestral Wisdom', angle: 180 },
+                { name: 'Community Bond', angle: 225 },
+                { name: 'Creative Expression', angle: 270 },
+                { name: 'Sacred Practice', angle: 315 }
+            ];
+
+            const svg = document.getElementById('characterMap');
+            svg.innerHTML = '';
+
+            const centerX = 200;
+            const centerY = 200;
+            const outerRadius = 150;
+            const innerRadius = 50;
+
+            // Draw segments
+            segments.forEach((segment, idx) => {
+                const angle1 = (segment.angle - 22.5) * Math.PI / 180;
+                const angle2 = (segment.angle + 22.5) * Math.PI / 180;
+
+                const x1 = centerX + outerRadius * Math.cos(angle1);
+                const y1 = centerY + outerRadius * Math.sin(angle1);
+                const x2 = centerX + outerRadius * Math.cos(angle2);
+                const y2 = centerY + outerRadius * Math.sin(angle2);
+
+                const ix1 = centerX + innerRadius * Math.cos(angle1);
+                const iy1 = centerY + innerRadius * Math.sin(angle1);
+                const ix2 = centerX + innerRadius * Math.cos(angle2);
+                const iy2 = centerY + innerRadius * Math.sin(angle2);
+
+                const pathData = `M ${ix1} ${iy1} L ${x1} ${y1} A ${outerRadius} ${outerRadius} 0 0 1 ${x2} ${y2} L ${ix2} ${iy2} A ${innerRadius} ${innerRadius} 0 1 0 ${ix1} ${iy1}`;
+
+                const milestone = milestones.find(m => m.segment === segment.name);
+                const isComplete = milestone && milestone.completed;
+
+                const pathElem = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                pathElem.setAttribute('d', pathData);
+                pathElem.setAttribute('fill', isComplete ? '#B85C35' : 'none');
+                pathElem.setAttribute('stroke', isComplete ? '#B85C35' : '#7A9E7E');
+                pathElem.setAttribute('stroke-width', isComplete ? '2' : '1.5');
+                pathElem.setAttribute('opacity', isComplete ? '0.8' : '0.3');
+                pathElem.setAttribute('stroke-dasharray', isComplete ? '0' : '5,3');
+                pathElem.style.transition = 'all 0.3s ease';
+                svg.appendChild(pathElem);
+
+                if (isComplete) {
+                    pathElem.style.filter = 'drop-shadow(0 0 10px rgba(184, 92, 53, 0.5))';
+                }
+            });
+
+            // Draw center circle
+            const centerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            centerCircle.setAttribute('cx', centerX);
+            centerCircle.setAttribute('cy', centerY);
+            centerCircle.setAttribute('r', innerRadius - 10);
+            centerCircle.setAttribute('fill', 'none');
+            centerCircle.setAttribute('stroke', '#D4A574');
+            centerCircle.setAttribute('stroke-width', '2');
+            centerCircle.setAttribute('opacity', '0.6');
+            svg.appendChild(centerCircle);
+
+            // Add labels
+            segments.forEach(segment => {
+                const angle = segment.angle * Math.PI / 180;
+                const x = centerX + (outerRadius + 30) * Math.cos(angle);
+                const y = centerY + (outerRadius + 30) * Math.sin(angle);
+
+                const textElem = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                textElem.setAttribute('x', x);
+                textElem.setAttribute('y', y);
+                textElem.setAttribute('text-anchor', 'middle');
+                textElem.setAttribute('dominant-baseline', 'middle');
+                textElem.setAttribute('font-size', '11');
+                textElem.setAttribute('fill', '#a08b6e');
+                textElem.setAttribute('font-family', 'EB Garamond, serif');
+                textElem.textContent = segment.name.split(' ')[0];
+                svg.appendChild(textElem);
+            });
+
+            // Journey summary
+            const completedSegments = milestones.filter(m => m.completed).length;
+            const totalSegments = segments.length;
+            const progressPercent = Math.round((completedSegments / totalSegments) * 100);
+
+            document.getElementById('journeyGlance').innerHTML = `
+                <strong style="color: #e8dcc8;">Your Progress</strong><br>
+                ${completedSegments} of ${totalSegments} aspects illuminated<br>
+                <strong style="color: #D4A574;">${progressPercent}%</strong> of your journey complete
+            `;
+        }
+
+        // ============================================
+        // AUTH FUNCTIONS
+        // ============================================
+        async function handleAuth(email) {
+            try {
+                const { error } = await supabase.auth.signInWithOtp({
+                    email: email,
+                });
+
+                if (error) throw error;
+
+                document.getElementById('authMessage').textContent = 'Magic link sent! Check your email.';
+                document.getElementById('authMessage').classList.add('success');
+                document.getElementById('authMessage').classList.remove('error');
+            } catch (error) {
+                document.getElementById('authMessage').textContent = 'Error: ' + error.message;
+                document.getElementById('authMessage').classList.add('error');
+                document.getElementById('authMessage').classList.remove('success');
+            }
+        }
+
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (session) {
+                currentUser = session.user;
+                await loadClientData();
+                showApp();
+            } else {
+                showAuth();
+            }
+        }
+
+        async function loadClientData() {
+            try {
+                const { data, error } = await supabase
+                    .from('client_portal_accounts')
+                    .select('*, clients(*)')
+                    .eq('auth_user_id', currentUser.id)
+                    .single();
+
+                if (error) throw error;
+
+                currentClient = data.clients;
+                updateUI();
+                await loadSectionData('welcome-home');
+            } catch (error) {
+                console.error('Error loading client:', error);
+            }
+        }
+
+        function updateUI() {
+            const initials = currentClient.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('userAvatar').textContent = initials;
+            document.getElementById('userName').textContent = currentClient.name;
+            document.getElementById('userStage').textContent = currentClient.pipeline_stage || 'Journey Begins';
+
+            document.getElementById('greetingText').textContent = `Welcome back, ${currentClient.name.split(' ')[0]}`;
+            document.getElementById('moonPhase').textContent = getMoonPhase();
+        }
+
+        async function logout() {
+            await supabase.auth.signOut();
+            currentUser = null;
+            currentClient = null;
+            showAuth();
+        }
+
+        // ============================================
+        // SECTION NAVIGATION
+        // ============================================
+        async function switchSection(sectionName) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+
+            document.getElementById(sectionName + 'Section').classList.add('active');
+            document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+
+            await loadSectionData(sectionName);
+
+            // Update header
+            const headerMap = {
+                'welcome-home': { title: 'Welcome Home', subtitle: 'The Animist Apothecary' },
+                'journey': { title: 'Your Journey', subtitle: 'Progress & Milestones' },
+                'inquiry': { title: 'Sacred Inquiry', subtitle: 'Deep Questions' },
+                'preparation': { title: 'Ceremony Preparation', subtitle: 'Getting Ready' },
+                'integration': { title: 'Integration & Aftercare', subtitle: 'Integration Journey' },
+                'library': { title: 'The Library', subtitle: 'Community Resources' },
+                'messages': { title: 'Messages', subtitle: 'With Your Practitioner' },
+                'journal': { title: 'Your Journal', subtitle: 'Private Reflections' }
+            };
+
+            const headers = headerMap[sectionName];
+            document.getElementById('headerTitle').textContent = headers.title;
+            document.getElementById('headerSubtitle').textContent = headers.subtitle;
+
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebarToggle').style.display = 'none';
+                document.querySelector('.sidebar').classList.remove('open');
+            }
+        }
+
+        async function loadSectionData(sectionName) {
+            try {
+                switch (sectionName) {
+                    case 'welcome-home':
+                        await loadWelcomeData();
+                        break;
+                    case 'journey':
+                        await loadJourneyData();
+                        break;
+                    case 'inquiry':
+                        await loadInquiryData();
+                        break;
+                    case 'library':
+                        await loadLibraryData();
+                        break;
+                    case 'messages':
+                        await loadMessagesData();
+                        break;
+                    case 'journal':
+                        await loadJournalData();
+                        break;
+                }
+            } catch (error) {
+                console.error('Error loading section:', error);
+            }
+        }
+
+        async function loadWelcomeData() {
+            try {
+                // Load appointments
+                const { data: appointments } = await supabase
+                    .from('appointments')
+                    .select('*')
+                    .eq('client_id', currentClient.id)
+                    .gte('appointment_date', new Date().toISOString())
+                    .order('appointment_date')
+                    .limit(3);
+
+                let appointmentsHtml = '';
+                if (appointments && appointments.length > 0) {
+                    appointmentsHtml = appointments.map(apt => {
+                        const date = new Date(apt.appointment_date);
+                        return `
+                            <div class="appointment-item">
+                                <div>
+                                    <div class="appointment-time">${date.toLocaleDateString()} at ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                                    <div class="appointment-title">${apt.session_type || 'Session'}</div>
+                                    ${apt.notes ? `<div class="appointment-notes">${apt.notes}</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    appointmentsHtml = '<p style="color: #a08b6e; font-style: italic;">No upcoming appointments scheduled. Reach out to book your next session.</p>';
+                }
+                document.getElementById('upcomingAppointments').innerHTML = appointmentsHtml;
+
+                // Load milestones for character map
+                const { data: milestones } = await supabase
+                    .from('client_milestones')
+                    .select('*')
+                    .eq('client_id', currentClient.id);
+
+                const defaultMilestones = [
+                    { segment: 'Spirit Connection', completed: false },
+                    { segment: 'Emotional Balance', completed: false },
+                    { segment: 'Physical Vitality', completed: false },
+                    { segment: 'Mental Clarity', completed: false },
+                    { segment: 'Ancestral Wisdom', completed: false },
+                    { segment: 'Community Bond', completed: false },
+                    { segment: 'Creative Expression', completed: false },
+                    { segment: 'Sacred Practice', completed: false }
+                ];
+
+                const mergedMilestones = defaultMilestones.map(seg => {
+                    const found = milestones && milestones.find(m => m.segment === seg.segment);
+                    return { ...seg, completed: found ? found.completed : false };
+                });
+
+                renderCharacterMap(mergedMilestones);
+
+                // Load recent activity
+                const { data: sessionNotes } = await supabase
+                    .from('session_notes')
+                    .select('*')
+                    .eq('client_id', currentClient.id)
+                    .order('created_at', { ascending: false })
+                    .limit(3);
+
+                let milestonesHtml = '';
+                if (sessionNotes && sessionNotes.length > 0) {
+                    milestonesHtml = sessionNotes.map(note => `
+                        <p style="margin-bottom: 8px;">✓ ${note.title || 'Session attended'}</p>
+                    `).join('');
+                } else {
+                    milestonesHtml = '<p style="color: #a08b6e; font-style: italic;">Your milestones will appear here</p>';
+                }
+                document.getElementById('recentMilestones').innerHTML = milestonesHtml;
+
+                // Current focus
+                document.getElementById('currentFocus').innerHTML = `
+                    <p>You are in the <strong>${currentClient.pipeline_stage || 'beginning'}</strong> stage of your healing journey.</p>
+                    <p style="margin-top: 12px; color: #a08b6e; font-size: 13px;">Each step brings you closer to wholeness.</p>
+                `;
+            } catch (error) {
+                console.error('Error loading welcome data:', error);
+            }
+        }
+
+        async function loadJourneyData() {
+            try {
+                const { data: sessionNotes } = await supabase
+                    .from('session_notes')
+                    .select('*')
+                    .eq('client_id', currentClient.id)
+                    .order('created_at', { ascending: false });
+
+                let timelineHtml = '';
+                if (sessionNotes && sessionNotes.length > 0) {
+                    timelineHtml = sessionNotes.map(note => {
+                        const date = new Date(note.created_at);
+                        return `
+                            <div class="timeline-item">
+                                <div class="timeline-date">${date.toLocaleDateString()}</div>
+                                <div class="timeline-title">${note.title || 'Session'}</div>
+                                <div class="timeline-content">${note.notes || 'Session completed'}</div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    timelineHtml = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">✧</div>
+                            <div class="empty-state-text">Your Journey Timeline</div>
+                            <div class="empty-state-hint">Your sessions and milestones will appear here as your healing journey unfolds</div>
+                        </div>
+                    `;
+                }
+                document.getElementById('journeyTimeline').innerHTML = timelineHtml;
+            } catch (error) {
+                console.error('Error loading journey:', error);
+            }
+        }
+
+        async function loadInquiryData() {
+            try {
+                const { data: forms } = await supabase
+                    .from('intake_forms')
+                    .select('*')
+                    .eq('client_id', currentClient.id)
+                    .order('created_at', { ascending: false });
+
+                let formsHtml = '';
+                if (forms && forms.length > 0) {
+                    formsHtml = forms.map(form => `
+                        <div class="card">
+                            <h3 class="card-title">${form.title || 'Intake Form'}</h3>
+                            <div class="card-content">${form.content || 'Form response recorded'}</div>
+                            <div class="card-footer">
+                                <span style="font-size: 12px; color: #a08b6e;">${new Date(form.created_at).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    formsHtml = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">✦</div>
+                            <div class="empty-state-text">Sacred Inquiry Forms</div>
+                            <div class="empty-state-hint">Intake forms and deep inquiry questionnaires will appear here</div>
+                        </div>
+                    `;
+                }
+                document.getElementById('intakeForms').innerHTML = formsHtml;
+            } catch (error) {
+                console.error('Error loading inquiry:', error);
+            }
+        }
+
+        async function loadLibraryData() {
+            try {
+                const { data: resources } = await supabase
+                    .from('community_resources')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                let resourcesHtml = '';
+                if (resources && resources.length > 0) {
+                    resourcesHtml = resources.map(res => `
+                        <div class="card">
+                            <h3 class="card-title">${res.title}</h3>
+                            <div class="card-content">${res.description || ''}</div>
+                            ${res.url ? `<div class="card-footer"><a href="${res.url}" target="_blank" style="color: #D4A574; text-decoration: none; font-weight: 600;">Read More →</a></div>` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    resourcesHtml = `
+                        <div class="empty-state" style="grid-column: 1 / -1;">
+                            <div class="empty-state-icon">📚</div>
+                            <div class="empty-state-text">The Library</div>
+                            <div class="empty-state-hint">Community resources and guides will be shared here as they become available</div>
+                        </div>
+                    `;
+                }
+                document.getElementById('libraryGrid').innerHTML = resourcesHtml;
+            } catch (error) {
+                console.error('Error loading library:', error);
+            }
+        }
+
+        async function loadMessagesData() {
+            try {
+                const { data: messages } = await supabase
+                    .from('client_messages')
+                    .select('*')
+                    .eq('client_id', currentClient.id)
+                    .order('created_at');
+
+                let messagesHtml = '';
+                if (messages && messages.length > 0) {
+                    messagesHtml = messages.map(msg => {
+                        const date = new Date(msg.created_at);
+                        const isFromPractitioner = msg.sender_type === 'practitioner';
+                        return `
+                            <div class="message ${isFromPractitioner ? 'from-practitioner' : 'from-client'}">
+                                <div class="message-avatar">${isFromPractitioner ? '◈' : '✦'}</div>
+                                <div class="message-bubble">
+                                    <div class="message-sender">${isFromPractitioner ? 'Your Practitioner' : 'You'}</div>
+                                    <div class="message-content">${msg.content}</div>
+                                    <div class="message-time">${date.toLocaleString()}</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    // Update unread badge
+                    const unreadCount = messages.filter(m => !m.is_read && m.sender_type === 'practitioner').length;
+                    const badge = document.getElementById('messagesBadge');
+                    if (unreadCount > 0) {
+                        badge.textContent = unreadCount;
+                        badge.style.display = 'block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                } else {
+                    messagesHtml = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">💬</div>
+                            <div class="empty-state-text">Begin the Conversation</div>
+                            <div class="empty-state-hint">Send a message to your practitioner. They will respond thoughtfully.</div>
+                        </div>
+                    `;
+                }
+                document.getElementById('messageThread').innerHTML = messagesHtml;
+            } catch (error) {
+                console.error('Error loading messages:', error);
+            }
+        }
+
+        async function loadJournalData() {
+            try {
+                const { data: entries } = await supabase
+                    .from('client_journal')
+                    .select('*')
+                    .eq('client_id', currentClient.id)
+                    .order('created_at', { ascending: false });
+
+                let entriesHtml = '';
+                if (entries && entries.length > 0) {
+                    entriesHtml = entries.map(entry => {
+                        const date = new Date(entry.created_at);
+                        const moodColors = {
+                            peaceful: '#7A9E7E',
+                            energized: '#D4A574',
+                            contemplative: '#B85C35',
+                            grateful: '#D4A574',
+                            vulnerable: '#B85C35',
+                            transforming: '#D4A574'
+                        };
+                        const moodColor = moodColors[entry.mood] || '#a08b6e';
+
+                        return `
+                            <div class="journal-entry">
+                                <div class="journal-header">
+                                    <div class="journal-date">${date.toLocaleDateString()}</div>
+                                    <div class="mood-indicator">
+                                        <div class="mood-dot" style="background: ${moodColor};"></div>
+                                        <span style="font-size: 12px; color: #a08b6e; text-transform: capitalize;">${entry.mood || 'Unspecified'}</span>
+                                    </div>
+                                </div>
+                                <div class="journal-text">"${entry.content}"</div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    entriesHtml = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📖</div>
+                            <div class="empty-state-text">Your Sacred Journal</div>
+                            <div class="empty-state-hint">Begin writing your reflections. This space is entirely private.</div>
+                        </div>
+                    `;
+                }
+                document.getElementById('journalEntries').innerHTML = entriesHtml;
+            } catch (error) {
+                console.error('Error loading journal:', error);
+            }
+        }
+
+        // ============================================
+        // ACTION HANDLERS
+        // ============================================
+        async function saveJournalEntry() {
+            const mood = document.getElementById('journalMood').value;
+            const text = document.getElementById('journalText').value;
+
+            if (!text.trim()) {
+                alert('Please write something in your reflection');
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('client_journal')
+                    .insert({
+                        client_id: currentClient.id,
+                        mood: mood,
+                        content: text
+                    });
+
+                if (error) throw error;
+
+                document.getElementById('journalMood').value = '';
+                document.getElementById('journalText').value = '';
+                await loadJournalData();
+            } catch (error) {
+                console.error('Error saving journal:', error);
+                alert('Error saving reflection. Please try again.');
+            }
+        }
+
+        async function sendMessage() {
+            const text = document.getElementById('messageInput').value;
+
+            if (!text.trim()) return;
+
+            try {
+                const { error } = await supabase
+                    .from('client_messages')
+                    .insert({
+                        client_id: currentClient.id,
+                        sender_type: 'client',
+                        content: text
+                    });
+
+                if (error) throw error;
+
+                document.getElementById('messageInput').value = '';
+                await loadMessagesData();
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
+        }
+
+        // ============================================
+        // UI FUNCTIONS
+        // ============================================
+        function showAuth() {
+            document.getElementById('authScreen').style.display = 'flex';
+            document.getElementById('appContainer').style.display = 'none';
+        }
+
+        function showApp() {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'flex';
+            document.getElementById('sidebarToggle').style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+        document.getElementById('authSubmit').addEventListener('click', () => {
+            const email = document.getElementById('authEmail').value;
+            if (email) handleAuth(email);
+        });
+
+        document.getElementById('authEmail').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const email = document.getElementById('authEmail').value;
+                if (email) handleAuth(email);
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const section = item.getAttribute('data-section');
+                switchSection(section);
+            });
+        });
+
+        document.getElementById('saveJournalBtn').addEventListener('click', saveJournalEntry);
+        document.getElementById('sendButton').addEventListener('click', sendMessage);
+
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.querySelector('.sidebar').classList.toggle('open');
+        });
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', (e) => {
+            const sidebar = document.querySelector('.sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            if (!sidebar.contains(e.target) && !toggle.contains(e.target) && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        async function init() {
+            await initSupabase();
+            initFireflies();
+            await checkAuth();
+
+            // Listen for auth changes
+            supabase.auth.onAuthStateChange((event, session) => {
+                if (!session) {
+                    showAuth();
+                }
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
