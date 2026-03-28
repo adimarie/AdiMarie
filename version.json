@@ -1,9 +1,9 @@
 {
-  "version": "v260328.03 9:53am",
-  "release": 3,
-  "sha": "b23cbcd",
-  "fullSha": "b23cbcd136d4cc538283dd82493e7da4138791b1",
+  "version": "v260328.04 10:11am",
+  "release": 4,
+  "sha": "772ecf6",
+  "fullSha": "772ecf69fa22e544415cb82957309d5dca92ab11",
   "actor": "adimarie",
-  "pushedAt": "2026-03-28T14:53:24Z",
-  "commits": [{"sha": "b23cbcd", "message": "Rebuild business views as custom interface panels", "author": "adimarie"}]
+  "pushedAt": "2026-03-28T15:11:54Z",
+  "commits": [{"sha": "772ecf6", "message": "Add Community Hearth welcome page", "author": "adimarie"}]
 }
