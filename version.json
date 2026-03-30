@@ -1,9 +1,9 @@
 {
-  "version": "v260329.01 4:05pm",
+  "version": "v260330.01 5:38pm",
   "release": 1,
-  "sha": "3e364f9",
-  "fullSha": "3e364f97c3d7f1b83b55020322226b3735114991",
+  "sha": "774abff",
+  "fullSha": "774abff2a4f307ce3f60d41089ec3c57e9f9907e",
   "actor": "adimarie",
-  "pushedAt": "2026-03-29T21:05:43Z",
-  "commits": [{"sha": "3e364f9", "message": "Rewrite travel map \u2014 all data from Supabase, add mountains and volcanoes", "author": "adimarie"}]
+  "pushedAt": "2026-03-30T22:38:33Z",
+  "commits": [{"sha": "774abff", "message": "Add full AlpacApps infrastructure modules (no overwrites)", "author": "Adi Marie"}]
 }
