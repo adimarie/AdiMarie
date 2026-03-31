@@ -1,9 +1,9 @@
 {
-  "version": "v260330.01 5:38pm",
+  "version": "v260331.01 5:58pm",
   "release": 1,
-  "sha": "774abff",
-  "fullSha": "774abff2a4f307ce3f60d41089ec3c57e9f9907e",
+  "sha": "0922724",
+  "fullSha": "09227248a4bfb813fa4afe3be587d37a97e56e36",
   "actor": "adimarie",
-  "pushedAt": "2026-03-30T22:38:33Z",
-  "commits": [{"sha": "774abff", "message": "Add full AlpacApps infrastructure modules (no overwrites)", "author": "Adi Marie"}]
+  "pushedAt": "2026-03-31T22:58:21Z",
+  "commits": [{"sha": "0922724", "message": "Delete CNAME", "author": "adimarie"}]
 }
